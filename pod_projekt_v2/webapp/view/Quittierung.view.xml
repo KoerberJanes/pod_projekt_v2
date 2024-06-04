@@ -1,0 +1,135 @@
+<mvc:View xmlns:table="sap.ui.mdc.table" controllerName="podprojekt.controller.quittierung"
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns="sap.f" 
+    xmlns:m="sap.m"
+    xmlns:core="sap.ui.core" 
+    xmlns:layout="sap.ui.layout" 
+    xmlns:form="sap.ui.layout.form"><!-- displayBlock="true"-->
+    <DynamicPage id="confirmationPage">
+        <title>
+            <DynamicPageTitle id="snappedHeaderContainer" >
+                <breadcrumbs>
+                    <m:Breadcrumbs id="breadcrumbs" currentLocationText="{i18n>confirmation}"></m:Breadcrumbs>
+                </breadcrumbs>
+                <heading>
+                    <m:VBox id="headerContainer">
+                        <m:Text id="driverInfo" text="{i18n>Robin Rösinger}"/><!--TODO Wert in Model eintragen-->
+                        <m:Title id="currentTourInfo" text="{i18n>currentTour}: {StopModel>/results/Tour}" wrapping="true"/><!--text="{i18n>currentTour}: {tours>/routeCaption}"-->
+                    </m:VBox>
+                </heading>
+            </DynamicPageTitle>
+        </title>
+        <header>
+            <DynamicPageHeader id="expandedHeaderContainer">
+                <m:VBox id="addressField" class="sapUiLargeMarginEnd ">
+                    <m:Text id="addressTxt" text="{SingleStopModel>/results/addressName1}&#13;&#10;{SingleStopModel>/results/street} {SingleStopModel>/results/streetNumber}&#13;&#10;{SingleStopModel>/results/country} {SingleStopModel>/results/zipCode} {SingleStopModel>/results/city}" width="100%"/>
+                </m:VBox>
+            </DynamicPageHeader>
+        </header>
+        <content>
+            <form:Form id="confirmationForm">
+                <form:layout>
+                    <form:ResponsiveGridLayout id="confirmationFormLayout"/>
+                </form:layout>
+                <form:formContainers>
+                    <form:FormContainer id="recipientContainer">
+                        <form:formElements>
+                            <form:FormElement id="recipientFoundControl" label="{i18n>recipientFound}">
+                                <m:Switch id="recipientFoundSwitch" type="AcceptReject" customTextOff="{i18n>no}" customTextOn="{i18n>yes}" state="{settings>/recipientFound}" change="onRecipientFoundSwitchChange"/>
+                            </form:FormElement>
+                            <form:FormElement id="recipientName" label="{i18n>recipientName}" visible="{= ${settings>/recipientFound} }">
+                                <m:Input id="recipientNameInp"/>
+                            </form:FormElement>
+                        </form:formElements>
+                    </form:FormContainer>
+                    <!--Text id="idUnterschriftText" text="{i18n>unterschrift}" class="BoldRed"/-->
+                    <form:FormContainer id="notesContainer">
+                        <form:formElements>
+                            <form:FormElement id="complaints" label="{i18n>complaints}">
+                                <m:Switch id="complaintsSwitch" customTextOff="{i18n>no}" customTextOn="{i18n>yes}" state="{settings>/isComplaintsEnabled}"/>
+                                <m:List id="complaintsList" mode="MultiSelect" includeItemInSelection="true" items="{ComplaintsModel>/results}" visible="{= ${settings>/isComplaintsEnabled}}">
+                                    <m:StandardListItem id="addComplaintIdToModel" title="{ComplaintsModel>complaintText}"/>
+                                </m:List>
+                            </form:FormElement>
+                            <form:FormElement id="remarks" label="{i18n>remarks}">
+                                <m:Switch id="remarksSwitch" state="{settings>/isRemarksEnabled}"/><!-- customTextOff="{i18n>no}" customTextOn="{i18n>yes}"-->
+                                <m:TextArea id="remarksTextArea" visible="{= ${settings>/isRemarksEnabled}}"/>
+                            </form:FormElement>
+                            <form:FormElement id="photoListElement">
+                                <m:ToggleButton id="photoItemsToggleButton" text="{i18n>photoItems}" press="onToggleListVisibility" pressed="{settings>/photoListVisible}"/><!-- icon="= ${photoListVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add' }"-->
+                                <m:List id="photoList" items="{path:'FotoModel>fotos', templateShareable:true}" mode="Delete" delete="onDelete" visible="{settings>/photoListVisible}">
+                                    <m:headerToolbar>
+                                        <m:OverflowToolbar id="photoTitle">
+                                            <m:Label text="{FotoModel>fotoArt}"/>
+                                        </m:OverflowToolbar>
+                                    </m:headerToolbar>
+                                    <m:CustomListItem >
+                                        <m:HBox >
+                                            <m:Image src="{FotoModel>fotoSrc}" width="100em" height="auto"/>
+                                            <form:SimpleForm >
+                                                <form:content>
+                                                    <m:Text text="{FotoModel>fotoId}"/>
+                                                </form:content>
+                                            </form:SimpleForm>
+                                        </m:HBox>
+                                    </m:CustomListItem>
+                                </m:List>
+                                <m:Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="onFoto"/>
+                            </form:FormElement>
+                        </form:formElements>
+                    </form:FormContainer>
+                    <form:FormContainer id="listButtonsContainer">
+                        <form:formElements>
+                            <form:FormElement id="deliveryNotes">
+                                <m:ToggleButton id="deliveryItemsToggleButton" text="{i18n>deliveryItems}" press="onToggleListVisibility" pressed="{settings>/deliveryItemsVisible}"/><!-- icon="{= ${/deliveryItemsVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add'}"-->
+                                <m:Button id="unloadBtn" text="{i18n>unload}" visible="{settings>/deliveryItemsVisible}" press="onDeliveryUnload" icon="{= ${SingleStopModel>/results.orders[0].orderStatus} === '90' ? 'sap-icon://sys-enter' : 'sap-icon://navigation-right-arrow'}" iconFirst="false"/>
+                                <!--TODO statt einem einzelnen Button eine Tabelle/Liste mit Lieferscheinen und jeweils einen Button zum Abladen dazu-->
+                            </form:FormElement>
+                            <form:FormElement id="loadingDevicesElement">
+                                <m:ToggleButton id="loadingDevicesToggleButton" text="{i18n>loadingDevices}" press="onToggleListVisibility" pressed="{settings>/loadingDevicesVisible}"/><!-- icon="= ${loadingDevicesVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add'}"-->
+                                <m:Table id="loadingDevicesTable" items="{LoadingDevicesModel>/items}" visible="{settings>/loadingDevicesVisible}">
+                                    <m:items>
+                                        <m:ColumnListItem>
+                                            <m:cells>
+                                                <m:Text text="{LoadingDeviceModel>Typ}"/>
+                                                <m:Text text="{LoadingDeviceModel>Bestand}"/>
+                                                <m:Input/>
+                                                <m:Input/>
+                                            </m:cells>
+                                        </m:ColumnListItem>
+                                    </m:items>
+                                    <m:columns>
+                                        <m:Column width="30%" hAlign="Center">
+                                            <m:header>
+                                                <m:Text text="{i18n>typ}"/>
+                                            </m:header>
+                                        </m:Column>
+                                        <m:Column width="17%" hAlign="Center">
+                                            <m:header>
+                                                <m:Text text="{i18n>bestand}"/>
+                                            </m:header>
+                                        </m:Column>
+                                        <m:Column width="27%">
+                                            <m:header>
+                                                <m:Text text="{i18n>abladen}"/>
+                                            </m:header>
+                                        </m:Column>
+                                        <m:Column width="27%">
+                                            <m:header>
+                                                <m:Text text="{i18n>aufladen}"/>
+                                            </m:header>
+                                        </m:Column>
+                                    </m:columns>
+                                </m:Table>
+                            </form:FormElement>
+                        </form:formElements>
+                    </form:FormContainer>
+                    <form:FormContainer id="completeButtonsContainer"><form:FormElement id="completeButtons">
+                        <m:Button id="signBtn" icon="sap-icon://signature" text="{i18n>sign}" press="onSign" visible="{= ${settings>/recipientFound}}"/>
+                        <m:Button id="notFoundBtn" icon="sap-icon://decline" text="{i18n>notFound}" press="onNotFound" visible="{= !${settings>/recipientFound}}"/>
+                    </form:FormElement></form:FormContainer>
+                </form:formContainers>
+            </form:Form>
+        </content>
+    </DynamicPage>
+</mvc:View>

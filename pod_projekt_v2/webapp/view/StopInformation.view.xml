@@ -1,0 +1,77 @@
+<mvc:View controllerName="podprojekt.controller.StopInformation"
+    xmlns:core="sap.ui.core" 
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns="sap.m" 
+    xmlns:layout="sap.ui.layout" 
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified" 
+    xmlns:tnt="sap.tnt" displayBlock="true">
+    <Page id="stopInformationPageId" title="{i18n>title}">
+        <customHeader>
+                <Bar>
+                    
+                    <contentLeft>
+                        <!--
+                        <Button id="MenuBtn"  type="Transparent" icon="sap-icon://menu2" press="onPressMenu"></Button>
+                        <Button id="BackBtn" type="Back" press="onNavToActiveTour"></Button>
+                        -->
+                    </contentLeft>
+                    <contentMiddle>
+                        <Label text="{i18n>stopuebersicht}"/>
+                    </contentMiddle>
+                    <contentRight>
+                        <!--Leer-->
+                    </contentRight>
+
+                </Bar>
+            </customHeader>
+        <content>
+            <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000" labelSpanL="3" labelSpanM="3" labelSpanS="3" labelSpanXL="3">
+                <form:content>
+                    <Bar>
+                        <contentMiddle>
+                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
+                        </contentMiddle>
+                    </Bar>
+                    <OverflowToolbar>
+                        <Label id="tourTxt" text="{i18n>Tour}"></Label>
+                        <ToolbarSpacer/>
+                        <Button id="stopInformationRefreshBtn" press="onRefreshStopInformation" icon="sap-icon://refresh" ></Button>
+                    </OverflowToolbar>
+                    
+                    <Label text="{i18n>Stopp}"></Label>
+                    <Input id="stopp" value="" editable="false"></Input>
+                    <Label text="{i18n>Adresse}"></Label>
+                    <TextArea editable="false" growing="true" value="{SingleStopModel>/results/addressName1}&#13;&#10;{SingleStopModel>/results/street}{SingleStopModel>/results/streetNumber}&#13;&#10;{SingleStopModel>/results/country} {SingleStopModel>/results/zipCode} {SingleStopModel>/results/city}"></TextArea>
+                    <!--<Input id="iStoppBezeichnung" value="{SingleStopModel>/results/addressName1}" editable="false"></Input>
+                    <Label/>
+                    <Input id="iStoppStrasse" value="{SingleStopModel>/results/street}{SingleStopModel>/results/streetNumber}" editable="false"></Input>
+                    <Label/>
+                    <Input id="iStoppOrt" value="{SingleStopModel>/results/country} {SingleStopModel>/results/zipCode} {SingleStopModel>/results/city}" editable="false"></Input>-->
+                    <Label/>
+                    <Button id="btnKarte" press="onPressBtnKarte" icon="sap-icon://locate-me-2" text="{i18n>Karte}"></Button>
+                    <Label text="{i18n>Hinweis}"></Label>
+                    <TextArea id="taHinweis"></TextArea>
+                    <!-- <Label text="{i18n>Avisierung}"></Label>
+                    <Input id="iAvisierung" editable="false"></Input> -->
+                    <Label text="{i18n>Avisnummer}"></Label>
+                    <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{SingleStopModel>/results/phoneAvis}"></Button>
+                    
+                </form:content>
+            </form:SimpleForm>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <Button id="ManualBackBtn" text="{i18n>Zurück}" icon="sap-icon://navigation-left-arrow" press="onNavToActiveTour"></Button>
+                </contentLeft>
+                <contentMiddle>
+                    <Button id="TestNavBtn" text="Zur Abladung" press="onNavToAbladung"></Button>
+                </contentMiddle>
+                <contentRight>
+                    <Button id="QuittierungBtn" text="{i18n>Quittierung}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onNavToQuittierung"></Button>
+                </contentRight>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

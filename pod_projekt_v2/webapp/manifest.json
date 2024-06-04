@@ -1,0 +1,269 @@
+{
+  "_version": "1.59.0",
+  "sap.app": {
+    "id": "podprojekt",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.12.4",
+      "toolsId": "646bc19b-a29e-496e-a997-b80aea0e6945"
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.124.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.suite.ui.generic.template": {},
+        "sap.ui.comp": {},
+        "sap.ui.generic.app": {},
+        "sap.ui.table": {},
+        "sap.ushell": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "podprojekt.i18n.i18n"
+        }
+      },
+      "settings": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/Settings.json",
+        "settings": {
+          "defaultBindingMode": "TwoWay"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      },
+      "TourModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "Kennzeichen": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "licensePlate": {}
+        }
+      },
+      "SingleStopModel":{
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": {}
+        }
+      },
+      "StopModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "TourStartFragmentModel":{
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "tour": {}
+        }
+      },
+      "TourStartFragmentUserModel":{
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "result": {
+            "mileage":""
+          }
+        }
+      },
+      "tours": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "localService/mockdata/Routes.json"
+      },
+      "stops": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "localService/mockdata/Stops.json"
+      },
+      "orders": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "localService/mockdata/Orders.json"
+      },
+      "loadingUnits": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "localService/mockdata/LoadingUnits.json"
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "podprojekt.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "name": "RouteMain",
+          "pattern": ":?query:",
+          "target": [
+            "TargetMain"
+          ]
+        },
+        {
+          "name": "Overview",
+          "pattern": "overview",
+          "target": [
+            "TargetOverview"
+          ]
+        },
+        {
+          "name": "ActiveTour",
+          "pattern": "tour/{tourId}",
+          "target": [
+            "TargetActiveTour"
+          ]
+        },
+        {
+          "name": "StopInformation",
+          "pattern": "stop/{stopId}",
+          "target": [
+            "TargetStopInformation"
+          ]
+        },
+        {
+          "name": "MapView",
+          "pattern": "map/{stopId}",
+          "target": [
+            "TargetMapView"
+          ]
+        },
+        {
+          "name": "Quittierung",
+          "pattern": "confirmation/{stopId}",
+          "target": [
+            "quittierung"
+          ]
+        },
+        {
+          "name": "Abladung",
+          "pattern": "unloading/{orderId}",
+          "target": [
+            "AbladungTarget"
+          ]
+        },
+        {
+          "name": "Unterschrift",
+          "pattern": "signature/{name}",
+          "target": [
+            "unterschrift"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetMain": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "main",
+          "viewName": "Main"
+        },
+        "TargetOverview": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "overviewPageId",
+          "viewName": "Overview"
+        },
+        "TargetActiveTour": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "activetourPageId",
+          "viewName": "ActiveTour"
+        },
+        "TargetStopInformation": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "stopinformationPageId",
+          "viewName": "StopInformation"
+        },
+        "quittierung": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "confirmationPage",
+          "viewName": "Quittierung"
+        },
+        "TargetMapView": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "MapViewPageId",
+          "viewName": "MapView"
+        },
+        "AbladungTarget": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "AbladungPageId",
+          "viewName": "Abladung"
+        },
+        "unterschrift": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "UnterschriftPageId",
+          "viewName": "Unterschrift"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "podprojekt.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  }
+}

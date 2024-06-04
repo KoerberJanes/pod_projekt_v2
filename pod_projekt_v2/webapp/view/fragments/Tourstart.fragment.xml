@@ -1,0 +1,52 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form">
+	<Dialog id="TourstartDialog" initialFocus="kilometer">
+		<customHeader>
+			<Bar>
+				<contentMiddle>
+					<Label design="Bold" text="{i18n>tourstarttitle}"/>
+				</contentMiddle>
+			</Bar>
+		</customHeader>
+		<content>
+			<form:SimpleForm>
+				<form:content>
+					<Label text="{i18n>KennzEing}">
+						<layoutData>
+							<layout:GridData span="L12 M12 S12"/>
+						</layoutData>       
+					</Label>
+					<Input id="kennzeichen" value="{TourStartFragmentModel>/tour/licensePlate}">
+						<layoutData>
+							<layout:GridData span="L12 M12 S12"/>
+						</layoutData>
+					</Input>
+					<Label text="{i18n>KilomEing}">
+						<layoutData>
+							<layout:GridData span="L12 M12 S12"/>
+						</layoutData>       
+					</Label>
+					<Input id="kilometer" value="{TourStartFragmentUserModel>/result/mileage}" type="Number">
+						<layoutData>
+							<layout:GridData span="L12 M12 S12"/>
+						</layoutData>
+					</Input>
+				</form:content>
+			</form:SimpleForm>
+		</content>
+		<form:SimpleForm>
+			<form:content>
+				<Button text="{i18n>dialogOkButtonText}" press=".onCheckDialog">
+					<layoutData>
+						<layout:GridData span="L6 M6 S6"/>
+					</layoutData>
+				</Button>
+				<Button text="{i18n>dialogCloseButtonText}" press=".onCloseDialog">
+					<layoutData>
+						<layout:GridData span="L6 M6 S6"/>
+					</layoutData>
+				</Button>
+			</form:content>
+		</form:SimpleForm>
+			
+	</Dialog>
+</core:FragmentDefinition>

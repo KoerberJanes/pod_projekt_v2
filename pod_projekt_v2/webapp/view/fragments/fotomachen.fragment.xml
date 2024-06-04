@@ -1,0 +1,22 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form">
+	<Dialog id="FotoMachenDialog" afterOpen="onAfterOpen" afterClose="onAfterClose">
+        <customHeader>
+            <Bar >
+                <contentRight>
+                    <Button icon="sap-icon://decline" press="onCloseDialog"></Button>
+                </contentRight>
+            </Bar>
+        </customHeader>
+		<content>
+            <core:HTML id="idHtml">
+            </core:HTML>
+            <form:SimpleForm id="sfFoto">
+                <form:content>
+                    <Button icon="sap-icon://add-photo" text="{i18n>foto}" press="onSnappPicture"></Button>
+                    <VBox id="oVBox"></VBox>
+                    <Button icon="sap-icon://action" text="{i18n>uebernehmen}" press="onUebernehmen"></Button>
+                </form:content>
+            </form:SimpleForm>
+		</content>
+	</Dialog>
+</core:FragmentDefinition>

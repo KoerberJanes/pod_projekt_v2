@@ -1,0 +1,27 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:unified="sap.ui.unified" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Dialog id="FotoDialog" afterOpen="onAfterOpenAuswahl">
+		<customHeader>
+			<Bar>
+				<contentMiddle>
+					<Label design="Bold" text="{i18n>foto}"/>
+				</contentMiddle>
+			</Bar>
+		</customHeader>
+		<content>
+			<form:SimpleForm >
+				<form:content>
+					<List id="fotoartlist" noDataText="{i18n>npa}" mode="SingleSelectLeft" items="{FotoModel>/results}">
+						<headerToolbar>
+							<OverflowToolbar >
+								<Label text="{i18n>fotoart}"/>
+							</OverflowToolbar>
+						</headerToolbar>
+						<StandardListItem title="{FotoModel>fotoArt}" selected="true"/>
+					</List>
+					<Button icon="sap-icon://add-photo" text="{i18n>foto}" press="onFotoMachen" class="sapUiVisibleOnlyOnDesktop"/>
+					<unified:FileUploader id="btnAddPhoto" buttonOnly="true" buttonText="{i18n>foto}" icon="sap-icon://add-photo" useMultipart="false" mimeType="image/*" width="100%" change="onFotoMobile" class="sapUiHideOnDesktop"/>
+				</form:content>
+			</form:SimpleForm>
+		</content>
+	</Dialog>
+</core:FragmentDefinition>

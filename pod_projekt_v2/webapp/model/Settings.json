@@ -1,0 +1,14 @@
+{
+    "confirmationPage": {
+        "recipientFound": true,
+        "complaintsSwitch": false,
+        "remarksSwitch": false,
+        "deliveryItemsVisible": false,
+        "loadingDevicesVisible": false,
+        "photoListVisible": false
+    },
+    "anotherPage": {
+        "someSetting": true,
+        "anotherSetting": "default"
+    }
+}

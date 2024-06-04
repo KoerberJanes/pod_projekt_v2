@@ -1,0 +1,80 @@
+<mvc:View controllerName="podprojekt.controller.ActiveTour"
+    xmlns:core="sap.ui.core" 
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns="sap.m" 
+    xmlns:layout="sap.ui.layout" 
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified" 
+    xmlns:tnt="sap.tnt" displayBlock="true">
+    <Page id="activetourPageId" title="{i18n>title}">
+        <customHeader>
+                <Bar>
+                    
+                    <contentLeft>
+                        <!--
+                        <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"></Button>
+                        <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onNavToTourauswahl"></Button>
+                        -->
+                    </contentLeft>
+                    <contentMiddle>
+                        <Label text="{i18n>touruebersicht}"/>
+                    </contentMiddle>
+                    <contentRight>
+                        <!--Leer-->
+                    </contentRight>
+
+                </Bar>
+            </customHeader>
+        <content>
+            <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
+                <form:content>
+                    <Bar>
+                        <contentMiddle>
+                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
+                        </contentMiddle>
+                    </Bar>
+                    
+                    <List id="LStopAuswahl" items="{StopModel>/results}" noDataText="{i18n>npa}"
+                        growing="true" growingThreshold="10" busyIndicatorDelay="500" enableBusyIndicator="true"
+                         rememberSelections="false"><!--selectionChange="onStopAuswahl" mode="SingleSelectMaster"-->
+                        <headerToolbar>
+                            <OverflowToolbar id="OvtbTourselect">
+                                <Label id="ueberschrift" text="Aktive Tour:"></Label>
+                                <ToolbarSpacer/>
+                                <Button id="refreshbtn" press="onRefresh" icon="sap-icon://refresh" type="Emphasized"></Button>
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <!--<StandardListItem title="{StopModel>addressName1}" description="{StopModel>street}{StopModel>streetNumber}" info="{StopModel>NveAnzahl}" wrapping="true" type="Navigation"
+                            infoState="{= ${TourModel>Status} === 'Completed' ? 'Information' : ${TourModel>Status} === 'Loaded' ? 'Warning' : 'Success'}"
+                            icon="{= ${TourModel>Status} === 'Completed' ?  'sap-icon://status-completed' : ${TourModel>Status} === 'Loaded' ? 'sap-icon://shipping-status' : 'sap-icon://flag'}">
+                            
+                            
+                        </StandardListItem>--><!--Der Inhalt vom infoState ist krasses Zeug von Timo-->
+                        <!--wrapCharLimit="10" war in StandardListItem -->
+                        
+                        <CustomListItem press="onItemPress" type="Active">
+                            <Bar class="sapUiTinyMarginBottom">
+                                <contentLeft>
+                                    <Title text="{StopModel>addressName1}"></Title>
+                                </contentLeft>
+                                <contentRight>
+                                    <Label text="{StopModel>loadingUnitsCount}"></Label>
+                                </contentRight>
+                            </Bar>
+                            <HBox >
+                                <VBox width="93%" >
+                                    <Label text="{StopModel>street} {StopModel>streetNumber}" class="sapUiSmallMarginBegin"></Label>
+                                    <Label text="{StopModel>country} {StopModel>zipCode} {StopModel>city}" class="sapUiSmallMarginBegin"></Label>
+                                </VBox>
+                                <VBox width="7%">
+                                    <core:Icon src="sap-icon://navigation-right-arrow" class="sapUiTinyMarginTop"></core:Icon>
+                                </VBox>
+                            </HBox>
+                            
+                        </CustomListItem>
+                    </List>
+                </form:content>
+            </form:SimpleForm>
+        </content>
+    </Page>
+</mvc:View>

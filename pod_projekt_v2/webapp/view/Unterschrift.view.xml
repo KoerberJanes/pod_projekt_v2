@@ -1,0 +1,65 @@
+<mvc:View xmlns:table="sap.ui.mdc.table" controllerName="podprojekt.controller.Unterschrift"
+    xmlns:core="sap.ui.core" 
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns="sap.m" 
+    xmlns:layout="sap.ui.layout" 
+    xmlns:form="sap.ui.layout.form" displayBlock="true"
+    xmlns:customControl="podprojekt.custom">
+    <Page id="UnterschriftPageId">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"/>
+                    <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onNavToQuittierung"/>
+                </contentLeft>
+                <contentMiddle>
+                    <Label text="{i18n>unterschrift}"/>
+                </contentMiddle>
+                <contentRight>
+                    <!--Leer-->
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <form:SimpleForm >
+                <form:content>
+                    <Bar>
+                        <contentMiddle>
+                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
+                        </contentMiddle>
+                    </Bar>
+                    <Text text="{SingleStopModel>/results/addressName1}"/>
+                    <Text text="{SingleStopModel>/results/zipCode} {SingleStopModel>/results/city}"/>
+                    <Text text="{i18n>lsnr} {= ${SingleStopModel>/results}.orders[0].shipmentNumber}"/>
+                </form:content>
+            </form:SimpleForm>
+            <form:SimpleForm >
+                <form:content>
+                    <Text text="{i18n>nves} {= ${SingleStopModel>/results}.orders[0].loadingUnits.length} {i18n>abgeladen}."></Text>
+                    <Text text="1 Lieferscheine / 0 Retouren bearbeitet."></Text><!--Platzhalter-->
+                </form:content>
+            </form:SimpleForm>
+            <form:SimpleForm >
+                <form:content>
+                    <Text text="{i18n>leihgut} {i18n>abgeladen} {i18n>aufgeladen}"></Text>
+                </form:content>
+            </form:SimpleForm>
+            <form:SimpleForm >
+                <form:content>
+                    <Text id="txtUnterschrift"></Text>
+                    <Text id="txtDatum"></Text>
+                    <Text text="{i18n>geokoordinaten}"></Text>
+                    <Text text="{i18n>b}: {= ${SingleStopModel>/results}.orders[0].startGeoB}, {i18n>l}: {= ${SingleStopModel>/results}.orders[0].startGeoL}"></Text>
+                </form:content>
+            </form:SimpleForm>
+            <Label width="10%"></Label>
+            <customControl:DigitalSignature id="digitalSignatureId" width="75%" height="30%"></customControl:DigitalSignature>
+            <Button width="10%" icon="sap-icon://decline" press="onClear"></Button>
+            <form:SimpleForm >
+                <form:content>
+                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onQuittieren"></Button>
+                </form:content>
+            </form:SimpleForm>
+        </content>
+    </Page>
+</mvc:View>

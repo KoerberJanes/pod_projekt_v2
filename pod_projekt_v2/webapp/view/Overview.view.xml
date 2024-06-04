@@ -1,0 +1,68 @@
+<mvc:View controllerName="podprojekt.controller.Overview"
+    xmlns:core="sap.ui.core" 
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns="sap.m" 
+    xmlns:layout="sap.ui.layout" 
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified" 
+    xmlns:tnt="sap.tnt" displayBlock="true">
+    <Page id="overviewPageId" title="{i18n>title}">
+        <customHeader>
+                <Bar>                    
+                    <contentLeft>
+                        <!--
+                        <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"></Button>
+                        <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onOpenLogoutDialog"></Button>
+                        -->
+                    </contentLeft>
+                    <contentMiddle>
+                        <Label text="{i18n>title}"/>
+                    </contentMiddle>
+                    <contentRight>
+                        <!--Leer-->
+                    </contentRight>
+                </Bar>
+            </customHeader>
+        <content>
+            <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
+                <form:content>
+                    <Bar>
+                        <contentMiddle>
+                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
+                        </contentMiddle>
+                    </Bar>
+                    
+                    <List id="LTourAuswahl" items="{TourModel>/results}" noDataText="{i18n>npa}" 
+                        growing="true" growingThreshold="10" busyIndicatorDelay="500">
+                        <!--selectionChange="onTourAuswahl" mode="SingleSelectMaster"-->
+                        <headerToolbar>
+                            <OverflowToolbar id="OvtbTourselect">
+                                <Label id="ueberschrift" text="Zugewiesene Touren:"></Label>
+                                <ToolbarSpacer/>
+                                <Button id="refreshbtn" press="onRefresh" icon="sap-icon://refresh" type="Emphasized"></Button>
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <!--Abfrage geht nur bis 70 weil, bei gleichbleibender Auswahl dann die default Lösunf gewählt wird (Success) -->
+                        <StandardListItem title="{TourModel>routeCaption}" description="{TourModel>externalId}" wrapping="true" 
+                            info="{TourModel>altRouteStatus}"
+                            infoState="{= ${TourModel>altRouteStatus} === 'Freigegeben' ? 'Success' : 
+                                            ${TourModel>altRouteStatus} === 'Beladen' ? 'Error' :
+                                                ${TourModel>altRouteStatus} === 'Beendet' ? 'Information' : 'Success'}"
+                                                    
+                            icon="{= ${TourModel>routeStatus} === '10' ? 'sap-icon://employee-approvals' : 
+                                        ${TourModel>routeStatus} === '50' ? 'sap-icon://shipping-status' :
+                                            ${TourModel>routeStatus} === '70' ? 'sap-icon://BusinessSuiteInAppSymbols/icon-box-truck-empty' : 'sap-icon://complete'}"
+                            type="Navigation"
+                            press="onItemPress">
+                        </StandardListItem>
+                            <!--Der Inhalt vom infoState ist krasses Zeug von Timo-->
+                        <!--
+                            <StandardListItem press="onItemPress" title="{TourModel>routeCaption}" description="{TourModel>externalId}" info="{TourModel>routeStatus}" type="Active" icon="{TourModel>Icon}"/>
+                                -->
+                        <!--wrapCharLimit="10" war in StandardListItem-->
+                    </List>
+                </form:content>
+            </form:SimpleForm>
+        </content>
+    </Page>
+</mvc:View>

@@ -1,0 +1,79 @@
+<mvc:View
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:vbm="sap.ui.vbm"
+  controllerName="podprojekt.controller.MapView"
+>
+  <App id="mapview">
+    <pages>
+      <Page id="MapViewPageId" title="Karte">
+        <content>
+          <vbm:GeoMap id="map">
+          <!-- width="100%" height="100%"
+          mapConfiguration='{
+            "MapProvider": [
+              {
+                "type": "OpenStreet",
+                "name": "osm",
+                "description": "OpenStreetMap",
+                "tileX": "256",
+                "tileY": "256",
+                "minLOD": "1",
+                "maxLOD": "20",
+                "copyright": "Tiles Courtesy of OpenStreetMap",
+                "Source": [
+                  {
+                    "id": "s1",
+                    "url": https://a.tile.openstreetmap.org/{LOD}/{X}/{Y}.png
+                  }
+                ]
+              }
+            ],
+            "MapLayerStacks": [
+              {
+                "name": "Default",
+                "MapLayer": [
+                  {
+                    "name": "osm",
+                    "refMapProvider": "osm"
+                  }
+                ]
+              }
+            ]
+          }'-->
+            <vbm:vos>
+              <vbm:Spots id="spots" items="{locations>/spots}"><!--click="onClickGeoMapSpot" 
+                                    contextMenu="onContextMenuItem" 
+                                    id="GeoMapSpots" 
+                                    items="{CaseEvents>/results}" 
+                                    posChangeable="false" 
+                                    scaleChangeable="false"-->
+                <vbm:items>
+                  <vbm:Spot id="customerspots" position="{locations>position}" type="Success" tooltip="{locations>text}"/><!--
+                                            id="Spot"
+                                            position="{Longitude};{Latitude};0" 
+                                            tooltip="{EventName} - {path: 'EventDatetime'} {path: 'EventDatetime'}" 
+                                            type="Warning"
+                                            click="onClickSpot" 
+                                            contextMenu="onContextMenuSpot" 
+                                            text="{EventName}"
+                                            scale="{path: 'DeleteInd'}"/-->
+                </vbm:items>
+              </vbm:Spots>
+            </vbm:vos>
+          </vbm:GeoMap>
+        </content>
+        <footer>
+          <Bar id="mapbar">
+            <contentLeft>
+              <Button type="Emphasized" icon="sap-icon://locate-me" text="{i18n>ResettoCurr}" press="onResetPosition"></Button>
+            </contentLeft>
+            <contentRight>
+              <Button type="Emphasized" text="{i18n>ZumZielort}" icon="sap-icon://target-group" press="toTargetPosition"></Button>
+            </contentRight>
+          </Bar>
+        </footer>
+      </Page>
+    </pages>
+  </App>
+</mvc:View>
