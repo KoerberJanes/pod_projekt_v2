@@ -5,11 +5,12 @@ sap.ui.define(
     "sap/ui/core/IconPool",
     "podprojekt/model/formatter",
     "podprojekt/utils/Helper",
+    "sap/m/MessageToast"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, deepClone, IconPool, formatter, Helper) {
+  function (Controller, deepClone, IconPool, formatter, Helper, MessageToast) {
     "use strict";
 
     return Controller.extend("podprojekt.controller.Overview", {
@@ -17,15 +18,12 @@ sap.ui.define(
 
       },
 
-      /**
-       * @override
-       */
       onAfterRendering: function() {
         //Controller.prototype.onAfterRendering.apply(this, arguments);
-        this.setCustomAttributesForTourStatus();
+        this.setCustomAttributes();
       },
 
-      setCustomAttributesForTourStatus:function(){
+      setCustomAttributes:function(){
         var oTourModel=this.getOwnerComponent().getModel("TourModel");
         var oTourModelItems = oTourModel.getProperty("/results");
 
@@ -72,6 +70,7 @@ sap.ui.define(
         var oTourStartFragmentUserModel=this.getOwnerComponent().getModel("TourStartFragmentUserModel");
         var sTourStartFragmentInput=oTourStartFragmentUserModel.getProperty("/result/mileage");
         var iTourStartFragmentInput=parseInt(sTourStartFragmentInput);
+
         var oDisplayedTour=this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
         var iRespectiveTourMileage= oDisplayedTour.mileage;
         var iRespectiveTourMileageTolerance=oDisplayedTour.mileageTolerance;
@@ -80,8 +79,7 @@ sap.ui.define(
             iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance)){
           this.setStopInformationModelData();
         } 
-        oTourStartFragmentUserModel.setProperty("/result/mileage", "");
-        
+        this.resetTourStartFragmentUserModel();
       },
 
       setStopInformationModelData:function(){
@@ -94,7 +92,20 @@ sap.ui.define(
         this.onNavToActiveTour();
       },
 
+      resetTourStartFragmentUserModel:function(){
+        var oTourStartFragmentUserModel=this.getOwnerComponent().getModel("TourStartFragmentUserModel");
+        oTourStartFragmentUserModel.setProperty("/result/mileage", "");
+      },
+
+      onRefreshTours:function(){
+        MessageToast.show("Dies ist ein Dummy-Rrefresh!", {
+          duration: 1000,
+          width:"15em"
+        });
+      },
+
       onCloseTourStartFragment: function () {
+        this.resetTourStartFragmentUserModel();
         this.byId("TourstartDialog").close();
       },
 

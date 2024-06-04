@@ -14,8 +14,7 @@ sap.ui.define([
             },
 
             onAfterRendering: function() {
-                //Controller.prototype.onAfterRendering.apply(this, arguments);
-                console.log("Hi! Du hast es geschafft!");
+                
             },
 
             onRefreshRespectiveStops:function(){

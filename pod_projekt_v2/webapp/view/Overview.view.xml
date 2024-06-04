@@ -39,7 +39,7 @@
                             <OverflowToolbar id="OvtbTourselect">
                                 <Label id="ueberschrift" text="Zugewiesene Touren:"></Label>
                                 <ToolbarSpacer/>
-                                <Button id="refreshbtn" press="onRefresh" icon="sap-icon://refresh" type="Emphasized"></Button>
+                                <Button id="refreshbtn" press="onRefreshTours" icon="sap-icon://refresh" type="Emphasized"></Button>
                             </OverflowToolbar>
                         </headerToolbar>
                         <!--Abfrage geht nur bis 70 weil, bei gleichbleibender Auswahl dann die default Lösunf gewählt wird (Success) -->

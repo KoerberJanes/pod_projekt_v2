@@ -34,25 +34,18 @@
                         </contentMiddle>
                     </Bar>
                     
-                    <List id="LStopAuswahl" items="{StopModel>/results}" noDataText="{i18n>npa}"
+                    <List id="stopSelectionList" items="{StopModel>/results}" noDataText="{i18n>npa}"
                         growing="true" growingThreshold="10" busyIndicatorDelay="500" enableBusyIndicator="true"
                          rememberSelections="false"><!--selectionChange="onStopAuswahl" mode="SingleSelectMaster"-->
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Label id="ueberschrift" text="Aktive Tour:"></Label>
+                                <Label id="ueberschrift" text="{i18n>Tour}"></Label>
                                 <ToolbarSpacer/>
                                 <Button id="refreshbtn" press="onRefreshRespectiveStops" icon="sap-icon://refresh" type="Emphasized"></Button>
                             </OverflowToolbar>
                         </headerToolbar>
-                        <!--<StandardListItem title="{StopModel>addressName1}" description="{StopModel>street}{StopModel>streetNumber}" info="{StopModel>NveAnzahl}" wrapping="true" type="Navigation"
-                            infoState="{= ${TourModel>Status} === 'Completed' ? 'Information' : ${TourModel>Status} === 'Loaded' ? 'Warning' : 'Success'}"
-                            icon="{= ${TourModel>Status} === 'Completed' ?  'sap-icon://status-completed' : ${TourModel>Status} === 'Loaded' ? 'sap-icon://shipping-status' : 'sap-icon://flag'}">
-                            
-                            
-                        </StandardListItem>--><!--Der Inhalt vom infoState ist krasses Zeug von Timo-->
-                        <!--wrapCharLimit="10" war in StandardListItem -->
                         
-                        <CustomListItem press="onItemPress" type="Active">
+                        <CustomListItem press="onStopListItemPressed" type="Active">
                             <Bar class="sapUiTinyMarginBottom">
                                 <contentLeft>
                                     <Title text="{StopModel>addressName1}"></Title>

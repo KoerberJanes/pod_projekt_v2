@@ -88,6 +88,12 @@
           "results": []
         }
       },
+      "StopInformationModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "tour": {}
+        }
+      },
       "TourStartFragmentModel":{
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
