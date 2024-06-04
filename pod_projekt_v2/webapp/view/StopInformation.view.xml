@@ -36,7 +36,7 @@
                     <OverflowToolbar>
                         <Label id="tourTxt" text="{i18n>Tour}"></Label>
                         <ToolbarSpacer/>
-                        <Button id="stopInformationRefreshBtn" press="onRefreshStopInformation" icon="sap-icon://refresh" ></Button>
+                        <Button id="stopInformationRefreshBtn" press="onRefreshRespectiveStops" icon="sap-icon://refresh" ></Button>
                     </OverflowToolbar>
                     
                     <Label text="{i18n>Stopp}"></Label>

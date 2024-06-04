@@ -28,6 +28,7 @@ sap.ui.define(
       setCustomAttributesForTourStatus:function(){
         var oTourModel=this.getOwnerComponent().getModel("TourModel");
         var oTourModelItems = oTourModel.getProperty("/results");
+
         for(var i in oTourModelItems){
             oTourModelItems[i].altRouteStatus=""; //Erstellen des Anzuzeigenden Attributes
             oTourModelItems[i].altRouteStatus=formatter.statusText(oTourModelItems[i].routeStatus, this.getOwnerComponent()); //Füllen mit wert
@@ -38,9 +39,10 @@ sap.ui.define(
       setPressedTour:function(oEvent){
         var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
         var sObjectId=oEvent.getSource().getId(); //Event-Id vom Objekt
-        var aListItems=this.getView().byId("LTourAuswahl").getItems(); //Array an Items in der Liste
+        var aListItems=this.getView().byId("tourSelectionList").getItems(); //Array an Items in der Liste
         var aModelItems=this.getOwnerComponent().getModel("TourModel").getProperty("/results"); //Array an Objekten im Model
         var oPressedModelObject=Helper.findModelObjectSlimm(sObjectId, aListItems, aModelItems);
+
         oTourStartFragmentModel.setProperty("/tour", oPressedModelObject);
         this.openTourStartFragment();
       },
@@ -74,13 +76,22 @@ sap.ui.define(
         var iRespectiveTourMileage= oDisplayedTour.mileage;
         var iRespectiveTourMileageTolerance=oDisplayedTour.mileageTolerance;
 
-
         if(iTourStartFragmentInput >= (iRespectiveTourMileage-iRespectiveTourMileageTolerance) && 
             iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance)){
-          this.onNavToActiveTour();
+          this.setStopInformationModelData();
         } 
         oTourStartFragmentUserModel.setProperty("/result/mileage", "");
         
+      },
+
+      setStopInformationModelData:function(){
+
+        var oStopInformationModel=this.getOwnerComponent().getModel("StopModel");
+        var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
+        var aRespectiveTourStops=oTourStartFragmentModel.getProperty("/tour/stops");
+
+        oStopInformationModel.setProperty("/results", aRespectiveTourStops);
+        this.onNavToActiveTour();
       },
 
       onCloseTourStartFragment: function () {
@@ -89,6 +100,7 @@ sap.ui.define(
 
       onNavToActiveTour: function () {
         var oRouter = this.getOwnerComponent().getRouter();
+        
         oRouter.navTo("ActiveTour");
       },
     });

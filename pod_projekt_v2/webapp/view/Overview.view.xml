@@ -32,7 +32,7 @@
                         </contentMiddle>
                     </Bar>
                     
-                    <List id="LTourAuswahl" items="{TourModel>/results}" noDataText="{i18n>npa}" 
+                    <List id="tourSelectionList" items="{TourModel>/results}" noDataText="{i18n>npa}" 
                         growing="true" growingThreshold="10" busyIndicatorDelay="500">
                         <!--selectionChange="onTourAuswahl" mode="SingleSelectMaster"-->
                         <headerToolbar>
