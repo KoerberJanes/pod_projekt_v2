@@ -82,12 +82,6 @@
           "licensePlate": {}
         }
       },
-      "SingleStopModel":{
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": {}
-        }
-      },
       "StopModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
@@ -159,28 +153,28 @@
         },
         {
           "name": "ActiveTour",
-          "pattern": "tour/{tourId}",
+          "pattern": "tour",
           "target": [
             "TargetActiveTour"
           ]
         },
         {
           "name": "StopInformation",
-          "pattern": "stop/{stopId}",
+          "pattern": "stop",
           "target": [
             "TargetStopInformation"
           ]
         },
         {
           "name": "MapView",
-          "pattern": "map/{stopId}",
+          "pattern": "map",
           "target": [
             "TargetMapView"
           ]
         },
         {
           "name": "Quittierung",
-          "pattern": "confirmation/{stopId}",
+          "pattern": "confirmation",
           "target": [
             "quittierung"
           ]

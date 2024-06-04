@@ -35,12 +35,12 @@
 		</content>
 		<form:SimpleForm>
 			<form:content>
-				<Button text="{i18n>dialogOkButtonText}" press=".onCheckDialog">
+				<Button id="TourstartFragmentButtonConfirm" text="{i18n>dialogOkButtonText}" press="onDialogButtonCallback">
 					<layoutData>
 						<layout:GridData span="L6 M6 S6"/>
 					</layoutData>
 				</Button>
-				<Button text="{i18n>dialogCloseButtonText}" press=".onCloseDialog">
+				<Button id="TourstartFragmentButtonAbort" text="{i18n>dialogCloseButtonText}" press="onDialogButtonCallback">
 					<layoutData>
 						<layout:GridData span="L6 M6 S6"/>
 					</layoutData>
