@@ -123,6 +123,66 @@
       "loadingUnits": {
         "type": "sap.ui.model.json.JSONModel",
         "uri": "localService/mockdata/LoadingUnits.json"
+      },"SpotModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "spot": [
+            {
+              "pos": "37.622882;55.755202;0",
+              "tooltip": "Moscow",
+              "type": "Inactive",
+              "text": "12345"
+      
+            },
+            {
+              "pos": "77.1024902;28.7040592;0",
+              "tooltip": "Delhi",
+              "type":"Success"
+            },
+            {
+              "pos": "-74.013327;40.705395;0",
+              "tooltip": "New York",
+              "type": "Error",
+              "text": "1"
+            },
+            {
+              "pos": "116.407072;39.906235;0",
+              "tooltip": "Beijing",
+              "type": "Warning",
+              "text": "123"
+            }
+          ]
+        }
+      },
+      "GeoMapProvider": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "mapConfig": {
+            "MapProvider": [{
+                "name": "OSM",
+                "type": "",
+                "description": "",
+                "tileX": "256",
+                "tileY": "256",
+                "minLOD" : "1",
+                "maxLOD": "20",
+                "copyright": "Tiles Courtesy of OpenStreetMap",
+                "Source": [{
+                    "id": "s1",
+                    "url": "https://a.tile.openstreetmap.org/{LOD}/{X}/{Y}.png"
+                }]
+            }],
+            "MapLayerStacks": [{
+                "name": "Default",
+                "MapLayer": [{
+                    "name": "Default",
+                    "refMapProvider": "OSM",
+                    "opacity": "1.0",
+                    "colBkgnd": "RGB(255,255,255)"
+                }]
+            }]
+          }
+        }
       }
     },
     "resources": {
@@ -187,7 +247,7 @@
         },
         {
           "name": "Abladung",
-          "pattern": "unloading/{orderId}",
+          "pattern": "unloading",
           "target": [
             "AbladungTarget"
           ]

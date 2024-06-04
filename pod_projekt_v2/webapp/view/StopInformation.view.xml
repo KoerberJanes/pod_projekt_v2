@@ -34,7 +34,7 @@
                         </contentMiddle>
                     </Bar>
                     <OverflowToolbar>
-                        <Label id="tourTxt" text="{i18n>Tour}"></Label>
+                        <Label id="tourTxt" text="{i18n>Tour}&#13;{TourStartFragmentModel>/tour/routeCaption}"></Label>
                         <ToolbarSpacer/>
                         <Button id="stopInformationRefreshBtn" press="onRefreshRespectiveStops" icon="sap-icon://refresh" ></Button>
                     </OverflowToolbar>
@@ -46,7 +46,7 @@
                     <TextArea editable="false" growing="true" value="{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"></TextArea>
                    
                     <Label/>
-                    <Button id="btnKarte" press="onPressBtnKarte" icon="sap-icon://locate-me-2" text="{i18n>Karte}"></Button>
+                    <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>Karte}"></Button>
                     <Label text="{i18n>Hinweis}"></Label>
                     <TextArea id="taHinweis"></TextArea>
                     <Label text="{i18n>Avisnummer}"></Label>
