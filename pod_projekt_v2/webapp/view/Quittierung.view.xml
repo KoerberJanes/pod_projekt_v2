@@ -1,4 +1,4 @@
-<mvc:View xmlns:table="sap.ui.mdc.table" controllerName="podprojekt.controller.quittierung"
+<mvc:View xmlns:table="sap.ui.mdc.table" controllerName="podprojekt.controller.Quittierung"
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns="sap.f" 
     xmlns:m="sap.m"
@@ -14,7 +14,7 @@
                 <heading>
                     <m:VBox id="headerContainer">
                         <m:Text id="driverInfo" text="{i18n>Robin Rösinger}"/><!--TODO Wert in Model eintragen-->
-                        <m:Title id="currentTourInfo" text="{i18n>currentTour}: {StopModel>/results/Tour}" wrapping="true"/><!--text="{i18n>currentTour}: {tours>/routeCaption}"-->
+                        <m:Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" wrapping="true"/><!--text="{i18n>currentTour}: {tours>/routeCaption}"-->
                     </m:VBox>
                 </heading>
             </DynamicPageTitle>
@@ -22,7 +22,7 @@
         <header>
             <DynamicPageHeader id="expandedHeaderContainer">
                 <m:VBox id="addressField" class="sapUiLargeMarginEnd ">
-                    <m:Text id="addressTxt" text="{SingleStopModel>/results/addressName1}&#13;&#10;{SingleStopModel>/results/street} {SingleStopModel>/results/streetNumber}&#13;&#10;{SingleStopModel>/results/country} {SingleStopModel>/results/zipCode} {SingleStopModel>/results/city}" width="100%"/>
+                    <m:Text id="addressTxt" text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
                 </m:VBox>
             </DynamicPageHeader>
         </header>
@@ -56,7 +56,7 @@
                                 <m:TextArea id="remarksTextArea" visible="{= ${settings>/isRemarksEnabled}}"/>
                             </form:FormElement>
                             <form:FormElement id="photoListElement">
-                                <m:ToggleButton id="photoItemsToggleButton" text="{i18n>photoItems}" press="onToggleListVisibility" pressed="{settings>/photoListVisible}"/><!-- icon="= ${photoListVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add' }"-->
+                                <m:ToggleButton id="photoItemsToggleButton" text="{i18n>photoItems}" press="onFotoVisibileToggle" pressed="{settings>/photoListVisible}"/><!-- icon="= ${photoListVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add' }"-->
                                 <m:List id="photoList" items="{path:'FotoModel>fotos', templateShareable:true}" mode="Delete" delete="onDelete" visible="{settings>/photoListVisible}">
                                     <m:headerToolbar>
                                         <m:OverflowToolbar id="photoTitle">
@@ -74,19 +74,19 @@
                                         </m:HBox>
                                     </m:CustomListItem>
                                 </m:List>
-                                <m:Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="onFoto"/>
+                                <m:Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="onAddPhoto"/>
                             </form:FormElement>
                         </form:formElements>
                     </form:FormContainer>
                     <form:FormContainer id="listButtonsContainer">
                         <form:formElements>
                             <form:FormElement id="deliveryNotes">
-                                <m:ToggleButton id="deliveryItemsToggleButton" text="{i18n>deliveryItems}" press="onToggleListVisibility" pressed="{settings>/deliveryItemsVisible}"/><!-- icon="{= ${/deliveryItemsVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add'}"-->
+                                <m:ToggleButton id="deliveryItemsToggleButton" text="{i18n>deliveryItems}" press="onDeliveryItemVisibleToggle" pressed="{settings>/deliveryItemsVisible}"/><!-- icon="{= ${/deliveryItemsVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add'}"-->
                                 <m:Button id="unloadBtn" text="{i18n>unload}" visible="{settings>/deliveryItemsVisible}" press="onDeliveryUnload" icon="{= ${SingleStopModel>/results.orders[0].orderStatus} === '90' ? 'sap-icon://sys-enter' : 'sap-icon://navigation-right-arrow'}" iconFirst="false"/>
                                 <!--TODO statt einem einzelnen Button eine Tabelle/Liste mit Lieferscheinen und jeweils einen Button zum Abladen dazu-->
                             </form:FormElement>
                             <form:FormElement id="loadingDevicesElement">
-                                <m:ToggleButton id="loadingDevicesToggleButton" text="{i18n>loadingDevices}" press="onToggleListVisibility" pressed="{settings>/loadingDevicesVisible}"/><!-- icon="= ${loadingDevicesVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add'}"-->
+                                <m:ToggleButton id="loadingDevicesToggleButton" text="{i18n>loadingDevices}" press="onLoadingDevicesVisibleToggle" pressed="{settings>/loadingDevicesVisible}"/><!-- icon="= ${loadingDevicesVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add'}"-->
                                 <m:Table id="loadingDevicesTable" items="{LoadingDevicesModel>/items}" visible="{settings>/loadingDevicesVisible}">
                                     <m:items>
                                         <m:ColumnListItem>
@@ -126,7 +126,7 @@
                     </form:FormContainer>
                     <form:FormContainer id="completeButtonsContainer"><form:FormElement id="completeButtons">
                         <m:Button id="signBtn" icon="sap-icon://signature" text="{i18n>sign}" press="onSign" visible="{= ${settings>/recipientFound}}"/>
-                        <m:Button id="notFoundBtn" icon="sap-icon://decline" text="{i18n>notFound}" press="onNotFound" visible="{= !${settings>/recipientFound}}"/>
+                        <m:Button id="notFoundBtn" icon="sap-icon://decline" text="{i18n>notFound}" press="onCustomerAbsent" visible="{= !${settings>/recipientFound}}"/>
                     </form:FormElement></form:FormContainer>
                 </form:formContainers>
             </form:Form>

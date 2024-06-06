@@ -108,6 +108,12 @@
           }
         }
       },
+      "ComplaintsModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
       "tours": {
         "type": "sap.ui.model.json.JSONModel",
         "uri": "localService/mockdata/Routes.json"

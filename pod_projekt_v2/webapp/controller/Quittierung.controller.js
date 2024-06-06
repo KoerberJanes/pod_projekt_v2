@@ -11,6 +11,43 @@ sap.ui.define([
         return Controller.extend("podprojekt.controller.Quittierung", {
             onInit: function () {
 
+            },
+
+            onAfterRendering: function() {
+                
+            },
+
+            onRecipientFoundSwitchChange:function(){ //Switch mit Kunde nicht angetroffen
+
+            },
+
+            onFotoVisibileToggle:function(){ //Methode um geschossene Fotos ein-/auszublenden
+
+            },
+
+            onDeliveryItemVisibleToggle:function(){ //Paletten oder so ein-/ausblenden
+
+            },
+
+            onLoadingDevicesVisibleToggle:function(){ //Loading Devices oder so ein-/ausblenden
+
+            },
+
+            onAddPhoto:function(){ //Foto hinzufügen
+
+            },
+
+            onDeliveryUnload:function(){
+
+            },
+
+            onSign:function(){
+
+            },
+
+            onCustomerAbsent:function(){
+
             }
+
         });
     });
