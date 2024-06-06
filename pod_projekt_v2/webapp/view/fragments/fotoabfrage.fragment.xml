@@ -3,7 +3,9 @@
 		<customHeader>
 			<Bar>
 				<contentMiddle>
-					<Label design="Bold" text="{i18n>foto}"/>
+					<Label design="Bold" text="fotoabfrageDialog"/>
+						<ToolbarSpacer ></ToolbarSpacer>
+					<Button icon="sap-icon://decline" press="onPhotoQueryDialogClose"></Button>
 				</contentMiddle>
 			</Bar>
 		</customHeader>

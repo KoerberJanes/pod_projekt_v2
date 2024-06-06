@@ -3,7 +3,9 @@
         <customHeader>
             <Bar >
                 <contentRight>
-                    <Button icon="sap-icon://decline" press="onCloseDialog"></Button>
+                    <Label design="Bold" text="FotoMachenDialog"/>
+                        <ToolbarSpacer ></ToolbarSpacer>
+                    <Button icon="sap-icon://decline" press="onAddFotoDialogClose"></Button>
                 </contentRight>
             </Bar>
         </customHeader>
@@ -14,7 +16,7 @@
                 <form:content>
                     <Button icon="sap-icon://add-photo" text="{i18n>foto}" press="onSnappPicture"></Button>
                     <VBox id="oVBox"></VBox>
-                    <Button icon="sap-icon://action" text="{i18n>uebernehmen}" press="onUebernehmen"></Button>
+                    <Button icon="sap-icon://action" text="{i18n>uebernehmen}" press="onConfirmFoto"></Button>
                 </form:content>
             </form:SimpleForm>
 		</content>

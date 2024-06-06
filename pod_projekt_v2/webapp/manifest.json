@@ -60,9 +60,13 @@
       },
       "settings": {
         "type": "sap.ui.model.json.JSONModel",
-        "uri": "model/Settings.json",
         "settings": {
-          "defaultBindingMode": "TwoWay"
+          "recipientFound": true,
+          "complaintsSwitch": false,
+          "remarksSwitch": false,
+          "deliveryItemsVisible": false,
+          "loadingDevicesVisible": false,
+          "photoListVisible": false
         }
       },
       "": {
@@ -108,10 +112,43 @@
           }
         }
       },
+      "RecipientNameModel":{
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "recipient": {
+            "name": ""
+          }
+        }
+      },
       "ComplaintsModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "results": []
+        }
+      },
+      "PhotoModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "photos": []
+        }
+      },
+      "LoadingDeviceModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "items": [
+            {
+              "Typ": "Kolli",
+              "Bestand": "1"
+            },
+            {
+              "Typ": "Palette",
+              "Bestand": "2"
+            },
+            {
+              "Typ": "Kiste",
+              "Bestand": "3"
+            }
+          ]
         }
       },
       "tours": {
