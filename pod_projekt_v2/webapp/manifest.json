@@ -297,7 +297,7 @@
         },
         {
           "name": "Unterschrift",
-          "pattern": "signature/{name}",
+          "pattern": "signature",
           "target": [
             "unterschrift"
           ]

@@ -122,7 +122,7 @@ sap.ui.define([
             onNavToUnterschrift:function(){
                 var oRouter = this.getOwnerComponent().getRouter();
         
-                oRouter.navTo("Unterschirft");
+                oRouter.navTo("Unterschrift");
             }
 
         });
