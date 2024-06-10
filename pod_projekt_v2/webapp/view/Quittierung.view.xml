@@ -74,7 +74,7 @@
                                         </m:HBox>
                                     </m:CustomListItem>
                                 </m:List>
-                                <m:Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="onPhotoVarietyOpen"/>
+                                <m:Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="onFotoabfrageDialogOpen"/><!--press="onPhotoVarietyOpen-->
                             </form:FormElement>
                         </form:formElements>
                     </form:FormContainer>
@@ -82,7 +82,7 @@
                         <form:formElements>
                             <form:FormElement id="deliveryNotes">
                                 <m:ToggleButton id="deliveryItemsToggleButton" text="{i18n>deliveryItems}" press="onDeliveryItemVisibleToggle" pressed="{settings>/deliveryItemsVisible}"/><!-- icon="{= ${/deliveryItemsVisible} ? 'sap-icon://sys-minus' : 'sap-icon://sys-add'}"-->
-                                <m:Button id="unloadBtn" text="{i18n>unload}" visible="{settings>/deliveryItemsVisible}" press="onDeliveryUnload" icon="{= ${SingleStopModel>/results.orders[0].orderStatus} === '90' ? 'sap-icon://sys-enter' : 'sap-icon://navigation-right-arrow'}" iconFirst="false"/>
+                                <m:Button id="unloadBtn" text="{i18n>unload}" visible="{settings>/deliveryItemsVisible}" press="onNavToAbladung" icon="{= ${SingleStopModel>/results.orders[0].orderStatus} === '90' ? 'sap-icon://sys-enter' : 'sap-icon://navigation-right-arrow'}" iconFirst="false"/>
                                 <!--TODO statt einem einzelnen Button eine Tabelle/Liste mit Lieferscheinen und jeweils einen Button zum Abladen dazu-->
                             </form:FormElement>
                             <form:FormElement id="loadingDevicesElement">

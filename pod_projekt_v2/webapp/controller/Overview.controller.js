@@ -53,7 +53,7 @@ sap.ui.define(
         this.oTourstartDialog.then((oDialog) => oDialog.open());
       },
 
-      onDialogButtonCallback: function (oEvent) { //Callbacl vom TourStartFrtagment um Buttons zu unterscheiden
+      onTourStartDialogButtonCallback: function (oEvent) { //Callbacl vom TourStartFrtagment um Buttons zu unterscheiden
         var sLongButtonId = oEvent.getSource().getId();
         var sShortButtonId = sLongButtonId.substring(sLongButtonId.lastIndexOf("-") + 1,sLongButtonId.length);
 

@@ -42,10 +42,6 @@ sap.ui.define([
                 this.oAddFotoDialog.then((oDialog) => oDialog.open());
             },
 
-            onDeliveryUnload:function(){
-
-            },
-
             onSign:function(){
                 var oRecipientNameModel=this.getOwnerComponent().getModel("RecipientNameModel")
                 var sRecipientName=oRecipientNameModel.getProperty("/recipient/name");
@@ -86,7 +82,7 @@ sap.ui.define([
                 var iQuantityOfPhotos=aPhotos.length;
 
                 if(iQuantityOfPhotos<5){
-                    this.fotoabfrageDialogOpen();
+                    this.onFotoabfrageDialogOpen();
                 }
             },
 
@@ -111,12 +107,18 @@ sap.ui.define([
                 });
             },
 
-            fotoabfrageDialogOpen:function(){
+            onFotoabfrageDialogOpen:function(){
                 this.oFotoabfrageDialog ??= this.loadFragment({
                     name: "podprojekt.view.fragments.fotoabfrage",
                 });
           
                 this.oFotoabfrageDialog.then((oDialog) => oDialog.open());
+            },
+            
+            onNavToAbladung:function(){
+                var oRouter = this.getOwnerComponent().getRouter();
+        
+                oRouter.navTo("Abladung");
             },
 
             onNavToUnterschrift:function(){

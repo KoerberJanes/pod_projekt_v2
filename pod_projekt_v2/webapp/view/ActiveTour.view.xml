@@ -39,7 +39,7 @@
                          rememberSelections="false"><!--selectionChange="onStopAuswahl" mode="SingleSelectMaster"-->
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Label id="ueberschrift" text="{i18n>Tour}"></Label>
+                                <Label id="ueberschrift" text="{i18n>Tour}&#13;{TourStartFragmentModel>/tour/routeCaption}"></Label>
                                 <ToolbarSpacer/>
                                 <Button id="refreshbtn" press="onRefreshRespectiveStops" icon="sap-icon://refresh" type="Emphasized"></Button>
                             </OverflowToolbar>

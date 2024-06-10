@@ -28,7 +28,10 @@
                 <form:content>
                     <Bar>
                         <contentMiddle>
+                            <!-- Nicht mehr so wichtig (S. Brenner) -> kann aber ggf. wieder rein gemacht werden
+                                Dazu müsste der gesamte 'Bar' abschnitt entfernt werden
                             <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
+                            -->
                         </contentMiddle>
                     </Bar>
                     
