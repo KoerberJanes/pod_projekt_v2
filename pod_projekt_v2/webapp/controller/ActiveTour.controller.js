@@ -21,7 +21,7 @@ sap.ui.define([
                 this.setCustomAttributes();
             },
 
-            alterStopDescriptionForOrder:function(){
+            alterStopDescriptionForOrder:function(){ //Anpassung der Beschreibung, damit alles so aussieht wie auf der Vorlage
                 var oStopModel=this.getOwnerComponent().getModel("StopModel");
                 var aStops=oStopModel.getProperty("/results");
                 var sActualDescription="";
@@ -75,6 +75,16 @@ sap.ui.define([
                 var oPressedModelObject=Helper.findModelObjectSlimm(sStopId, aListItems, aModelItems);
                 
                 oStopInformationModel.setProperty("/tour", oPressedModelObject);
+                this.setLoadingUnits(oPressedModelObject);
+            },
+
+            setLoadingUnits:function(oPressedModelObject){
+                var oPressedModelObjectOrder=oPressedModelObject.orders[0];
+                var aLoadingUnits=oPressedModelObjectOrder.loadingUnits;
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
+
+                oLoadingUnitsModel.setProperty("/results", aLoadingUnits);
+
                 this.onNavToStopInformation();
             },
 

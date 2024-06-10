@@ -1,0 +1,64 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns:layout="sap.ui.layout" 
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified"
+    xmlns:upload="sap.m.upload">
+
+    <Dialog id="clearDialog" title="{i18n>klaerungen}" state="None" afterOpen="onFocusTA" afterClose="" >
+        <customHeader>
+            <!--custom Header Items-->
+            <Bar id="clearDialogHeaderBar">
+                <contentLeft>
+                    <Title id="clearDialogTitle" text="{i18n>klaerungen}"/>
+                </contentLeft>
+            </Bar>
+        </customHeader>
+            <content>
+                <form:SimpleForm id="clearDialogForm" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
+                    <form:content>
+                    <CheckBox id="notFoundCb" text="{i18n>nichtgefunden}" wrapping="true" select="onSelect"/>
+                    <CheckBox id="defectCb" text="{i18n>defekt}" wrapping="true" select="onSelect"/>
+                    <CheckBox id="partiallyDefectCb" text="{i18n>twdefekt}" wrapping="true" select="onSelect"/>
+                    <CheckBox id="notAcceptedCb" text="{i18n>annahmeverweigert}" wrapping="true" select="onSelect"/>
+                    <CheckBox id="noMoneyCb" text="{i18n>keingeld}" wrapping="true" select="onSelect"/>
+                    <CheckBox id="laterShippingCb" text="{i18n>spaetereauslieferung}" wrapping="true" select="onSelect"/>
+                    </form:content>
+                </form:SimpleForm>
+
+                <form:SimpleForm id="clearDialogForm2" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
+                    <Label id="txtBemerkung" text="{i18n>bemerkungen}" width="70%"/>
+                    <TextArea id="taBemerkungen"></TextArea>
+                </form:SimpleForm>
+                     
+                <form:SimpleForm id="clearDialogForm3" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
+                    <!--Button id="photobtn" type="Emphasized" icon="sap-icon://camera" text="{i18n>photomachen}" press="onCapturePic"/Button> <class="sapUiVisibleOnlyOnDesktop"-->
+                    <Button icon="sap-icon://add-photo" text="{i18n>foto}" press="onFotoMachen" class="sapUiVisibleOnlyOnDesktop"/>
+                    <u:FileUploader id="btnAddPhoto" buttonOnly="true" buttonText="{i18n>foto}" icon="sap-icon://add-photo" useMultipart="false" mimeType="image/*" width="100%" change="onFotoMobile" class="sapUiHideOnDesktop"/>
+                    <Button id="btnFotoListe" icon="sap-icon://add" text="{i18n>photoliste}" press="onFotoListe"/>
+                    <!--<Button id="photolistbtn" type="Emphasized" icon="sap-icon://add" text="{i18n>photoliste}" press="onHidePhotos"/-->
+                    <!--<u:FileUploader id="btnAddPhoto" visible="true" buttonOnly="true" icon="sap-icon://add-photo" iconOnly="true" useMultipart="false" change="onBtnAddPhoto" mimeType="image/*" uploadOnChange="true"/>-->
+                    <List id="fotoListe" items="{FotoModelAbladen>/results}" mode="Delete" delete="onDelete" visible="false" showNoData="false">
+                        <CustomListItem >
+                            <HBox >
+                                <Image src="{FotoModelAbladen>fotoSrc}" width="7em" height="auto"/>
+                                <form:SimpleForm >
+                                    <form:content>
+                                        <Text text="{FotoModelAbladen>fotoId}"/>
+                                    </form:content>
+                                </form:SimpleForm>
+                            </HBox>
+                        </CustomListItem>
+                    </List>
+                </form:SimpleForm>
+            </content>
+            <beginButton>
+                <Button id="clearNVEOkBtn" icon="sap-icon://accept" text="{i18n>ok}" press="nveClearingDialogConfirm"/>
+            </beginButton>
+            <endButton>
+                <Button id="clearNVEBackBtn" icon="sap-icon://error" text="{i18n>Zurück}" press="nveClearingDialogClose"/>
+            </endButton>
+    </Dialog>
+</core:FragmentDefinition>

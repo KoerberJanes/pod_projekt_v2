@@ -9,8 +9,10 @@
         <customHeader>
             <Bar>
                 <contentLeft>
+                    <!--
                     <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"/>
                     <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onNavToQuittierung"/>
+                    -->
                 </contentLeft>
                 <contentMiddle>
                     <Label text="{i18n>unterschrift}"/>

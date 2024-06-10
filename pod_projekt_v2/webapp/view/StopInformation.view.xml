@@ -61,7 +61,9 @@
                     <Button id="ManualBackBtn" text="{i18n>Zurück}" icon="sap-icon://navigation-left-arrow" press="onNavToActiveTour"></Button>
                 </contentLeft>
                 <contentMiddle>
+                    <!--
                     <Button id="TestNavBtn" text="Zur Abladung" press="onNavToAbladung"></Button>
+                    -->
                 </contentMiddle>
                 <contentRight>
                     <Button id="QuittierungBtn" text="{i18n>Quittierung}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onNavToQuittierung"></Button>

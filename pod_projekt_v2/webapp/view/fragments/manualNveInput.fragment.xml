@@ -1,0 +1,30 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+
+    <Dialog id="ManualNveInputDialogId" title="{i18n>handeingabe}" initialFocus="barcodeinput" afterClose="">
+        
+        <customHeader>
+            <Bar id="inputDialogHeaderBar">
+                <contentMiddle>
+                    <Title id="inputDialogTitle" text="{i18n>handeingabe}"/>
+                </contentMiddle>    
+            </Bar>
+        </customHeader>
+            <content>
+                <Text class="sapUiSmallMarginBegin" id="barcodetxt" text="{i18n>barcode}"/>
+                <Input width="90%" class="sapUiSmallMarginBeginEnd" id="barcodeinput" placeholder="{i18n>enterbarcode}" submit="onCloseInputDialog"></Input>
+            </content>
+
+            
+            <footer>
+                <Toolbar id="inputDialogTB">
+                    <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press=""/>
+                    <ToolbarSpacer/>
+                    <Button id="inputDialogClearBtn" text="{i18n>clearinput}" type="Emphasized" press=""/>
+                    <ToolbarSpacer/>
+                    <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onManualNveInputFragmentClose"/>
+                </Toolbar>
+            </footer>
+    </Dialog>
+</core:FragmentDefinition>

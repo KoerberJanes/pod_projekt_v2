@@ -151,6 +151,18 @@
           ]
         }
       },
+      "LoadingUnitsModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "nveClearingDialogModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "clearingNve": {}
+        }
+      },
       "tours": {
         "type": "sap.ui.model.json.JSONModel",
         "uri": "localService/mockdata/Routes.json"

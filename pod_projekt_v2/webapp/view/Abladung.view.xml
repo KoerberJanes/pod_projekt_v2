@@ -1,33 +1,28 @@
 <mvc:View controllerName="podprojekt.controller.Abladung"
     xmlns:core="sap.ui.core" 
     xmlns:mvc="sap.ui.core.mvc" 
-    xmlns="sap.m" 
-    xmlns:layout="sap.ui.layout" 
-    xmlns:form="sap.ui.layout.form"
-    xmlns:u="sap.ui.unified" 
-    xmlns:tnt="sap.tnt" displayBlock="true"
-    xmlns:upload="sap.m.upload">
+    xmlns="sap.m"
+    xmlns:form="sap.ui.layout.form">
     <Page id="AbladungPageId" title="{i18n>title}">
         <customHeader>
-                <Bar>                    
-                    <contentLeft>
-                        <!--
-                        <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"/>
-                        <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onNavToStopInformation"/>
-                        -->
-                    </contentLeft>
-                    <contentMiddle>
-                        <Label text="{i18n>abladung}"/>
-                    </contentMiddle>
-                    <contentRight>
-                        <!--Leer-->
-                    </contentRight>
-                </Bar>
-            </customHeader>
+            <Bar>                    
+                <contentLeft>
+                    <!--
+                    <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"/>
+                    <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onNavToStopInformation"/>
+                    -->
+                </contentLeft>
+                <contentMiddle>
+                    <Label text="{i18n>abladung}"/>
+                </contentMiddle>
+                <contentRight>
+                    <!--Leer-->
+                </contentRight>
+            </Bar>
+        </customHeader>
         <content>
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
-                  
                     <Bar>
                         <contentMiddle>
                             <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
@@ -42,6 +37,8 @@
                         <content>
                             <!-- <core:Icon id="iconId" src="sap-icon://sys-add" class="sapUiTinyMarginBegin"/> -->
                             <Text id="NVEText" text="NVEs"/>
+                            <ToolbarSpacer ></ToolbarSpacer>
+                            <Button id="testBreakpointButton" press="onBreakpoint" icon="sap-icon://refresh" type="Emphasized"></Button>
                             <ToolbarSpacer/>
                             <Text id="txtNVEAnzahl"></Text>
                         </content>
@@ -61,117 +58,14 @@
                                 </OverflowToolbar></content>
                         </CustomListItem>
                     </List> -->
-                    <Tree id="NVETree" items="{NVEModel>/results/loadingUnits}" ><!-- toggleOpenState="onExpand" -->
-                        <StandardTreeItem type="Active"  title="{NVEModel>label1}" press="onCollapse"></StandardTreeItem>
+                    <Tree id="NVETree" items="{LoadingUnitsModel>/results}" ><!-- toggleOpenState="onExpand" -->
+                        <StandardTreeItem type="Active"  title="{LoadingUnitsModel>label1}" press="onCheckTreeItemPress"></StandardTreeItem><!--{LoadingUnitsModel>lodingDeviceTypeCaption} wäre auch möglich., sieht halt doof aus-->
                         <!-- icon="sap-icon://navigation-right-arrow" -->
                     </Tree>
-                    <Button id="handeingabebtn" icon="sap-icon://simulate" text="{i18n>handeingabe}" press="onOpenInputDialog"/>
+                    <Button id="handeingabebtn" icon="sap-icon://simulate" text="{i18n>handeingabe}" press="onManualNveInputFragmentOpen"/>
                     <Button id="btnAllesQuittieren" text="{i18n>allesQuittieren}" icon="sap-icon://accept" press="onAllesQuittieren"/>
                 </form:content>
             </form:SimpleForm>
-            <!-- Dialog -->
-            <Dialog id="clearDialog" visible="false" title="{i18n>klaerungen}" state="None" afterOpen="onFocusTA" afterClose="" >
-                <customHeader>
-                    <!--custom Header Items-->
-                    <Bar id="clearDialogHeaderBar">
-                        <contentLeft>
-                            <Title id="clearDialogTitle" text="{i18n>klaerungen}"/>
-                        </contentLeft>
-                    </Bar>
-                </customHeader>
-                    <content>
-                        <form:SimpleForm id="clearDialogForm" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
-                            <form:content>
-                            <CheckBox id="notFoundCb" text="{i18n>nichtgefunden}" wrapping="true" select="onSelect"/>
-                            <CheckBox id="defectCb" text="{i18n>defekt}" wrapping="true" select="onSelect"/>
-                            <CheckBox id="partiallyDefectCb" text="{i18n>twdefekt}" wrapping="true" select="onSelect"/>
-                            <CheckBox id="notAcceptedCb" text="{i18n>annahmeverweigert}" wrapping="true" select="onSelect"/>
-                            <CheckBox id="noMoneyCb" text="{i18n>keingeld}" wrapping="true" select="onSelect"/>
-                            <CheckBox id="laterShippingCb" text="{i18n>spaetereauslieferung}" wrapping="true" select="onSelect"/>
-                            </form:content>
-                        </form:SimpleForm>
-
-                        <form:SimpleForm id="clearDialogForm2" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
-                            <Label id="txtBemerkung" text="{i18n>bemerkungen}" width="70%"/>
-                            <TextArea id="taBemerkungen"></TextArea>
-                        </form:SimpleForm>
-                             
-                        <form:SimpleForm id="clearDialogForm3" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
-                            <!--Button id="photobtn" type="Emphasized" icon="sap-icon://camera" text="{i18n>photomachen}" press="onCapturePic"/Button> <class="sapUiVisibleOnlyOnDesktop"-->
-                            <Button icon="sap-icon://add-photo" text="{i18n>foto}" press="onFotoMachen" class="sapUiVisibleOnlyOnDesktop"/>
-					        <u:FileUploader id="btnAddPhoto" buttonOnly="true" buttonText="{i18n>foto}" icon="sap-icon://add-photo" useMultipart="false" mimeType="image/*" width="100%" change="onFotoMobile" class="sapUiHideOnDesktop"/>
-                            <Button id="btnFotoListe" icon="sap-icon://add" text="{i18n>photoliste}" press="onFotoListe"/>
-                            <!--<Button id="photolistbtn" type="Emphasized" icon="sap-icon://add" text="{i18n>photoliste}" press="onHidePhotos"/-->
-                            <!--<u:FileUploader id="btnAddPhoto" visible="true" buttonOnly="true" icon="sap-icon://add-photo" iconOnly="true" useMultipart="false" change="onBtnAddPhoto" mimeType="image/*" uploadOnChange="true"/>-->
-                            <List id="fotoListe" items="{FotoModelAbladen>/results}" mode="Delete" delete="onDelete" visible="false" showNoData="false">
-                                <CustomListItem >
-                                    <HBox >
-                                        <Image src="{FotoModelAbladen>fotoSrc}" width="7em" height="auto"/>
-                                        <form:SimpleForm >
-                                            <form:content>
-                                                <Text text="{FotoModelAbladen>fotoId}"/>
-                                            </form:content>
-                                        </form:SimpleForm>
-                                    </HBox>
-                                </CustomListItem>
-                            </List>
-                        </form:SimpleForm>
-                    </content>
-                    <beginButton>
-                        <Button id="clearNVEOkBtn" icon="sap-icon://accept" text="{i18n>ok}" press="onKlärung"/>
-                    </beginButton>
-                    <endButton>
-                        <Button id="clearNVEBackBtn" icon="sap-icon://error" text="{i18n>Zurück}" press="onCloseClearDialog"/>
-                    </endButton>
-            </Dialog>
-            
-            <Dialog id="inputDialog" visible="false" title="{i18n>handeingabe}" state="None" initialFocus="barcodeinput" afterClose="">
-                <customHeader>
-                    <Bar id="inputDialogHeaderBar">
-                        <contentMiddle>
-                            <Title id="inputDialogTitle" text="{i18n>handeingabe}"/>
-                        </contentMiddle>    
-                    </Bar>
-                </customHeader>
-                    <content>
-                        <Text class="sapUiSmallMarginBegin" id="barcodetxt" text="{i18n>barcode}"/>
-                        <Input width="90%" class="sapUiSmallMarginBeginEnd" id="barcodeinput" placeholder="{i18n>enterbarcode}" submit="onCloseInputDialog"></Input>
-                    </content>
-                    <footer>
-                        <Toolbar id="inputDialogTB">
-                            <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press="onCloseInputDialog"/>
-                            <ToolbarSpacer/>
-                            <Button id="inputDialogClearBtn" text="{i18n>clearinput}" type="Emphasized" press="onClearInputDialog"/>
-                            <ToolbarSpacer/>
-                            <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onCloseInputDialog"/>
-                        </Toolbar>
-                    </footer>
-                    <!--beginButton>
-                        <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press="onCloseInputDialog"/>
-                    </beginButton>
-                    <endButton>
-                        <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onCloseInputDialog"/>
-                    </endButton-->
-            </Dialog>
-
-            <Dialog id="removeImageDialog" visible="false" title="{i18n>removeimage}" state="None" afterClose="">
-                <customHeader>
-                    <Bar id="removeImageDialogHeaderBar">
-                        <contentMiddle>
-                            <Title id="removeImageDialogTitle" text="{i18n>removeimage}"/>
-                        </contentMiddle>    
-                    </Bar>
-                </customHeader>
-                <content>
-                    <Text id="removeimagetxt" text="{i18n>removeimagequestion}" class="sapUiMediumMarginBeginEnd sapUiSmallMarginTopBottom"/>
-                </content>
-                <beginButton>
-                    <Button id="removeImageOkBtn" type="Emphasized" text="{i18n>ja}" press="onRemoveImage"/>
-                </beginButton>
-                <endButton>
-                    <Button id="removeImageCancelBtn" type="Emphasized" text="{i18n>nein}" press="onCloseRemoveImageDialog"/>
-                </endButton>
-            </Dialog>
         </content>
         <footer>
             <Bar>

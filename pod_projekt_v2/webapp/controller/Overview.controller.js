@@ -5,12 +5,13 @@ sap.ui.define(
     "sap/ui/core/IconPool",
     "podprojekt/model/formatter",
     "podprojekt/utils/Helper",
-    "sap/m/MessageToast"
+    "sap/m/MessageToast",
+    "sap/ui/model/Filter"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, deepClone, IconPool, formatter, Helper, MessageToast) {
+  function (Controller, deepClone, IconPool, formatter, Helper, MessageToast, Filter) {
     "use strict";
 
     return Controller.extend("podprojekt.controller.Overview", {
@@ -19,17 +20,73 @@ sap.ui.define(
       },
 
       onAfterRendering: function() {
-        //Controller.prototype.onAfterRendering.apply(this, arguments);
+        this._oBundle=this.getOwnerComponent().getModel("i18n").getResourceBundle(); //Globales Model für die i18n
+        this.simulateBackendCallForTours(true);
+        //this.setCustomAttributes();
+      },
+
+      simulateBackendCallForTours:function(bTestCase){
+        this.onBusyDialogOpen(); //Dialog oeffnen um Backend-Call abzuwarten.
+        //Methoden und Filter können hier erstellt werden.
+        var sPathPos="/ABAP_FUNKTIONSBAUSTEIN"; //Methode am Backend um Daten zu erhalten.
+        var oFilter1 = new Filter(); //Filter Attribut 1
+        var oFilter2 = new Filter(); //Filter Attribut 2
+        var oFilter3 = new Filter(); //Filter Attribut 3
+        var aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+
+
+        /*
+        this.getView().getModel("TP_VERLADUNG_SRV").read(sPathPos, {
+          filters: aFilters,
+
+          success: function (oData) {
+              this.busyDialogClose();
+              var aRecievedTours=oData.getProperty("/results");
+
+              if(aRecievedTours.length===0){
+                  this.noToursError(); //Fahrer hat keine Touren
+              } else{
+                  this.handleRecievedTours(aRecievedTours); //Setzen der Touren in Model
+              }
+
+          }.bind(this),
+          error: function(oError){
+              this.busyDialogClose();
+              //Bisher keine Funktion
+          }.bind(this)
+        });
+      */
+
+        if(bTestCase){ //Success-Fall simulieren
+          this.onBusyDialogClose();
+          var oTourModel=this.getOwnerComponent().getModel("TourModel"); //Demo Model bereits vorab gefüllt
+          var aTourModelItems = oTourModel.getProperty("/results"); //Inhalt für Abfrage benoetigt. Wird später durch das oData Model ersetzt
+
+          if(aTourModelItems.length===0){ //Keine Tour vorhanden
+            this.noToursError();
+          }else{
+            this.handleRecievedTours(aTourModelItems);
+          }
+        }else{
+          //Error-Fall simulieren
+          this.onBusyDialogClose();
+        }
+      },
+
+      handleRecievedTours:function(aRecievedTours){
+        var oTourModel=this.getOwnerComponent().getModel("TourModel");
+
+        oTourModel.setProperty("/results", aRecievedTours);
         this.setCustomAttributes();
       },
 
       setCustomAttributes:function(){
         var oTourModel=this.getOwnerComponent().getModel("TourModel");
-        var oTourModelItems = oTourModel.getProperty("/results");
+        var aTourModelItems = oTourModel.getProperty("/results");
 
-        for(var i in oTourModelItems){
-            oTourModelItems[i].altRouteStatus=""; //Erstellen des Anzuzeigenden Attributes
-            oTourModelItems[i].altRouteStatus=formatter.statusText(oTourModelItems[i].routeStatus, this.getOwnerComponent()); //Füllen mit wert
+        for(var i in aTourModelItems){
+            aTourModelItems[i].altRouteStatus=""; //Erstellen des Anzuzeigenden Attributes
+            aTourModelItems[i].altRouteStatus=formatter.statusText(aTourModelItems[i].routeStatus, this.getOwnerComponent()); //Füllen mit wert
         }
         oTourModel.refresh(); //Aktualisieren
       },
@@ -43,6 +100,18 @@ sap.ui.define(
 
         oTourStartFragmentModel.setProperty("/tour", oPressedModelObject);
         this.openTourStartFragment();
+      },
+
+      onBusyDialogOpen:function(){
+        this.oBusyDialog ??= this.loadFragment({
+          name: "podprojekt.view.fragments.BusyDialog",
+        });
+
+        this.oBusyDialog.then((oDialog) => oDialog.open());
+      },
+
+      onBusyDialogClose:function(){
+        setTimeout(() => { this.byId("BusyDialog").close() },250);
       },
 
       openTourStartFragment: function () {
@@ -92,6 +161,14 @@ sap.ui.define(
         this.onNavToActiveTour();
       },
 
+      noToursError:function(){ //Es konnten keine Touren geladen werden
+        MessageBox.error(this._oBundle.getText("noToursLoaded"), {
+            onClose:function(){
+                //NOP:
+            }.bind(this)
+        });
+    },
+
       resetTourStartFragmentUserModel:function(){
         var oTourStartFragmentUserModel=this.getOwnerComponent().getModel("TourStartFragmentUserModel");
         oTourStartFragmentUserModel.setProperty("/result/mileage", "");
@@ -102,6 +179,7 @@ sap.ui.define(
           duration: 1000,
           width:"15em"
         });
+        this.simulateBackendCallForTours();
       },
 
       onCloseTourStartFragment: function () {
