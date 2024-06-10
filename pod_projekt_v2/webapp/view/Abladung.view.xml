@@ -34,7 +34,8 @@
                         </contentMiddle>
                     </Bar>
                       <VBox class="sapUiSmallMargin" id="VboxId">
-                        <Text id="shipmentnr" text="{NVEModel>/results/shipmentNumber}"/>
+                        <Text id="shipmentnr" text="{i18n>Tour}{TourStartFragmentModel>/tour/routeCaption}&#13;&#10;{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"/>
+                        <!--<Text id="currentTourLabelId" text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;{StopInformationModel>/tour/country}{StopInformationModel>/tour/zipCode}{StopInformationModel>/tour/city}" />-->
                         <!-- <Text id="Adresse"></Text> addressName1, country zipCode city--> 
                     </VBox>
                     <OverflowToolbar active="false" id="NVEBar"> <!-- press="onViewNVEs" -->
