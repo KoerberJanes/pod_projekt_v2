@@ -16,9 +16,8 @@ sap.ui.define([
             },
 
             onAfterRendering: function() {
-                //Controller.prototype.onAfterRendering.apply(this, arguments);
-                this.alterStopDescriptionForOrder();
-                this.setCustomAttributes();
+                this.alterStopDescriptionForOrder(); //Anpassen des Titels eines Stops entsprechend der Reihgenfolge
+                this.setCustomAttributes(); 
             },
 
             alterStopDescriptionForOrder:function(){ //Anpassung der Beschreibung, damit alles so aussieht wie auf der Vorlage
@@ -52,7 +51,7 @@ sap.ui.define([
                 oStopModel.refresh();
             },
 
-            setCustomAttributes:function(){
+            setCustomAttributes:function(){ //Erstellen zusätzlicher Attribute für die Anzeige
 
                 var oStopModel=this.getOwnerComponent().getModel("StopModel");
                 var oStopModelItems = oStopModel.getProperty("/results");
@@ -67,7 +66,7 @@ sap.ui.define([
 
             },
 
-            onStopListItemPressed:function(oEvent){
+            onStopListItemPressed:function(oEvent){ //Herausfinden welcher Stop in der Liste ausgewaehlt wurde
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var sStopId=oEvent.getSource().getId(); //Event-Id vom Objekt
                 var aListItems=this.getView().byId("stopSelectionList").getItems(); //Array an Items in der Liste
@@ -78,7 +77,7 @@ sap.ui.define([
                 this.setLoadingUnits(oPressedModelObject);
             },
 
-            setLoadingUnits:function(oPressedModelObject){
+            setLoadingUnits:function(oPressedModelObject){ //Zu Verladenen NVEs in Model setzen
                 var oPressedModelObjectOrder=oPressedModelObject.orders[0];
                 var aLoadingUnits=oPressedModelObjectOrder.loadingUnits;
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
@@ -88,13 +87,13 @@ sap.ui.define([
                 this.onNavToStopInformation();
             },
 
-            onNavToStopInformation:function(){
+            onNavToStopInformation:function(){ //Navigation zur StopInformation View
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("StopInformation");
             },
 
-            onRefreshRespectiveStops:function(){
+            onRefreshRespectiveStops:function(){ //Dummy-Refresh
                 
                 MessageToast.show("Dies ist ein Dummy-Rrefresh!", {
                     duration: 1000,

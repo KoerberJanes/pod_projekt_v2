@@ -125,7 +125,7 @@
                         </form:formElements>
                     </form:FormContainer>
                     <form:FormContainer id="completeButtonsContainer"><form:FormElement id="completeButtons">
-                        <m:Button id="signBtn" icon="sap-icon://signature" text="{i18n>sign}" press="onSign" visible="{= ${settings>/recipientFound}}"/>
+                        <m:Button id="signBtn" icon="sap-icon://signature" text="{i18n>sign}" press="checkSignConditions" visible="{= ${settings>/recipientFound}}"/>
                         <m:Button id="notFoundBtn" icon="sap-icon://decline" text="{i18n>notFound}" press="onCustomerAbsent" visible="{= !${settings>/recipientFound}}"/>
                     </form:FormElement></form:FormContainer>
                 </form:formContainers>

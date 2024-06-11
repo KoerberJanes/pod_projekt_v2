@@ -42,7 +42,7 @@ sap.ui.define([
                 this.oAddFotoDialog.then((oDialog) => oDialog.open());
             },
 
-            onSign:function(){
+            checkSignConditions:function(){ //Pruefen ob zur bedingungen erfuellt sind zur Unterschrift View zu wechseln
                 var oRecipientNameModel=this.getOwnerComponent().getModel("RecipientNameModel")
                 var sRecipientName=oRecipientNameModel.getProperty("/recipient/name");
 
@@ -53,7 +53,7 @@ sap.ui.define([
                 }
             },
             
-            checkIfTourIsFinished:function(){
+            checkIfTourIsFinished:function(){ //Pruefen ob die Tour abgeschlossen ist
                 var oActiveTour=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/orders")[0];
                 var sTourStatus=oActiveTour.orderStatus;
 
@@ -64,15 +64,15 @@ sap.ui.define([
                 }
             },
 
-            onCustomerAbsent:function(){
+            onCustomerAbsent:function(){ //Kunde nicht angetroffen switch
 
             },
 
-            onAddFotoDialogClose:function(){ //Schließen Dialog
+            onAddFotoDialogClose:function(){ //Schließen X Dialog
                 this.byId("FotoMachenDialog").close();
             },
 
-            onPhotoQueryDialogClose:function(){
+            onPhotoQueryDialogClose:function(){ //Schließen Y Dialog
                 this.byId("FotoDialog").close();
             },
 
@@ -86,11 +86,11 @@ sap.ui.define([
                 }
             },
 
-            onConfirmFoto:function(){
+            onConfirmFoto:function(){ //Foto bestätigen
 
             },       
             
-            showChekBoxError:function(){
+            showChekBoxError:function(){ //Fehler weil nicht alle Checkboxen bearbeitet wurden
                 MessageBox.error(this._oBundle.getText("haken"),{
                     onClose: function() {
                         //Bisher funktionslos
@@ -99,7 +99,7 @@ sap.ui.define([
             },
                 
 
-            showEmptyNameError:function(){
+            showEmptyNameError:function(){ //Fehler weil kein Kundenname eingetragen
                 MessageBox.error(this._oBundle.getText("nameang"),{
                     onClose: function() {
                         //Bisher funktionslos
@@ -107,7 +107,7 @@ sap.ui.define([
                 });
             },
 
-            onFotoabfrageDialogOpen:function(){
+            onFotoabfrageDialogOpen:function(){ //Oeffnen Fotoabfrage frament
                 this.oFotoabfrageDialog ??= this.loadFragment({
                     name: "podprojekt.view.fragments.fotoabfrage",
                 });
@@ -115,13 +115,13 @@ sap.ui.define([
                 this.oFotoabfrageDialog.then((oDialog) => oDialog.open());
             },
             
-            onNavToAbladung:function(){
+            onNavToAbladung:function(){ //Navigation zur Abladung View
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("Abladung");
             },
 
-            onNavToUnterschrift:function(){
+            onNavToUnterschrift:function(){ //Navigation zur Unterschrift View
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("Unterschrift");

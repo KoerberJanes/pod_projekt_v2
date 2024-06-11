@@ -35,7 +35,7 @@ sap.ui.define([
                 this.setTreeStructureForModel(oLoadingUnitsModel, aLoadingUnits);
             },
 
-            setTreeStructureForModel:function(oLoadingUnitsModel, aLoadingUnits){
+            setTreeStructureForModel:function(oLoadingUnitsModel, aLoadingUnits){ //Struktur und Attribute für den Tree erstellen
 
                 for(var i in aLoadingUnits){
                     var oCurerntLoadingUnit=aLoadingUnits[i];
@@ -47,7 +47,7 @@ sap.ui.define([
                 oLoadingUnitsModel.refresh();
             },
 
-            onCheckTreeItemPress:function(oEvent){
+            onCheckTreeItemPress:function(oEvent){ //Pruefen ob eine untergeordnete Struktur ausgewaehlt wurde
                 var sLevelOfPressedObject=oEvent.getSource().getLevel();
                 
                 if(sLevelOfPressedObject==="0"){
@@ -57,7 +57,7 @@ sap.ui.define([
                 }
             },
 
-            getSelectedModelItem:function(oEvent){
+            getSelectedModelItem:function(oEvent){ //Das gedrueckte Element im Model erfassen
                 var sParentNodeId=oEvent.getSource().getParentNode().getId();
                 var aNveTreeItems=this.byId("NVETree").getItems();
                 var aModelItems=this.getOwnerComponent().getModel("LoadingUnitsModel").getProperty("/results");
@@ -68,19 +68,18 @@ sap.ui.define([
                 this.setClearingNveModel(oTreeModelParent);
             },
 
-            setClearingNveModel:function(oTreeModelParent){
+            setClearingNveModel:function(oTreeModelParent){ //Uebergeordnete Struktur in das Klaer-Model setzen
                 var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel");
 
                 oClearingNveModel.setProperty("/clearingNve", oTreeModelParent);
-
                 this.nveClearingDialogOpen();
             },
 
-            nveClearingDialogConfirm:function(){
+            nveClearingDialogConfirm:function(){ //Bestaetigen Knopf bei der Klaerung wurde gedrückt
                 
             },
 
-            nveClearingDialogOpen:function(){
+            nveClearingDialogOpen:function(){ //Oeffnen des Klaer-Dialoges
                 this.oNveClearingDialog ??= this.loadFragment({
                     name: "podprojekt.view.fragments.nveClearingDialog",
                 });
@@ -88,11 +87,11 @@ sap.ui.define([
                 this.oNveClearingDialog.then((oDialog) => oDialog.open());
             },
 
-            nveClearingDialogClose:function(){
+            nveClearingDialogClose:function(){ //Schließen des Klaer-Dialoges
                 this.byId("clearDialog").close();
             },
 
-            onManualNveInputFragmentOpen:function(){
+            onManualNveInputFragmentOpen:function(){ //Oeffnen des Handeingabe fragmentes
                 this.oManualNveInputDialog ??= this.loadFragment({
                     name: "podprojekt.view.fragments.manualNveInput",
                 });
@@ -100,11 +99,11 @@ sap.ui.define([
                 this.oManualNveInputDialog.then((oDialog) => oDialog.open());
             },
 
-            onManualNveInputFragmentClose:function(){
+            onManualNveInputFragmentClose:function(){ //Schließen des Handeingabe fragmentes
                 this.byId("ManualNveInputDialogId").close();
             },
 
-            onBreakpoint:function(){
+            onBreakpoint:function(){ //Breakpoint für den Debugger
                 console.log("Break!");
             }
         });

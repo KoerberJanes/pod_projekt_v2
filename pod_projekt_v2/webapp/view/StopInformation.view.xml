@@ -58,7 +58,9 @@
         <footer>
             <Bar>
                 <contentLeft>
+                    <!--
                     <Button id="ManualBackBtn" text="{i18n>Zurück}" icon="sap-icon://navigation-left-arrow" press="onNavToActiveTour"></Button>
+                    -->
                 </contentLeft>
                 <contentMiddle>
                     <!--

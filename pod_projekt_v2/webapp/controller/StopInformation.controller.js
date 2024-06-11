@@ -29,31 +29,31 @@ sap.ui.define([
                 */
             },
 
-            onNavToMap:function(){
+            onNavToMap:function(){ //Navigation zur GeoMap View
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("MapView");
             },
 
-            onNavToAbladung:function(){
+            /*onNavToAbladung:function(){ //Navigation zur Abladung View
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("Abladung");
-            },
+            },*/
 
-            onNavToQuittierung:function(){
+            onNavToQuittierung:function(){ //Navigation zur Quittierung View
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("Quittierung");
             },
 
-            onNavToActiveTour:function(){
+            /*onNavToActiveTour:function(){ //Navigation zur AvtiveTour View
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("ActiveTour");
-            },
+            },*/
 
-            onRefreshRespectiveStops:function(){
+            onRefreshRespectiveStops:function(){ //Dummy-Refresh
                 
                 MessageToast.show("Dies ist ein Dummy-Rrefresh!", {
                     duration: 1000,
