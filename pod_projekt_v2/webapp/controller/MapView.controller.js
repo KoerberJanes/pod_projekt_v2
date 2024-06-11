@@ -80,9 +80,9 @@ sap.ui.define([
                     this.onBusyDialogClose();
                     var sCurrentGeoL=position.coords.longitude;
                     var sCurrentGeoB=position.coords.latitude;
-                    var sAltitude=position.coords.altitude;
+                    //var sAltitude=position.coords.altitude;
                     var sAccuracy=position.coords.accuracy;
-                    var sSpeed=position.coords.speed;
+                    //var sSpeed=position.coords.speed;
 
                     if(sAccuracy>100){ //Pruefen ob die Daten überhaupt genau genug sind!
                         MessageToast.show("Trying to fetch more accurate data! Accuracy is not goof enough!");
@@ -96,10 +96,10 @@ sap.ui.define([
                     this.onBusyDialogClose();
                     MessageToast.show("Unknown error occured!");
                 }.bind(this),
-                
-                
                 {
-                    enableHighAccuracy:true
+                    enableHighAccuracy:true,
+                    timeout: 5000,
+                    maximumAge: 0
                 });
             },
 
