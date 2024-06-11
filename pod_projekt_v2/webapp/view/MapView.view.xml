@@ -46,10 +46,10 @@
         <footer>
           <Bar id="mapbar">
             <contentLeft>
-              <Button type="Emphasized" icon="sap-icon://locate-me" text="{i18n>ResettoCurr}" press="onResetPosition"></Button>
+              <Button type="Emphasized" icon="sap-icon://locate-me" text="{i18n>ResettoCurr}" press="onGetCurrentPosition"></Button>
             </contentLeft>
             <contentRight>
-              <Button type="Emphasized" text="{i18n>ZumZielort}" icon="sap-icon://target-group" press="toTargetPosition"></Button>
+              <Button type="Emphasized" text="{i18n>ZumZielort}" icon="sap-icon://target-group" press="onToTargetPosition"></Button>
             </contentRight>
           </Bar>
         </footer>
