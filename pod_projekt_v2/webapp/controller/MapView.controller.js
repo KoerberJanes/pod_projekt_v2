@@ -85,8 +85,8 @@ sap.ui.define([
                     //var sSpeed=position.coords.speed;
 
                     if(sAccuracy>100){ //Pruefen ob die Daten überhaupt genau genug sind!
-                        MessageToast.show("Trying to fetch more accurate data! Accuracy is not goof enough!");
-                        this.toCurrentPosition(sCurrentGeoL, sCurrentGeoB);
+                        MessageToast.show("Trying to fetch more accurate data! Accuracy is not good enough!");
+                        //this.onGetCurrentPosition();
                     } else{
                         this.toCurrentPosition(sCurrentGeoL, sCurrentGeoB);
                     }
