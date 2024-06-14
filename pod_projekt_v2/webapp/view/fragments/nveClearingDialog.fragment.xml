@@ -58,7 +58,7 @@
                 <Button id="clearNVEOkBtn" icon="sap-icon://accept" text="{i18n>ok}" press="nveClearingDialogConfirm"/>
             </beginButton>
             <endButton>
-                <Button id="clearNVEBackBtn" icon="sap-icon://error" text="{i18n>Zurück}" press="nveClearingDialogClose"/>
+                <Button id="clearNVEBackBtn" icon="sap-icon://error" text="{i18n>Zurück}" press="nveClearingDialogReject"/>
             </endButton>
     </Dialog>
 </core:FragmentDefinition>

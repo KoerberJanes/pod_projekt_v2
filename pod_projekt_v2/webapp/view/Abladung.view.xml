@@ -40,30 +40,15 @@
                             <ToolbarSpacer ></ToolbarSpacer>
                             <Button id="testBreakpointButton" press="onBreakpoint" icon="sap-icon://refresh" type="Emphasized"></Button>
                             <ToolbarSpacer/>
-                            <Text id="txtNVEAnzahl"></Text>
+                            <Text id="txtNVEAnzahl" text="{= ${ReceiptNvesModel>/results}.length}/{= ${ReceivedLoadingUnitsModel>/results}.length}"></Text>
                         </content>
                     </OverflowToolbar>
-                    <!-- <List id="NVEList" items="{StopModel>/results}" noDataText="{i18n>npa}"
-                        growing="true" growingThreshold="10" busyIndicatorDelay="500" enableBusyIndicator="true"
-                         rememberSelections="false" visible="false">
-                        <CustomListItem id="_IDGenActionListItem1"> //title="{StopModel>addressName1}" description="{StopModel>street}{StopModel>streetNumber}" info="{StopModel>NveAnzahl}" wrapping="true" type="Navigation"
-                            infoState="" icon=""
-                            <content>
-                                <OverflowToolbar active="true" id="Itembar" press="onDetailNVE">
-                                    <content>
-                                        <Button id="editButton" icon="sap-icon://edit" press="onEditNVE"></Button>
-                                        <ToolbarSpacer/>
-                                        <Text id="txtMaterial" text="{StopModel>addressName1}" textAlign="Begin"/>
-                                    </content>
-                                </OverflowToolbar></content>
-                        </CustomListItem>
-                    </List> -->
                     <Tree id="NVETree" items="{LoadingUnitsModel>/results}" ><!-- toggleOpenState="onExpand" -->
                         <StandardTreeItem type="Active"  title="{LoadingUnitsModel>label1}" press="onCheckTreeItemPress"></StandardTreeItem><!--{LoadingUnitsModel>lodingDeviceTypeCaption} wäre auch möglich., sieht halt doof aus-->
                         <!-- icon="sap-icon://navigation-right-arrow" -->
                     </Tree>
                     <Button id="handeingabebtn" icon="sap-icon://simulate" text="{i18n>handeingabe}" press="onManualNveInputFragmentOpen"/>
-                    <Button id="btnAllesQuittieren" text="{i18n>allesQuittieren}" icon="sap-icon://accept" press="onAllesQuittieren"/>
+                    <Button id="btnAllesQuittieren" text="{i18n>allesQuittieren}" icon="sap-icon://accept" press="checkForRemainingNves"/>
                 </form:content>
             </form:SimpleForm>
         </content>

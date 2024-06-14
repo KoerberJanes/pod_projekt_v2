@@ -151,7 +151,19 @@
           ]
         }
       },
+      "ReceivedLoadingUnitsModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
       "LoadingUnitsModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "ReceiptNvesModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "results": []
@@ -161,6 +173,12 @@
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "clearingNve": {}
+        }
+      },
+      "manualNveInputModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "manualInput": ""
         }
       },
       "tours": {

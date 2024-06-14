@@ -12,18 +12,18 @@
             </Bar>
         </customHeader>
             <content>
-                <Text class="sapUiSmallMarginBegin" id="barcodetxt" text="{i18n>barcode}"/>
-                <Input width="90%" class="sapUiSmallMarginBeginEnd" id="barcodeinput" placeholder="{i18n>enterbarcode}" submit="onCloseInputDialog"></Input>
+                <Text id="barcodetxt" text="{i18n>barcode}"/> <!--class="sapUiSmallMarginBegin" -->
+                <Input id="barcodeinput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>enterbarcode}" submit="onCloseInputDialog"></Input><!--width="90%" class="sapUiSmallMarginBeginEnd" -->
             </content>
 
             
             <footer>
                 <Toolbar id="inputDialogTB">
-                    <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press=""/>
+                    <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press="onNveClearingDialogCallbackConfirm"/>
                     <ToolbarSpacer/>
                     <Button id="inputDialogClearBtn" text="{i18n>clearinput}" type="Emphasized" press=""/>
                     <ToolbarSpacer/>
-                    <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onManualNveInputFragmentClose"/>
+                    <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onNveClearingDialogCallbackReject"/>
                 </Toolbar>
             </footer>
     </Dialog>
