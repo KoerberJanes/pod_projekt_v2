@@ -72,14 +72,14 @@ sap.ui.define([
                 var aListItems=this.getView().byId("stopSelectionList").getItems(); //Array an Items in der Liste
                 var aModelItems=this.getOwnerComponent().getModel("StopModel").getProperty("/results"); //Array an Objekten im Model
                 var oPressedModelObject=Helper.findModelObjectSlimm(sStopId, aListItems, aModelItems);
+                var oPressedModelObjectDetails=oPressedModelObject.orders[0]; //Detailreichere Informationen über das Modelobjekt
                 
-                oStopInformationModel.setProperty("/tour", oPressedModelObject);
-                this.setLoadingUnits(oPressedModelObject);
+                oStopInformationModel.setProperty("/tour", oPressedModelObjectDetails);
+                this.setLoadingUnits(oPressedModelObjectDetails);
             },
 
-            setLoadingUnits:function(oPressedModelObject){ //Zu Verladenen NVEs in Model setzen
-                var oPressedModelObjectOrder=oPressedModelObject.orders[0];
-                var aLoadingUnits=oPressedModelObjectOrder.loadingUnits;
+            setLoadingUnits:function(oPressedModelObjectDetails){ //Zu Verladenen NVEs in Model setzen
+                var aLoadingUnits=oPressedModelObjectDetails.loadingUnits;
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
 
                 oLoadingUnitsModel.setProperty("/results", aLoadingUnits);

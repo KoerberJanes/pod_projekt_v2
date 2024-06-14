@@ -17,16 +17,11 @@ sap.ui.define([
                 
             },
 
-            onPressBtnAvisNr: function(oEvent){
-                /*
-                const oSingleStopModel = this.getView().getModel("SingleStopModel").getProperty("/results");
-                const {phoneAvis} = oSingleStopModel;
-                sap.m.URLHelper.triggerTel(phoneAvis);//phoneAvis
-                const telefonBtn = this.getView().byId("btnAvisNr");
-                const toQuittierungsBtn = this.getView().byId("QuittierungBtn");
-                telefonBtn.setType("Default");
-                toQuittierungsBtn.setType("Emphasized");
-                */
+            onPressBtnAvisNr: function(oEvent){ //Natives anrufen der Telefonnummer
+                var oCurrentStopDetails=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/orders")[0];
+                var sPhoneAvis=oCurrentStopDetails.phoneAvis;
+
+                sap.m.URLHelper.triggerTel(sPhoneAvis);
             },
 
             onNavToMap:function(){ //Navigation zur GeoMap View

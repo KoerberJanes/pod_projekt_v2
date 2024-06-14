@@ -48,7 +48,7 @@
                     <Label/>
                     <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>Karte}"></Button>
                     <Label text="{i18n>Hinweis}"></Label>
-                    <TextArea id="taHinweis"></TextArea>
+                    <TextArea id="taHinweis" value="{StopInformationModel>/tour/shipmentConditionCaption}"></TextArea>
                     <Label text="{i18n>Avisnummer}"></Label>
                     <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{StopInformationModel>/tour/phoneAvis}"></Button>
                     
