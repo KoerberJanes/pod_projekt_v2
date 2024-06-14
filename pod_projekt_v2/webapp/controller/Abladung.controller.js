@@ -98,16 +98,26 @@ sap.ui.define([
             onReceiptAllRemainingNves:function(oLoadingUnitsModel, aRemainingNves){
                 var oReceiptNvesModel=this.getOwnerComponent().getModel("ReceiptNvesModel"); //Model für Quittierte NVEs
                 var aReceiptNves=oReceiptNvesModel.getProperty("/results");
+                var aUpdatedReceiptNves=aReceiptNves.concat(aRemainingNves);
 
-                for(var i in aRemainingNves){
-                    aReceiptNves.concat(aRemainingNves[i]); //Jede NVE in das Quittierte Model schieben
-                }
-
+                oReceiptNvesModel.setProperty("/results", aUpdatedReceiptNves);
                 oLoadingUnitsModel.setProperty("/results", []); //Model anpassen
-                
+                //oReceiptNvesModel.refresh();
             },
 
-            onSave:function(){
+            onAbortReceiptNves:function(){ //Herstellen des Ursprünglichen zustandes der Bearbeitung
+                var oReceivedLoadingUnitsModel=this.getOwnerComponent().getModel("ReceivedLoadingUnitsModel");
+                var aReceivedLoadingUnits=oReceivedLoadingUnitsModel.getProperty("/results");
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
+                var oReceiptNvesModel=this.getOwnerComponent().getModel("ReceiptNvesModel"); //Model für Quittierte NVEs
+
+                oLoadingUnitsModel.setProperty("/results", aReceivedLoadingUnits); //Die Anzeige der zu quittierenden NVEs wird wieder auf den Ursprungszustand zurueckgesetzt
+                oReceiptNvesModel.setProperty("/results", []); //Quittierte NVEs werden wieder zurueckgesetzt
+
+                this.navBackToQuittierung();
+            },
+
+            onSave:function(){ //Speichern des aktuellen zustandes der Bearbeitung
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
                 var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
 

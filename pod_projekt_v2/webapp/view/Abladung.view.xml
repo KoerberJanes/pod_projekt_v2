@@ -61,7 +61,7 @@
                     <Button type="Emphasized" text="Test" press="onTest"/>
                 </contentMiddle> -->
                 <contentRight>
-                    <Button text="{i18n>dialogCloseButtonText}" press="onNavToStopInformation"/>
+                    <Button text="{i18n>dialogCloseButtonText}" press="onAbortReceiptNves"/>
                 </contentRight>
             </Bar>
         </footer>
