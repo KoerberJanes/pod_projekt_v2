@@ -8,28 +8,16 @@
     <pages>
       <Page id="MapViewPageId" title="Karte">
         <content>
-          <!--
-          <vbm:GeoMap id="map">
-          
-            <vbm:vos>
-              <vbm:Spots id="spots" items="{locations>/spots}">
-                <vbm:items>
-                  <vbm:Spot id="customerspots" position="{locations>position}" type="Success" tooltip="{locations>text}"/>
-                </vbm:items>
-              </vbm:Spots>
-            </vbm:vos>
-          </vbm:GeoMap>
-        -->
 
-        <vbm:GeoMap id="GeoMap" width="100%" height="30em" centerPosition="7.46;51.5643" initialZoom="7" mapConfiguration="{GeoMapProvider>/mapConfig}">
-                <vbm:vos>
-                    <vbm:Spots click="onClickGeoMapSpot" scaleChangeable="false" items="{SpotModel>/spot}">
-						<vbm:items>
-							<vbm:Spot id="Spot" position="{SpotModel>pos}" text="{SpotModel>text}" tooltip="{SpotModel>tooltip}" type="{SpotModel>type}" click="onClickSpot" contextMenu="onContextMenuSpot">
-							</vbm:Spot>
-						</vbm:items>
-					</vbm:Spots>
-                </vbm:vos>
+          <vbm:GeoMap id="GeoMap" width="100%" height="30em" centerPosition="7.46;51.5643" initialZoom="7" mapConfiguration="{GeoMapProvider>/mapConfig}">
+              <vbm:vos>
+                  <vbm:Spots click="onClickGeoMapSpot" scaleChangeable="false" items="{SpotModel>/spot}">
+                    <vbm:items>
+                      <vbm:Spot id="Spot" position="{SpotModel>pos}" text="{SpotModel>text}" tooltip="{SpotModel>tooltip}" type="{SpotModel>type}" contextMenu="onContextMenuSpot">
+                      </vbm:Spot>
+                    </vbm:items>
+                  </vbm:Spots>
+              </vbm:vos>
                 <!--Legende, falls mal eine erwünscht sein sollte, wirft derzeit aber einen Fehler, den ich nicht so ohne weiteres Beheben kann.
                 <vbm:legend>
                   <vbm:Legend id="GeoMapLegend" caption="Legend">

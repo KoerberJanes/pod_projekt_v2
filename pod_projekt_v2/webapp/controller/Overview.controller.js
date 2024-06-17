@@ -184,6 +184,11 @@ sap.ui.define(
       resetTourStartFragmentUserModel:function(){ //Tolleranz nicht eingehalten, zuruecksetzen des Eingabefeldes
         var oTourStartFragmentUserModel=this.getOwnerComponent().getModel("TourStartFragmentUserModel");
         oTourStartFragmentUserModel.setProperty("/result/mileage", "");
+        this.setFocusForTourStartFragment();
+      },
+
+      setFocusForTourStartFragment:function(){
+        setTimeout(() => { this.getView().byId("kilometer").focus() },100);
       },
 
       onRefreshTours:function(){ //Refresh der Touren, bisher ein Dummy

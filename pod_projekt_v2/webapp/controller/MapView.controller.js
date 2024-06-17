@@ -4,11 +4,12 @@ sap.ui.define([
     "sap/ui/vbm/Spot",
     "sap/m/MessageToast",
     "sap/ui/vbm/GeoMap",
+    "podprojekt/utils/Helper",
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, JSONModel, Spot, MessageToast, GeoMap) {
+    function (Controller, JSONModel, Spot, MessageToast, GeoMap, Helper) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.MapView", {
@@ -68,8 +69,9 @@ sap.ui.define([
                 oGeoMap.setInitialPosition(sTargetGeoL+";"+sTargetGeoB+";"+sAltitude);
             },
 
-            onClickSpot:function(){ //Spot Informationen in Dialog anzeigen möglich
-
+            onClickGeoMapSpot:function(oEvent){
+                //Funktioniert noch nicht, hier gibt es eine Änderung seit dem letzten Coding von mir
+                oEvent.getSource().openDetailWindow("My Detail Window", "0", "0" );
             },
 
             onGetCurrentPosition:function(){ //Zurücksetzen der Map Position auf aktuellen Ort?

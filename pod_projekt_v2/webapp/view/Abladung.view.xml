@@ -44,8 +44,15 @@
                         </content>
                     </OverflowToolbar>
                     <Tree id="NVETree" items="{LoadingUnitsModel>/results}" ><!-- toggleOpenState="onExpand" -->
-                        <StandardTreeItem type="Active"  title="{LoadingUnitsModel>label1}" press="onCheckTreeItemPress"></StandardTreeItem><!--{LoadingUnitsModel>lodingDeviceTypeCaption} wäre auch möglich., sieht halt doof aus-->
-                        <!-- icon="sap-icon://navigation-right-arrow" -->
+                        <!--<StandardTreeItem type="Active"  title="{LoadingUnitsModel>label1}" press="onCheckTreeItemPress"></StandardTreeItem>-->
+                        <CustomTreeItem type="Active" ><!--press="onCheckTreeItemPress"-->
+                            <content>
+                                <HBox>
+                                    <Title text="{LoadingUnitsModel>label1}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/>
+                                    <Button icon="sap-icon://technical-object" visible="{= ${LoadingUnitsModel>DetailedInformations} === undefined ? false : true}" press="onTechnicalButtonPress"></Button>
+                                </HBox>
+                            </content>
+                        </CustomTreeItem>
                     </Tree>
                     <Button id="handeingabebtn" icon="sap-icon://simulate" text="{i18n>handeingabe}" press="onManualNveInputFragmentOpen"/>
                     <Button id="btnAllesQuittieren" text="{i18n>allesQuittieren}" icon="sap-icon://accept" press="checkForRemainingNves"/>
@@ -61,7 +68,7 @@
                     <Button type="Emphasized" text="Test" press="onTest"/>
                 </contentMiddle> -->
                 <contentRight>
-                    <Button text="{i18n>dialogCloseButtonText}" press="onAbortReceiptNves"/>
+                    <Button text="{i18n>dialogCloseButtonText}" press="checkIfNvesAreReceipt"/><!--onAbortReceiptNves-->
                 </contentRight>
             </Bar>
         </footer>

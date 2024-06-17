@@ -54,7 +54,7 @@ sap.ui.define([
             },
             
             checkIfTourIsFinished:function(){ //Pruefen ob die Tour abgeschlossen ist
-                var oActiveTour=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/orders")[0];
+                var oActiveTour=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
                 var sTourStatus=oActiveTour.orderStatus;
 
                 if(sTourStatus==="90"){

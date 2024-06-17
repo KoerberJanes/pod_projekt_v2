@@ -58,7 +58,7 @@ sap.ui.define([
                 oReceivedLoadingUnitsModel.setProperty("/results", aStableLoadingUnits);
             },
 
-            onCheckTreeItemPress:function(oEvent){ //Pruefen ob eine untergeordnete Struktur ausgewaehlt wurde
+            /*onCheckTreeItemPress:function(oEvent){ //Pruefen ob eine untergeordnete Struktur ausgewaehlt wurde
                 var sLevelOfPressedObject=oEvent.getSource().getLevel();
                 
                 if(sLevelOfPressedObject==="0"){
@@ -66,10 +66,14 @@ sap.ui.define([
                 }else{
                     this.getSelectedModelItem(oEvent);
                 }
+            },*/
+
+            onTechnicalButtonPress:function(oEvent){
+                this.getSelectedModelItem(oEvent);
             },
 
             getSelectedModelItem:function(oEvent){ //Das gedrueckte Element im Model erfassen
-                var sParentNodeId=oEvent.getSource().getParentNode().getId();
+                var sParentNodeId=oEvent.getSource().getEventingParent().getParent().getId();  
                 var aNveTreeItems=this.byId("NVETree").getItems();
                 var aModelItems=this.getOwnerComponent().getModel("LoadingUnitsModel").getProperty("/results");
 
@@ -102,23 +106,54 @@ sap.ui.define([
 
                 oReceiptNvesModel.setProperty("/results", aUpdatedReceiptNves);
                 oLoadingUnitsModel.setProperty("/results", []); //Model anpassen
-                //oReceiptNvesModel.refresh();
+                //oReceiptNvesModel.refresh(); //Nicht refreshen weil nicht notwendig
+            },
+
+            checkIfNvesAreReceipt:function(){
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für NVEs die noch Quittiert werden müssen
+                var oReceiptNvesModel=this.getOwnerComponent().getModel("ReceiptNvesModel"); //Model für Quittierte NVEs
+
+                if(oReceiptNvesModel.getProperty("/results").length){ //Wenn mindestens eine NVE quittiert wurde abfragen was gemacht werden soll
+                    this.driverNveReceiptDescisionBox();
+                } else{
+                    this.onAbortReceiptNves();
+                }
+
+            },
+
+            driverNveReceiptDescisionBox:function(){
+                MessageBox.show(
+                    "Save changes bevor going back?", {
+                        icon: MessageBox.Icon.INFORMATION,
+                        title: "Unsaved changes!",
+                        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                        emphasizedAction: MessageBox.Action.YES,
+                        onClose: function (oAction) { 
+                            if(oAction==="YES"){
+                                this.onSave();
+                            } else{
+                                this.onAbortReceiptNves();
+                            }
+                        }.bind(this)
+                    }
+                );
             },
 
             onAbortReceiptNves:function(){ //Herstellen des Ursprünglichen zustandes der Bearbeitung
                 var oReceivedLoadingUnitsModel=this.getOwnerComponent().getModel("ReceivedLoadingUnitsModel");
                 var aReceivedLoadingUnits=oReceivedLoadingUnitsModel.getProperty("/results");
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für NVEs die noch Quittiert werden müssen
                 var oReceiptNvesModel=this.getOwnerComponent().getModel("ReceiptNvesModel"); //Model für Quittierte NVEs
 
                 oLoadingUnitsModel.setProperty("/results", aReceivedLoadingUnits); //Die Anzeige der zu quittierenden NVEs wird wieder auf den Ursprungszustand zurueckgesetzt
                 oReceiptNvesModel.setProperty("/results", []); //Quittierte NVEs werden wieder zurueckgesetzt
-
-                this.navBackToQuittierung();
+                //Wo die Navigation in dieser Methode gemacht wird ist egal,
+                //die NVEs werden immer für einen kurzern Moment sichtbar sein
+                this.navBackToQuittierung(); 
             },
 
             onSave:function(){ //Speichern des aktuellen zustandes der Bearbeitung
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für NVEs die noch Quittiert werden müssen
                 var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
 
                 if(aRemainingNves.length>0){
