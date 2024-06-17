@@ -1545,8 +1545,6 @@ sap.ui.define([
             this.setModel(new sap.ui.model.json.JSONModel({
             }), "StopModel");
 			
-			this.setModel(new sap.ui.model.json.JSONModel({
-			}), "Kennzeichen");
 
 			this.setModel(new sap.ui.model.json.JSONModel({
             }), "SingleStopModel");

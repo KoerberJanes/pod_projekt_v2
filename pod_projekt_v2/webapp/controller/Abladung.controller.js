@@ -90,36 +90,37 @@ sap.ui.define([
                 this.nveClearingDialogOpen();
             },
 
-            checkForRemainingNves:function(){
+            checkForRemainingNves:function(){ //Prüfen ob noch Nves zu quittieren sind
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
                 var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
 
                 if(aRemainingNves.length>0){ //Wenn mehr als eine NVE zu quittieren ist
                     this.onReceiptAllRemainingNves(oLoadingUnitsModel, aRemainingNves);
-                }
-            },
-
-            onReceiptAllRemainingNves:function(oLoadingUnitsModel, aRemainingNves){
-                var oReceiptNvesModel=this.getOwnerComponent().getModel("ReceiptNvesModel"); //Model für Quittierte NVEs
-                var aReceiptNves=oReceiptNvesModel.getProperty("/results");
-                var aUpdatedReceiptNves=aReceiptNves.concat(aRemainingNves);
-
-                oReceiptNvesModel.setProperty("/results", aUpdatedReceiptNves);
-                oLoadingUnitsModel.setProperty("/results", []); //Model anpassen
-                //oReceiptNvesModel.refresh(); //Nicht refreshen weil nicht notwendig
-            },
-
-            checkIfNvesAreReceipt:function(){
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für NVEs die noch Quittiert werden müssen
-                var oReceiptNvesModel=this.getOwnerComponent().getModel("ReceiptNvesModel"); //Model für Quittierte NVEs
-
-                if(oReceiptNvesModel.getProperty("/results").length){ //Wenn mindestens eine NVE quittiert wurde abfragen was gemacht werden soll
-                    this.driverNveReceiptDescisionBox();
                 } else{
-                    this.onAbortReceiptNves();
+                    this.driverNveReceiptBackDescisionBox(); 
                 }
-
             },
+
+            onReceiptAllRemainingNves:function(oLoadingUnitsModel, aRemainingNves){ //NVEs werden alle quittiert
+                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs dieser sitzung
+                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
+                var aUpdatedCurrentReceiptNves=aCurrentReceiptNves.concat(aRemainingNves); //Neues Array erstellen damit Model automatisch aktualisiert wird
+
+                oCurrentSittingReceiptNvesModel.setProperty("/results", aUpdatedCurrentReceiptNves);
+                oLoadingUnitsModel.setProperty("/results", []); //Model anpassen
+            },
+
+            checkForUnsavedNves:function(){
+                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs dieser sitzung
+                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
+
+                if(aCurrentReceiptNves.length>0){ //Eine Nve wurde quittiert
+                    this.driverNveReceiptDescisionBox(); //Abfragen ob diese Gespeichert werden soll
+                } else{
+                    this.navBackToQuittierung(); //Zurück zur vorherigen Seite
+                }
+            },
+
 
             driverNveReceiptDescisionBox:function(){
                 MessageBox.show(
@@ -132,35 +133,71 @@ sap.ui.define([
                             if(oAction==="YES"){
                                 this.onSave();
                             } else{
-                                this.onAbortReceiptNves();
+                                this.onAbortCurrentReceiptNves();
                             }
                         }.bind(this)
                     }
                 );
             },
 
-            onAbortReceiptNves:function(){ //Herstellen des Ursprünglichen zustandes der Bearbeitung
-                var oReceivedLoadingUnitsModel=this.getOwnerComponent().getModel("ReceivedLoadingUnitsModel");
-                var aReceivedLoadingUnits=oReceivedLoadingUnitsModel.getProperty("/results");
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für NVEs die noch Quittiert werden müssen
-                var oReceiptNvesModel=this.getOwnerComponent().getModel("ReceiptNvesModel"); //Model für Quittierte NVEs
+            driverNveReceiptBackDescisionBox:function(){
+                MessageBox.show(
+                    "Do you want to go back to Abladung?", {
+                        icon: MessageBox.Icon.INFORMATION,
+                        title: "NVEs completly received!",
+                        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                        emphasizedAction: MessageBox.Action.YES,
+                        onClose: function (oAction) { 
+                            if(oAction==="YES"){
+                                this.navBackToQuittierung();
+                            } else{
+                                
+                            }
+                        }.bind(this)
+                    }
+                );
+            },
 
-                oLoadingUnitsModel.setProperty("/results", aReceivedLoadingUnits); //Die Anzeige der zu quittierenden NVEs wird wieder auf den Ursprungszustand zurueckgesetzt
-                oReceiptNvesModel.setProperty("/results", []); //Quittierte NVEs werden wieder zurueckgesetzt
-                //Wo die Navigation in dieser Methode gemacht wird ist egal,
-                //die NVEs werden immer für einen kurzern Moment sichtbar sein
-                this.navBackToQuittierung(); 
+            onAbortCurrentReceiptNves:function(){ //Herstellen des Ursprünglichen zustandes der Bearbeitung
+                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für quittierte NVEs dieser sitzung
+                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Noch nicht quittierte Nves
+                var aLoadingUnits=oLoadingUnitsModel.getProperty("/results");
+                var aUpdatedLoadingUnits= aLoadingUnits.concat(aCurrentReceiptNves);
+
+                oLoadingUnitsModel.setProperty("/results", aUpdatedLoadingUnits);
+                this.emptyCurrentSittingNvesModel();
+                this.navBackToQuittierung();
             },
 
             onSave:function(){ //Speichern des aktuellen zustandes der Bearbeitung
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für NVEs die noch Quittiert werden müssen
-                var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
+                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs dieser sitzung
+                var oTotalReceiptNvesModel=this.getOwnerComponent().getModel("TotalReceiptNvesModel"); //Model für bereits vorher Quittierte NVEs
+                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
+                var aTotalReceiptNves=oTotalReceiptNvesModel.getProperty("/results");
 
-                if(aRemainingNves.length>0){
-                    this.showNotAllNvesProcessedError();
+                if(aCurrentReceiptNves.length>0){ //Wenn mindestens eine neue NVE quittiert wurde abfragen ob gespeichert werden soll
+                    var aUpdatedTotalReceiptNves=aTotalReceiptNves.concat(aCurrentReceiptNves);//zusammenführen der Nves
+                    oTotalReceiptNvesModel.setProperty("/results", aUpdatedTotalReceiptNves);
+                    this.emptyCurrentSittingNvesModel();
+
+                    MessageToast.show("Nves wurden gesichert!", {
+                        duration: 1000,
+                        width:"15em"
+                    });
                 } else{
-                    this.navBackToQuittierung();
+                    //Keine Ahnung was gemacht werden soll, wenn keine Änderung stattgefunden hat.
+                    MessageToast.show("Es gab keine Nves die inzwischen bearbeitet wurden!", {
+                        duration: 1000,
+                        width:"15em"
+                    });
                 }
+                
+            },
+
+            emptyCurrentSittingNvesModel:function(){ //Erstmal vorhanden weil es eventuell nochmal gebraucht wird
+                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für quittierte NVEs dieser sitzung
+                oCurrentSittingReceiptNvesModel.setProperty("/results", []);
             },
 
             nveClearingDialogConfirm:function(){ 
@@ -218,13 +255,13 @@ sap.ui.define([
             },
 
             receiptEnteredLoadingUnit:function(oEnteredLoadingUnit){
-                var oReceiptNvesModel=this.getOwnerComponent().getModel("ReceiptNvesModel"); //Model für Quittierte NVEs
-                var aReceiptNves=oReceiptNvesModel.getProperty("/results"); //Merken des vorherigen Zustandes
+                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs
+                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results"); //Merken des vorherigen Zustandes
                 var aEnteredLoadingUnit=[oEnteredLoadingUnit]; //Erstellen eines Arrays mit quittierter NVE
-                var aUpdatedReceiptNves=aReceiptNves.concat(aEnteredLoadingUnit); //Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
+                var aUpdatedCurrentReceiptNves=aCurrentReceiptNves.concat(aEnteredLoadingUnit); //Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
 
-                oReceiptNvesModel.setProperty("/results", aUpdatedReceiptNves); //Setzen der neuen NVEs in das Model
-                oReceiptNvesModel.refresh();
+                oCurrentSittingReceiptNvesModel.setProperty("/results", aUpdatedCurrentReceiptNves); //Setzen der neuen NVEs in das Model
+                //oTotalReceiptNvesModel.refresh();
                 this.onManualNveInputFragmentClose();
             },
 

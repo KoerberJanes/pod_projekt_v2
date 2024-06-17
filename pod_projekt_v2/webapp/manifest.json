@@ -80,12 +80,6 @@
           "results": []
         }
       },
-      "Kennzeichen": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "licensePlate": {}
-        }
-      },
       "StopModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
@@ -101,17 +95,10 @@
       "TourStartFragmentModel":{
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
-          "tour": {}
+          "tour": {},
+          "mileage":""
         }
-      },
-      "TourStartFragmentUserModel":{
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "result": {
-            "mileage":""
-          }
-        }
-      },
+      }, 
       "RecipientNameModel":{
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
@@ -163,7 +150,13 @@
           "results": []
         }
       },
-      "ReceiptNvesModel": {
+      "TotalReceiptNvesModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "CurrentSittingReceiptNvesModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "results": []

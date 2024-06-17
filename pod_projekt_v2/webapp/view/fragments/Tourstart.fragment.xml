@@ -25,7 +25,7 @@
 							<layout:GridData span="L12 M12 S12"/>
 						</layoutData>       
 					</Label>
-					<Input id="kilometer" value="{TourStartFragmentUserModel>/result/mileage}" type="Number">
+					<Input id="kilometer" value="{TourStartFragmentModel>/mileage}" type="Number">
 						<layoutData>
 							<layout:GridData span="L12 M12 S12"/>
 						</layoutData>

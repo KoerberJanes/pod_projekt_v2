@@ -148,19 +148,18 @@ sap.ui.define(
       },
 
       checkIfEnteredValueInRange: function () { //Pruefen ob Tolleranz eingehalten wurde
-        var oTourStartFragmentUserModel=this.getOwnerComponent().getModel("TourStartFragmentUserModel");
-        var sTourStartFragmentInput=oTourStartFragmentUserModel.getProperty("/result/mileage");
+        var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
+        var sTourStartFragmentInput=oTourStartFragmentModel.getProperty("/mileage");
         var iTourStartFragmentInput=parseInt(sTourStartFragmentInput);
 
-        var oDisplayedTour=this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
-        var iRespectiveTourMileage= oDisplayedTour.mileage;
-        var iRespectiveTourMileageTolerance=oDisplayedTour.mileageTolerance;
+        var iRespectiveTourMileage= oTourStartFragmentModel.getProperty("/tour/mileage");
+        var iRespectiveTourMileageTolerance=oTourStartFragmentModel.getProperty("/tour/mileageTolerance");
 
         if(iTourStartFragmentInput >= (iRespectiveTourMileage-iRespectiveTourMileageTolerance) && 
             iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance)){
           this.setStopInformationModelData();
         } 
-        this.resetTourStartFragmentUserModel();
+        this.resetTourStartFragmentUserInput();
       },
 
       setStopInformationModelData:function(){ //Tolleranz eingehalten und Stops der Tour in entsprechendes Model setzen
@@ -181,9 +180,9 @@ sap.ui.define(
         });
     },
 
-      resetTourStartFragmentUserModel:function(){ //Tolleranz nicht eingehalten, zuruecksetzen des Eingabefeldes
-        var oTourStartFragmentUserModel=this.getOwnerComponent().getModel("TourStartFragmentUserModel");
-        oTourStartFragmentUserModel.setProperty("/result/mileage", "");
+      resetTourStartFragmentUserInput:function(){ //Tolleranz nicht eingehalten, zuruecksetzen des Eingabefeldes
+        var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
+        oTourStartFragmentModel.setProperty("/mileage", "");
         this.setFocusForTourStartFragment();
       },
 
@@ -200,7 +199,7 @@ sap.ui.define(
       },
 
       onCloseTourStartFragment: function () { //Tourstart Fragment schließen
-        this.resetTourStartFragmentUserModel();
+        this.resetTourStartFragmentUserInput();
         this.byId("TourstartDialog").close();
       },
 
