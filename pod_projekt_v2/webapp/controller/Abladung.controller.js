@@ -58,16 +58,6 @@ sap.ui.define([
                 oReceivedLoadingUnitsModel.setProperty("/results", aStableLoadingUnits);
             },
 
-            /*onCheckTreeItemPress:function(oEvent){ //Pruefen ob eine untergeordnete Struktur ausgewaehlt wurde
-                var sLevelOfPressedObject=oEvent.getSource().getLevel();
-                
-                if(sLevelOfPressedObject==="0"){
-                    //Fehler Meldung oder sonst was
-                }else{
-                    this.getSelectedModelItem(oEvent);
-                }
-            },*/
-
             onTechnicalButtonPress:function(oEvent){
                 this.getSelectedModelItem(oEvent);
             },
@@ -200,10 +190,87 @@ sap.ui.define([
                 oCurrentSittingReceiptNvesModel.setProperty("/results", []);
             },
 
-            nveClearingDialogConfirm:function(){ 
+            nveClearingDialogConfirm:function(oEvent){ 
                 //Platz fuer zusaetzliche Funktionen, die gemacht werden können
-
+                
+                this.chekIfAtLeastOneErrorReasonIsSelected();
             },
+
+            chekIfAtLeastOneErrorReasonIsSelected:function(){
+                var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
+                var oCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
+                var aQuantityOfSelectedReasons=this.getSelectedClearingReasonQuantity(oCurrentClearingReasons);
+
+                if(aQuantityOfSelectedReasons.length>0){ //Mindestens 1 Klaergrund wurde ausgewaehlt
+                    this.checkIfOnlyOneErrorReasonIsSelected(aQuantityOfSelectedReasons);
+                } else{ //kein Klaergrund wurde ausgewaehlt
+                    this.noClearingReasonSelectedError();
+                }
+            },
+
+            checkIfOnlyOneErrorReasonIsSelected:function(aQuantityOfSelectedReasons){
+                var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
+                var oCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
+
+                //Hier kann das Intervall beschränkt werden!
+                //Bisher >0 --> untere Schranke gegeben
+                //Hier >1 --> obere Schranke wird festgelegt 
+                if(aQuantityOfSelectedReasons.length>1){ //Mindestens 1 Klaergrund wurde ausgewaehlt
+                    this.tooManyErrorReasonsSelectedError();
+                } else{ //kein Klaergrund wurde ausgewaehlt
+                    this.setSelectedClearingAttributes(oCurrentClearingReasons);
+                }
+            },
+
+            getSelectedClearingReasonQuantity:function(oCurrentClearingReasons){ //Gibt Array mit Anzahl der Selectierten Klaergruende zurueck
+                return Object.entries(oCurrentClearingReasons).filter(([, bool]) => bool).map(e => e[0]);
+            },
+
+            setSelectedClearingAttributes:function(oCurrentClearingReasons){ //Setzen der Klaergruende in die zu klaerende NVE
+                var aSelectedAttributeWithValue=[];
+
+                for (var property in oCurrentClearingReasons) { //Jedes Atrtibut wird durchlaufen
+                    //console.log(`${property}: ${oCurrentClearingReasons[property]}`);
+                    if(oCurrentClearingReasons[property]){
+
+                        var sPropertyName=property;
+                        var oAttributeWithValue={};
+                        Object.defineProperty(oAttributeWithValue, sPropertyName, {
+                            value: oCurrentClearingReasons[property],
+                            writable: false,
+                        });
+                        var aNewAttributeObject=[oAttributeWithValue];
+
+                        aSelectedAttributeWithValue=aSelectedAttributeWithValue.concat(aNewAttributeObject);
+                    }
+                }
+
+                this.setClearingResonInNve(aSelectedAttributeWithValue); //Einzelner Reason
+                this.setClearingResonsInNve(aSelectedAttributeWithValue); //Mehrere Reasons
+            },
+
+            setClearingResonInNve:function(aSelectedAttributeWithValue){
+                var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel");
+                var oClearingNve=oClearingNveModel.getProperty("/clearingNve");
+
+                //Einzelnes Objekt
+                var oSelectedReason=aSelectedAttributeWithValue[0];
+                Object.defineProperty(oClearingNve, "clearingReason", {
+                    value: oSelectedReason
+                });
+            },
+
+            setClearingResonsInNve:function(aSelectedAttributeWithValue){
+                var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel");
+                var oClearingNve=oClearingNveModel.getProperty("/clearingNve");
+
+
+                //Fue mehrere Klaergruende
+                Object.defineProperty(oClearingNve, "aClearingReasons", {
+                    value: aSelectedAttributeWithValue
+                });
+            },
+
 
             nveClearingDialogReject:function(){
                 //Platz fuer zusaetzliche Funktionen, die gemacht werden können
@@ -267,6 +334,22 @@ sap.ui.define([
 
             showNotAllNvesProcessedError:function(){
                 MessageBox.error(this._oBundle.getText("nvsUnbe"), {
+                    onClose:function(){
+                        //NOP:
+                    }.bind(this)
+                });
+            },
+
+            tooManyErrorReasonsSelectedError:function(){
+                MessageBox.error(this._oBundle.getText("tooManyClearingResonsSelected"), {
+                    onClose:function(){
+                        //NOP:
+                    }.bind(this)
+                });
+            },
+
+            noClearingReasonSelectedError:function(){
+                MessageBox.error(this._oBundle.getText("noClearingResonSelected"), {
                     onClose:function(){
                         //NOP:
                     }.bind(this)

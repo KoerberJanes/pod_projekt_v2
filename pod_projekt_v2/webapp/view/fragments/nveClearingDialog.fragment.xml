@@ -19,18 +19,18 @@
             <content>
                 <form:SimpleForm id="clearDialogForm" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
                     <form:content>
-                    <CheckBox id="notFoundCb" text="{i18n>nichtgefunden}" wrapping="true" select="onSelect"/>
-                    <CheckBox id="defectCb" text="{i18n>defekt}" wrapping="true" select="onSelect"/>
-                    <CheckBox id="partiallyDefectCb" text="{i18n>twdefekt}" wrapping="true" select="onSelect"/>
-                    <CheckBox id="notAcceptedCb" text="{i18n>annahmeverweigert}" wrapping="true" select="onSelect"/>
-                    <CheckBox id="noMoneyCb" text="{i18n>keingeld}" wrapping="true" select="onSelect"/>
-                    <CheckBox id="laterShippingCb" text="{i18n>spaetereauslieferung}" wrapping="true" select="onSelect"/>
+                    <CheckBox id="notFoundCb" selected="{CurrentSittingClearingNvesModel>/results/notFound}" text="{i18n>nichtgefunden}" wrapping="true"/><!--select="onSelect"-->
+                    <CheckBox id="defectCb" selected="{CurrentSittingClearingNvesModel>/results/malfunction}" text="{i18n>defekt}" wrapping="true" /><!--select="onSelect"-->
+                    <CheckBox id="partiallyDefectCb" selected="{CurrentSittingClearingNvesModel>/results/partiallyMalfunctioning}" text="{i18n>twdefekt}" wrapping="true" /><!--select="onSelect"-->
+                    <CheckBox id="notAcceptedCb" selected="{CurrentSittingClearingNvesModel>/results/notAccepted}" text="{i18n>annahmeverweigert}" wrapping="true" /><!--select="onSelect"-->
+                    <CheckBox id="noMoneyCb" selected="{CurrentSittingClearingNvesModel>/results/noMoney}" text="{i18n>keingeld}" wrapping="true" /><!--select="onSelect"-->
+                    <CheckBox id="laterShippingCb" selected="{CurrentSittingClearingNvesModel>/results/laterShipping}" text="{i18n>spaetereauslieferung}" wrapping="true" /><!--select="onSelect"-->
                     </form:content>
                 </form:SimpleForm>
 
                 <form:SimpleForm id="clearDialogForm2" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
                     <Label id="txtBemerkung" text="{i18n>bemerkungen}" width="70%"/>
-                    <TextArea id="taBemerkungen"></TextArea>
+                    <TextArea id="taBemerkungen" value="{CurrentSittingClearingNvesModel>/results/remarks}"></TextArea>
                 </form:SimpleForm>
                      
                 <form:SimpleForm id="clearDialogForm3" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >

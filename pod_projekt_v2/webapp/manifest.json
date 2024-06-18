@@ -162,10 +162,36 @@
           "results": []
         }
       },
+      "ClearingNvesModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "TotalClearingNvesModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "CurrentSittingClearingNvesModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": {
+            "notFound": false,
+            "malfunction": false,
+            "partiallyMalfunctioning": false,
+            "notAccepted": false,
+            "noMoney": false,
+            "laterShipping": false,
+            "remarks": ""
+          }
+        }
+      },
       "nveClearingDialogModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
-          "clearingNve": {}
+          "stats": {}
         }
       },
       "manualNveInputModel": {
