@@ -15,7 +15,7 @@
 							<layout:GridData span="L12 M12 S12"/>
 						</layoutData>       
 					</Label>
-					<Input id="kennzeichen" value="{TourStartFragmentModel>/tour/licensePlate}">
+					<Input id="kennzeichen" value="{TourStartFragmentModel>/tour/licensePlate}" editable="false">
 						<layoutData>
 							<layout:GridData span="L12 M12 S12"/>
 						</layoutData>

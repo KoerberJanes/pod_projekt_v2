@@ -58,11 +58,6 @@
                             type="Navigation"
                             press="setPressedTour">
                         </StandardListItem>
-                            <!--Der Inhalt vom infoState ist krasses Zeug von Timo-->
-                        <!--
-                            <StandardListItem press="onItemPress" title="{TourModel>routeCaption}" description="{TourModel>externalId}" info="{TourModel>routeStatus}" type="Active" icon="{TourModel>Icon}"/>
-                                -->
-                        <!--wrapCharLimit="10" war in StandardListItem-->
                     </List>
                 </form:content>
             </form:SimpleForm>

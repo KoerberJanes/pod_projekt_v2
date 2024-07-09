@@ -11,10 +11,7 @@
                 <Bar>
                     
                     <contentLeft>
-                        <!--
-                        <Button id="MenuBtn"  type="Transparent" icon="sap-icon://menu2" press="onPressMenu"></Button>
-                        <Button id="BackBtn" type="Back" press="onNavToActiveTour"></Button>
-                        -->
+                        <!--Leer-->
                     </contentLeft>
                     <contentMiddle>
                         <Label text="{i18n>stopuebersicht}"/>
@@ -48,7 +45,7 @@
                     <Label/>
                     <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>Karte}"></Button>
                     <Label text="{i18n>Hinweis}"></Label>
-                    <TextArea id="taHinweis" value="{StopInformationModel>/tour/shipmentConditionCaption}"></TextArea>
+                    <TextArea id="taHinweis" value="{StopInformationModel>/tour/shipmentConditionCaption}" editable="false"></TextArea>
                     <Label text="{i18n>Avisnummer}"></Label>
                     <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{StopInformationModel>/tour/phoneAvis}"></Button>
                     

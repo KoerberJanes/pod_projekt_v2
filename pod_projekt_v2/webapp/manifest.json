@@ -107,16 +107,53 @@
           }
         }
       },
+      "DeliveryNoteModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": [
+            {
+              "Name":"TestName 1",
+              "ProductId": "42069"
+            },
+            {
+              "Name":"TestName 2",
+              "ProductId": "69420"
+            }
+          ]
+        }
+      },
       "ComplaintsModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "results": []
         }
       },
+      "LatestPhotoModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "photo": {}
+        }
+      },
       "PhotoModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "photos": []
+        }
+      },
+      "PhotoTypeModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "photoTypes": [{
+            "photoTyp": "Zum Stopp",
+            "photo": []
+          },{
+            "photoTyp": "Zur Beanstandung",
+            "photo": []
+          },
+          {
+            "photoTyp": "Test",
+            "photo": []
+          }]
         }
       },
       "LoadingDeviceModel": {

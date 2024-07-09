@@ -1,21 +1,34 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form">
-	<Dialog id="FotoMachenDialog" afterOpen="onAfterOpen" afterClose="onAfterClose">
+	<Dialog id="FotoMachenDialog" afterOpen="addCameraPlayerToCameraDialog" afterClose="">
         <customHeader>
             <Bar >
                 <contentRight>
-                    <Label design="Bold" text="FotoMachenDialog"/>
-                        <ToolbarSpacer ></ToolbarSpacer>
                     <Button icon="sap-icon://decline" press="onAddFotoDialogClose"></Button>
                 </contentRight>
             </Bar>
         </customHeader>
 		<content>
-            <core:HTML id="idHtml">
-            </core:HTML>
+            <core:HTML id="videoFeedContainer"/>
             <form:SimpleForm id="sfFoto">
                 <form:content>
-                    <Button icon="sap-icon://add-photo" text="{i18n>foto}" press="onSnappPicture"></Button>
-                    <VBox id="oVBox"></VBox>
+                    <Button icon="sap-icon://add-photo" text="{i18n>foto}" press="checkIfPhotoNeedsToBeCleared"></Button>
+                    <!--<VBox id="latestPhotoDisplay" ></VBox>-->
+                    <!--
+                    <List  id="PhotoList" mode="None" includeItemInSelection="true" items="{LatestPhotoModel>/photo}" visible="{= Object.keys(${LatestPhotoModel>/photo}).length === 0 ? false : true}" noDataText="Kein Foto"> 
+                        <items>
+                            <CustomListItem>
+                                <Image src="{= ${LatestPhotoModel>/photo}.src}" width="{= ${LatestPhotoModel>/photo}.width}" height="{= ${LatestPhotoModel>/photo}.heigth}"/>
+                            </CustomListItem>
+                        </items>
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title text="{i18n>LatestPhoto}"/>
+                            </OverflowToolbar>
+                        </headerToolbar>
+                    </List>
+                    -->
+                    <Image src="{= ${LatestPhotoModel>/photo}.src}" width="{= ${LatestPhotoModel>/photo}.width}" height="{= ${LatestPhotoModel>/photo}.heigth}"/>
+
                     <Button icon="sap-icon://action" text="{i18n>uebernehmen}" press="onConfirmFoto"></Button>
                 </form:content>
             </form:SimpleForm>
