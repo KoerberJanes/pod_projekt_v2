@@ -1,17 +1,23 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
-    "sap/m/MessageBox"
+    "sap/m/MessageBox",
+	"sap/m/MessageToast"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, JSONModel, MessageBox) {
+    function (Controller,
+	JSONModel,
+	MessageBox,
+	MessageToast) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Quittierung", {
             onInit: function () {
 
+                //! WICHTIG: Es muss noch das Model gesetzt werden für das Selektierte Model (PhotoTypeSelectedModel)
+                //! Muss gemacht werden, weil das Moden inital leer ist und erst beim wechsel des Selektierten Items alles autonom abläuft
             },
 
             onAfterRendering: function() {
@@ -104,7 +110,7 @@ sap.ui.define([
 
             },
 
-            onAddFotoDialogClose:function(){ //Schließen X Dialog
+            onAddFotoDialogClose:function(){ //Schließen Dialog
                 this.disableVideoStreams();
                 this.clearPhotoModel();
                 this.byId("FotoMachenDialog").close();
@@ -125,43 +131,125 @@ sap.ui.define([
                 this.onSnappPicture();
             },
 
-            clearPhotoModel:function(oPhotoModel){
-                var oPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel");
+            clearPhotoModel:function(){
+                var oPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel"); //Model in dem das geschossene Foto gespeichert wird
 
                 oPhotoModel.setProperty("/photo", {});
             },
 
             onSnappPicture:function(){ //(neues) Foto machen
-                var oVideoFeed=document.getElementById("player");
+                var oVideoFeed=document.getElementById("player"); //VideoStream
                 var canvas=document.createElement('canvas');
                 var context = canvas.getContext('2d');
+                var oDateAndTime= new Date(); //Datum inklusive Uhrzeit
 
                 canvas.width = oVideoFeed.videoWidth;
                 canvas.height = oVideoFeed.videoHeight;
                 context.drawImage(oVideoFeed, 0, 0, canvas.width, canvas.height);
 
-                var oImageData=canvas.toDataURL("image/png");
+                var oImageData=canvas.toDataURL("image/png"); //Base 64 encoded Bild-String
 
                 var oImage= {
                     src: oImageData,
                     width: "100%",
-                    height: "auto"
-                };
+                    height: "auto",
+                    dateAndTime: oDateAndTime.toUTCString()
+                }; //Objekt wirde erzeugt und ist bereit als Image in der View interpretiert zu werden
 
                 this.saveNewImage(oImage);
-                
-                
             },
 
-            onConfirmFoto:function(){ //Foto bestätigen
+            onPhotoTypesSelectChange:function(){
+                var oSelectedPhotoType=this.getView().byId("photoTypeSelect").getSelectedItem();
+                var sSelectedPhotoTypeText=oSelectedPhotoType.getText();
+                var oSelectedType=this.getSelectedPhotoTypeObject(sSelectedPhotoTypeText);
+                this.setPhotoTypeSelectedModel(oSelectedType);
+                
+                //Es besteht die Option hier den Select-Typen der voll ist, zu deaktivieren
+                //var bEoughSpace=this.checkIfSpaceForAnotherPhoto(oSelectedType);
+            },
 
+            setPhotoTypeSelectedModel:function(oSelectedType){
+                var oPhotoTypeSelectedModel=this.getOwnerComponent().getModel("PhotoTypeSelectedModel");
+                
+                oPhotoTypeSelectedModel.setProperty("/type", oSelectedType);
+            },
+
+            getSelectedPhotoTypeObject:function(sSelectedTypeText){
+                var oPhotoTypeModel=this.getOwnerComponent().getModel("PhotoTypeModel"); //Model mit Select-Optionen
+                var aSelectPhotoTypes=oPhotoTypeModel.getProperty("/photoTypes"); //Array des Models
+                var getIndex= (element) => element.photoTyp === sSelectedTypeText; //
+                var iIndexOfSelectedType= aSelectPhotoTypes.findIndex(getIndex); //Index des ausgewählten Model-Objektes erfahren 
+
+                return aSelectPhotoTypes[iIndexOfSelectedType]; //Model-Objekt zurückgeben, denn Model-Objekt != Select-Objekt
+            },
+
+            checkIfSpaceForAnotherPhoto:function(oSelectedType){ //Wirft eine Fehlermeldung, wenn Menge an Fotos überschritten wird
+                
+                var sTyp=oSelectedType.photoTyp;
+                var iAllawedPhotos=0;
+                var bEnoughSpace=true;
+
+                switch (sTyp) { //Existiert nur, wenn unterschiedliche Anzahl Photos möglich sind!
+                    case "Zum Stopp":
+                        iAllawedPhotos=5;
+                        break;
+                    case "Zur Beanstandung":
+                        iAllawedPhotos=3;
+                        break;
+                    case "Test":
+                        iAllawedPhotos=0;
+                        break;
+                
+                    default:
+                        break;
+                }
+                
+                if(oSelectedType.photo.length === iAllawedPhotos){
+                    this.showNotEnoughSpaceError();
+                    //moeglichkeit fotos zu entfernen einbauen
+                    //Vielleicht das Select-Element deaktivieren
+                    bEnoughSpace=false;
+                }
+
+                return bEnoughSpace;
+            },
+
+            onCheckIfPhotoTaken:function(){
+                var oLatestPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel"); 
+                var oTakenPhoto= oLatestPhotoModel.getProperty("/photo"); //'Geschossenes' Foto
+
+                //Muss geprüft werden weil Model-Inhalt leeres Objekt ist
+                if(Object.keys(oTakenPhoto).length !== 0){ //Wenn Objekt Attribute enthält, exisitert ein Foto
+                    this.onConfirmFoto();
+                } else{
+                    MessageToast.show("Es wurde kein Foto geschossen!", {
+                        duration: 1000,
+                        width:"15em"
+                    });
+                }
+            },
+
+            onConfirmFoto:function(){ //Foto bestätigen und übernehmen
+                var oLatestPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel"); 
+                var oTakenPhoto= oLatestPhotoModel.getProperty("/photo"); //Geschossenes Foto
+
+                var oPhotoTypeSelectedModel=this.getOwnerComponent().getModel("PhotoTypeSelectedModel");//Model mit gespeichertem Foto-Typ
+                var oSelectedType=oPhotoTypeSelectedModel.getProperty("/type"); //Selektierter Foto-Typ 
+                var bEnoughSpace=this.checkIfSpaceForAnotherPhoto(oSelectedType); //Platz für weitere Fotos?
+
+                if(bEnoughSpace){
+                    var aNewPhoto=[oTakenPhoto]; //Erstellen eines Arrays mit Aktuellem Foto
+                    var aUpdatedPhotos=oSelectedType.photo.concat(aNewPhoto); //Erstellen eines Arrays mit alten Fotos und neuem Foto darin
+                    oPhotoTypeSelectedModel.setProperty("/type/photo", aUpdatedPhotos);//Setzen der neuen Fotos in das Model
+                } else{
+                    this.showNotEnoughSpaceError();
+                }
+                
             },       
 
-            saveNewImage:function(oImage){
+            saveNewImage:function(oImage){ //Speichern von zu letzt geschossenem Foto
                 var oPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel");
-                var oSavedPhoto=oPhotoModel.getProperty("/photo");
-                //var aNewPicture=[oImage];
-                //var aUpdatedPhotos=aSavedPhotos.concat(aNewPicture);
                 oPhotoModel.setProperty("/photo", oImage);
                 oPhotoModel.refresh();
             },
@@ -173,8 +261,15 @@ sap.ui.define([
                     }.bind(this)
                 });
             },
-                
 
+            showNotEnoughSpaceError:function(){
+                MessageBox.error(this._oBundle.getText("notEnoughSpace"),{
+                    onClose: function() {
+                        //Bisher funktionslos
+                    }.bind(this)
+                });
+            },
+                
             showEmptyNameError:function(){ //Fehler weil kein Kundenname eingetragen
                 MessageBox.error(this._oBundle.getText("nameang"),{
                     onClose: function() {
@@ -182,6 +277,7 @@ sap.ui.define([
                     }.bind(this)
                 });
             },
+            
 
             onFotoabfrageDialogOpen:function(){ //Oeffnen Fotoabfrage frament
                 this.oFotoabfrageDialog ??= this.loadFragment({

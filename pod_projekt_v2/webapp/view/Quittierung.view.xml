@@ -78,9 +78,8 @@
 
                     <HBox justifyContent="SpaceAround">
                         <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="onOpenPhotoDialog" /> <!--press="onFotoabfrageDialogOpen"-->
-                            <Select id="photoTypeSelect" items="{
-                                path:'PhotoTypeModel>/photoTypes'
-                            }">
+                        <Select id="photoTypeSelect" items="{
+                                path:'PhotoTypeModel>/photoTypes'}" change="onPhotoTypesSelectChange">
                                 <core:ListItem text="{PhotoTypeModel>photoTyp}" key="{PhotoTypeModel>photoTyp}"/>
                         </Select>
                     </HBox>
