@@ -7,30 +7,33 @@
     xmlns:u="sap.ui.unified"
     xmlns:upload="sap.m.upload">
 
-    <Dialog id="clearDialog" title="{i18n>klaerungen}" state="None" afterOpen="onFocusTA" afterClose="" >
+    <Dialog id="clearDialog" title="={i18n>clearing}" state="None" afterOpen="onFocusTA" afterClose="" >
         <customHeader>
             <!--custom Header Items-->
             <Bar id="clearDialogHeaderBar">
                 <contentLeft>
-                    <Title id="clearDialogTitle" text="{i18n>klaerungen}"/>
+                    <Title id="clearDialogTitle" text="{i18n>clearing}&#13;"/><!--{CurrentClearingObjectModel>/clearingObject/ProductId} Das gibt die Lieferscheinnummer an-->
                 </contentLeft>
             </Bar>
         </customHeader>
             <content>
                 <form:SimpleForm id="clearDialogForm" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
                     <form:content>
-                    <CheckBox id="notFoundCb" selected="{CurrentSittingClearingNvesModel>/results/notFound}" text="{i18n>nichtgefunden}" wrapping="true"/><!--select="onSelect"-->
-                    <CheckBox id="defectCb" selected="{CurrentSittingClearingNvesModel>/results/malfunction}" text="{i18n>defekt}" wrapping="true" /><!--select="onSelect"-->
-                    <CheckBox id="partiallyDefectCb" selected="{CurrentSittingClearingNvesModel>/results/partiallyMalfunctioning}" text="{i18n>twdefekt}" wrapping="true" /><!--select="onSelect"-->
-                    <CheckBox id="notAcceptedCb" selected="{CurrentSittingClearingNvesModel>/results/notAccepted}" text="{i18n>annahmeverweigert}" wrapping="true" /><!--select="onSelect"-->
-                    <CheckBox id="noMoneyCb" selected="{CurrentSittingClearingNvesModel>/results/noMoney}" text="{i18n>keingeld}" wrapping="true" /><!--select="onSelect"-->
-                    <CheckBox id="laterShippingCb" selected="{CurrentSittingClearingNvesModel>/results/laterShipping}" text="{i18n>spaetereauslieferung}" wrapping="true" /><!--select="onSelect"-->
-                    </form:content>
-                </form:SimpleForm>
+                
+                    <List id="checkBoxList" items="{CurrentSittingClearingNvesModel>/results}" mode="SingleSelectLeft">
+                        <headerToolbar>
+                            <OverflowToolbar id="OvtbTourselect">
+                                <Label id="ueberschrift" text="Mögliche Klärgründe:"></Label>
+                                <ToolbarSpacer/>
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <StandardListItem title="{CurrentSittingClearingNvesModel>Description}" selected="{CurrentSittingClearingNvesModel>value}" wrapping="true" press="setPressedTour">
+                        </StandardListItem>
+                    </List>
 
-                <form:SimpleForm id="clearDialogForm2" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
+                    </form:content>
                     <Label id="txtBemerkung" text="{i18n>bemerkungen}" width="70%"/>
-                    <TextArea id="taBemerkungen" value="{CurrentSittingClearingNvesModel>/results/remarks}"></TextArea>
+                    <TextArea id="taBemerkungen" value="{CurrentSittingClearingNvesModel>/remarks}"></TextArea>
                 </form:SimpleForm>
                      
                 <form:SimpleForm id="clearDialogForm3" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >

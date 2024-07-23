@@ -10,31 +10,27 @@
         <customHeader>
                 <Bar>                    
                     <contentLeft>
-                        <!--
-                        <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"></Button>
-                        <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onOpenLogoutDialog"></Button>
-                        -->
                     </contentLeft>
                     <contentMiddle>
                         <Label text="{i18n>title}"/>
                     </contentMiddle>
                     <contentRight>
-                        <!--Leer-->
                     </contentRight>
                 </Bar>
             </customHeader>
         <content>
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
+                    <!--
                     <Bar>
                         <contentMiddle>
-                            <!-- Nicht mehr so wichtig (S. Brenner) -> kann aber ggf. wieder rein gemacht werden
+                             Nicht mehr so wichtig (S. Brenner) -> kann aber ggf. wieder rein gemacht werden
                                 Dazu müsste der gesamte 'Bar' abschnitt entfernt werden
                             <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
-                            -->
+                            
                         </contentMiddle>
                     </Bar>
-                    
+                    -->
                     <List id="tourSelectionList" items="{TourModel>/results}" noDataText="{i18n>npa}" 
                         growing="true" growingThreshold="10" busyIndicatorDelay="500">
                         <!--selectionChange="onTourAuswahl" mode="SingleSelectMaster"-->

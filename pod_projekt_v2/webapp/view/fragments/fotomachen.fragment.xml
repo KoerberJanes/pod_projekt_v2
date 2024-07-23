@@ -3,7 +3,7 @@
         <customHeader>
             <Bar >
                 <contentLeft>
-                    <Title text="{= ${PhotoTypeSelectedModel>/type}.photoTyp}"></Title>
+                    <Title id="FotoMachenDialogeTitle" text="{= ${PhotoTypeSelectedModel>/type}.photoTyp} ({= ${PhotoTypeSelectedModel>/type}.photo.length})"></Title>
                 </contentLeft>
                 <contentRight>
                     <Button icon="sap-icon://decline" press="onAddFotoDialogClose"></Button>

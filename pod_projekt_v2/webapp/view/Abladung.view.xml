@@ -3,7 +3,7 @@
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns="sap.m"
     xmlns:form="sap.ui.layout.form">
-    <Page id="AbladungPageId" title="{i18n>title}">
+    <Page id="AbladungPageId">
         <customHeader>
             <Bar>                    
                 <contentLeft>
@@ -21,18 +21,20 @@
             </Bar>
         </customHeader>
         <content>
+
+            <form:SimpleForm id="currentTourInfoForm">
+                <form:content>
+                    <Text id="driverInfo" text="{i18n>Robin Rösinger}&#10;"/>
+                    <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" wrapping="true" level="H2"/>
+                        <HBox justifyContent="SpaceAround">
+                            <Label text="{i18n>Adresse}"/>
+                            <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
+                        </HBox>
+                </form:content>
+            </form:SimpleForm>
+
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
-                    <Bar>
-                        <contentMiddle>
-                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
-                        </contentMiddle>
-                    </Bar>
-                      <VBox class="sapUiSmallMargin" id="VboxId">
-                        <Text id="shipmentnr" text="{i18n>Tour}{TourStartFragmentModel>/tour/routeCaption}&#13;&#10;{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"/>
-                        <!--<Text id="currentTourLabelId" text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;{StopInformationModel>/tour/country}{StopInformationModel>/tour/zipCode}{StopInformationModel>/tour/city}" />-->
-                        <!-- <Text id="Adresse"></Text> addressName1, country zipCode city--> 
-                    </VBox>
                     <OverflowToolbar active="false" id="NVEBar"> <!-- press="onViewNVEs" -->
                         <content>
                             <!-- <core:Icon id="iconId" src="sap-icon://sys-add" class="sapUiTinyMarginBegin"/> -->
@@ -49,7 +51,7 @@
                             <content>
                                 <HBox>
                                     <Title text="{LoadingUnitsModel>label1}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/>
-                                    <Button icon="sap-icon://technical-object" visible="{= ${LoadingUnitsModel>DetailedInformations} === undefined ? false : true}" press="onTechnicalButtonPress"></Button>
+                                    <Button text="{i18n>clearing}" visible="{= ${LoadingUnitsModel>DetailedInformations} === undefined ? false : true}" press="onClearingButtonPress"></Button>
                                 </HBox>
                             </content>
                         </CustomTreeItem>
@@ -64,11 +66,11 @@
                 <contentLeft>
                     <Button text="{i18n>save}" id="savebtn" press="onSave"/>
                 </contentLeft>
-                <!-- <contentMiddle>
+                <contentMiddle>
                     <Button type="Emphasized" text="Test" press="onTest"/>
-                </contentMiddle> -->
+                </contentMiddle>
                 <contentRight>
-                    <Button text="{i18n>dialogCloseButtonText}" press="checkForUnsavedNves"/><!--onAbortReceiptNves-->
+                    <Button text="{i18n>dialogCloseButtonText}" press="checkForUnsavedNves"/>
                 </contentRight>
             </Bar>
         </footer>

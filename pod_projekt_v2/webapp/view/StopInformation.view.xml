@@ -7,29 +7,30 @@
     xmlns:u="sap.ui.unified" 
     xmlns:tnt="sap.tnt" displayBlock="true">
     <Page id="stopInformationPageId" title="{i18n>title}">
+        
         <customHeader>
-                <Bar>
-                    
-                    <contentLeft>
-                        <!--Leer-->
-                    </contentLeft>
-                    <contentMiddle>
-                        <Label text="{i18n>stopuebersicht}"/>
-                    </contentMiddle>
-                    <contentRight>
-                        <!--Leer-->
-                    </contentRight>
+            <Bar>
+                <contentLeft>
+                </contentLeft>
+                <contentMiddle>
+                    <Label text="{i18n>stopuebersicht}"/>
+                </contentMiddle>
+                <contentRight>
+                </contentRight>
 
-                </Bar>
-            </customHeader>
+            </Bar>
+        </customHeader>
+        
         <content>
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000" labelSpanL="3" labelSpanM="3" labelSpanS="3" labelSpanXL="3">
                 <form:content>
+                    <!--
                     <Bar>
                         <contentMiddle>
                             <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
                         </contentMiddle>
                     </Bar>
+                    -->
                     <OverflowToolbar>
                         <Label id="tourTxt" text="{i18n>Tour}&#13;{TourStartFragmentModel>/tour/routeCaption}"></Label>
                         <ToolbarSpacer/>

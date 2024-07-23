@@ -58,7 +58,7 @@ sap.ui.define([
                 oReceivedLoadingUnitsModel.setProperty("/results", aStableLoadingUnits);
             },
 
-            onTechnicalButtonPress:function(oEvent){
+            onClearingButtonPress:function(oEvent){
                 this.getSelectedModelItem(oEvent);
             },
 
@@ -100,7 +100,7 @@ sap.ui.define([
                 oLoadingUnitsModel.setProperty("/results", []); //Model anpassen
             },
 
-            checkForUnsavedNves:function(){
+            checkForUnsavedNves:function(){ //In der View Auskommentiert
                 var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs dieser sitzung
                 var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
 
@@ -160,7 +160,7 @@ sap.ui.define([
                 this.navBackToQuittierung();
             },
 
-            onSave:function(){ //Speichern des aktuellen zustandes der Bearbeitung
+            onSave:function(){ //Speichern des aktuellen zustandes der Bearbeitung; In der View auskommentiert
                 var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs dieser sitzung
                 var oTotalReceiptNvesModel=this.getOwnerComponent().getModel("TotalReceiptNvesModel"); //Model für bereits vorher Quittierte NVEs
                 var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
@@ -198,16 +198,19 @@ sap.ui.define([
 
             chekIfAtLeastOneErrorReasonIsSelected:function(){
                 var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
-                var oCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
-                var aQuantityOfSelectedReasons=this.getSelectedClearingReasonQuantity(oCurrentClearingReasons);
+                var aCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
+                var aQuantityOfSelectedReasons=this.getSelectedClearingReasonQuantity(aCurrentClearingReasons);
 
                 if(aQuantityOfSelectedReasons.length>0){ //Mindestens 1 Klaergrund wurde ausgewaehlt
                     this.checkIfOnlyOneErrorReasonIsSelected(aQuantityOfSelectedReasons);
                 } else{ //kein Klaergrund wurde ausgewaehlt
                     this.noClearingReasonSelectedError();
                 }
+        
+               var oSelectedClearingReason="";
             },
 
+            
             checkIfOnlyOneErrorReasonIsSelected:function(aQuantityOfSelectedReasons){
                 var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
                 var oCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
@@ -221,22 +224,34 @@ sap.ui.define([
                     this.setSelectedClearingAttributes(oCurrentClearingReasons);
                 }
             },
+            
 
-            getSelectedClearingReasonQuantity:function(oCurrentClearingReasons){ //Gibt Array mit Anzahl der Selectierten Klaergruende zurueck
-                return Object.entries(oCurrentClearingReasons).filter(([, bool]) => bool).map(e => e[0]);
+            
+            getSelectedClearingReasonQuantity:function(aCurrentClearingReasons){ //Gibt Array mit Anzahl der Selectierten Klaergruende zurueck
+                //return Object.entries(aCurrentClearingReasons).filter(([, bool]) => bool).map(e => e[0]);
+                var aAcumulatedErrorReasons=[];
+                var aSelectedClearingReasons=[];
+                for(var i in aCurrentClearingReasons){
+                    if(aCurrentClearingReasons[i].value===true){
+                        var aNewClearingReasonArray=[aCurrentClearingReasons[i]];
+                        aAcumulatedErrorReasons=aSelectedClearingReasons.concat(aNewClearingReasonArray);
+                    }
+                }
+                return aAcumulatedErrorReasons;
             },
+            
 
             setSelectedClearingAttributes:function(oCurrentClearingReasons){ //Setzen der Klaergruende in die zu klaerende NVE
                 var aSelectedAttributeWithValue=[];
 
-                for (var property in oCurrentClearingReasons) { //Jedes Atrtibut wird durchlaufen
+                for (var i in oCurrentClearingReasons) { //Jedes Atrtibut wird durchlaufen
                     //console.log(`${property}: ${oCurrentClearingReasons[property]}`);
-                    if(oCurrentClearingReasons[property]){
+                    if(oCurrentClearingReasons[i].value===true){
 
-                        var sPropertyName=property;
+                        var sPropertyName=oCurrentClearingReasons[i].Description;
                         var oAttributeWithValue={};
                         Object.defineProperty(oAttributeWithValue, sPropertyName, {
-                            value: oCurrentClearingReasons[property],
+                            value: oCurrentClearingReasons[i].value,
                             writable: false,
                         });
                         var aNewAttributeObject=[oAttributeWithValue];
@@ -258,6 +273,8 @@ sap.ui.define([
                 Object.defineProperty(oClearingNve, "clearingReason", {
                     value: oSelectedReason
                 });
+
+                this.nveClearingDialogClose();
             },
 
             setClearingResonsInNve:function(aSelectedAttributeWithValue){
@@ -269,6 +286,8 @@ sap.ui.define([
                 Object.defineProperty(oClearingNve, "aClearingReasons", {
                     value: aSelectedAttributeWithValue
                 });
+
+                this.nveClearingDialogClose();
             },
 
 
@@ -319,6 +338,19 @@ sap.ui.define([
                     aRemainingNves.splice(iIndexOfLoadingUnit, 1);
                 }
                 oLoadingUnitsModel.refresh();
+            },
+
+            
+
+            selectOnlyThis:function(oEvent){
+                var sEventId=oEvent.getSource().getId();
+                var oList=this.getView().byId("checkBoxList");
+
+                for(var i in oList){
+                    oList[i].setSelected
+                }
+
+                console.log("Success");
             },
 
             receiptEnteredLoadingUnit:function(oEnteredLoadingUnit){

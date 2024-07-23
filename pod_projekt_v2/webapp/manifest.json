@@ -170,16 +170,28 @@
         "settings": {
           "items": [
             {
-              "Typ": "Kolli",
+              "Typ": "Testleih",
               "Bestand": "1"
             },
             {
-              "Typ": "Palette",
+              "Typ": "Stammdaten-012",
               "Bestand": "2"
             },
             {
-              "Typ": "Kiste",
+              "Typ": "Europalette",
               "Bestand": "3"
+            },
+            {
+              "Typ": "Gestell",
+              "Bestand": "4"
+            },
+            {
+              "Typ": "Gitterbox",
+              "Bestand": "5"
+            },
+            {
+              "Typ": "Rollwagen",
+              "Bestand": "6"
             }
           ]
         }
@@ -214,6 +226,12 @@
           "results": []
         }
       },
+      "CurrentClearingObjectModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "clearingObject": {}
+        }
+      },
       "TotalClearingNvesModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
@@ -223,15 +241,33 @@
       "CurrentSittingClearingNvesModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
-          "results": {
-            "notFound": false,
-            "malfunction": false,
-            "partiallyMalfunctioning": false,
-            "notAccepted": false,
-            "noMoney": false,
-            "laterShipping": false,
-            "remarks": ""
-          }
+          "results": [
+            {
+              "Description" : "notFound",
+              "value": false
+            },
+            {
+              "Description" : "malfunction",
+              "value": false
+            },
+            {
+              "Description" : "partiallyMalfunctioning",
+              "value": false
+            },
+            {
+              "Description" : "notAccepted",
+              "value": false
+            },
+            {
+              "Description" : "noMoney",
+              "value": false
+            },
+            {
+              "Description" : "laterShipping",
+              "value": false
+            }
+          ],
+          "remarks": "Test Remarks"
         }
       },
       "nveClearingDialogModel": {

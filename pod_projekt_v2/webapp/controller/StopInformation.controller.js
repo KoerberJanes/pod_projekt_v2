@@ -18,8 +18,7 @@ sap.ui.define([
             },
 
             onPressBtnAvisNr: function(oEvent){ //Natives anrufen der Telefonnummer
-                var oCurrentStopDetails=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/orders")[0];
-                var sPhoneAvis=oCurrentStopDetails.phoneAvis;
+                var sPhoneAvis=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/phoneAvis");
 
                 sap.m.URLHelper.triggerTel(sPhoneAvis);
             },
