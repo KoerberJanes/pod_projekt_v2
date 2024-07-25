@@ -123,7 +123,7 @@ sap.ui.define(
       },
 
       onBusyDialogClose:function(){ //Lade-Dialog schließen
-        setTimeout(() => { this.byId("BusyDialog").close() },250);
+        setTimeout(() => { this.byId("BusyDialog").close() },1000);
       },
 
       openTourStartFragment: function () { //Tourstart Fragment oeffnen
@@ -172,6 +172,10 @@ sap.ui.define(
         this.onNavToActiveTour();
       },
 
+      setInputFocus:function(){
+        this.getView().byId("kilometerInput").focus();
+      },
+
       noToursError:function(){ //Es konnten keine Touren geladen werden
         MessageBox.error(this._oBundle.getText("noToursLoaded"), {
             onClose:function(){
@@ -183,13 +187,9 @@ sap.ui.define(
       resetTourStartFragmentUserInput:function(){ //Tolleranz nicht eingehalten, zuruecksetzen des Eingabefeldes
         var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
         oTourStartFragmentModel.setProperty("/mileage", "");
-        this.setFocusForTourStartFragment();
       },
 
-      setFocusForTourStartFragment:function(){
-        setTimeout(() => { this.getView().byId("kilometer").focus() },100);
-      },
-
+      
       onRefreshTours:function(){ //Refresh der Touren, bisher ein Dummy
         MessageToast.show("Dies ist ein Dummy-Rrefresh!", {
           duration: 1000,

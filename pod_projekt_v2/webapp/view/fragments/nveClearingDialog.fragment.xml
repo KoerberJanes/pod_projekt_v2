@@ -20,48 +20,86 @@
                 <form:SimpleForm id="clearDialogForm" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
                     <form:content>
                 
-                    <List id="checkBoxList" items="{CurrentSittingClearingNvesModel>/results}" mode="SingleSelectLeft">
+                    <List id="ClearingList" items="{CurrentSittingClearingNvesModel>/results}" mode="SingleSelectLeft">
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Label id="ueberschrift" text="Mögliche Klärgründe:"></Label>
-                                <ToolbarSpacer/>
+                                <Title id="ueberschrift" text="Mögliche Klärgründe:" level="H1"/>
                             </OverflowToolbar>
                         </headerToolbar>
-                        <StandardListItem title="{CurrentSittingClearingNvesModel>Description}" selected="{CurrentSittingClearingNvesModel>value}" wrapping="true" press="setPressedTour">
-                        </StandardListItem>
+                        <StandardListItem title="{CurrentSittingClearingNvesModel>Description}" selected="{CurrentSittingClearingNvesModel>value}" wrapping="true" press="setPressedTour"/>
                     </List>
-
-                    </form:content>
-                    <Label id="txtBemerkung" text="{i18n>bemerkungen}" width="70%"/>
+                    <Label id="txtBemerkung" text="{i18n>bemerkungen}"/>
                     <TextArea id="taBemerkungen" value="{CurrentSittingClearingNvesModel>/remarks}"></TextArea>
-                </form:SimpleForm>
-                     
-                <form:SimpleForm id="clearDialogForm3" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
-                    <!--Button id="photobtn" type="Emphasized" icon="sap-icon://camera" text="{i18n>photomachen}" press="onCapturePic"/Button> <class="sapUiVisibleOnlyOnDesktop"-->
-                    <Button icon="sap-icon://add-photo" text="{i18n>foto}" press="onFotoMachen" class="sapUiVisibleOnlyOnDesktop"/>
-                    <u:FileUploader id="btnAddPhoto" buttonOnly="true" buttonText="{i18n>foto}" icon="sap-icon://add-photo" useMultipart="false" mimeType="image/*" width="100%" change="onFotoMobile" class="sapUiHideOnDesktop"/>
-                    <Button id="btnFotoListe" icon="sap-icon://add" text="{i18n>photoliste}" press="onFotoListe"/>
-                    <!--<Button id="photolistbtn" type="Emphasized" icon="sap-icon://add" text="{i18n>photoliste}" press="onHidePhotos"/-->
-                    <!--<u:FileUploader id="btnAddPhoto" visible="true" buttonOnly="true" icon="sap-icon://add-photo" iconOnly="true" useMultipart="false" change="onBtnAddPhoto" mimeType="image/*" uploadOnChange="true"/>-->
-                    <List id="fotoListe" items="{FotoModelAbladen>/results}" mode="Delete" delete="onDelete" visible="false" showNoData="false">
+                    <ToggleButton id="fotoListeToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoliste}" pressed="{settings>/photoListVisible}"/>
+                    <Label/>
+                    <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="onOpenPhotoDialogClearing" class="sapUiVisibleOnlyOnDesktop"/>
+                    <Label/>
+                    <!--<u:FileUploader id="btnAddPhoto" buttonOnly="true" buttonText="{i18n>foto}" icon="sap-icon://add-photo" useMultipart="false" mimeType="image/*" change="onFotoMobile" width="100%" class="sapUiHideOnDesktop"/>-->
+                    <upload:UploadSet id="photoItemsList" visible="{= ${settings>/photoListVisible}}" fileTypes="png, image/*" instantUpload="false"
+                        items="{path:'PhotoModelUnloading>/results', 
+                            sorter: {path:'photoType', descending: false, 
+                                group: true},
+                                    groupHeaderFactory:'.formatter.getPhotoTypeHeader'}"> 
+                        <upload:toolbar>
+                            <OverflowToolbar >
+                                <ToolbarSpacer/>
+                                <Button
+                                        id="uploadSelectedButton"
+                                        text="Upload selected"
+                                        press="onUploadSelectedButton"/>
+                                <Button
+                                        id="downloadSelectedButton"
+                                        text="Download selected"
+                                        press="onDownloadSelectedButton"/>
+                                <upload:UploadSetToolbarPlaceholder />
+                            </OverflowToolbar>
+                        </upload:toolbar>
+                        <upload:items >
+                            <upload:UploadSetItem
+                                    fileName="{PhotoModelUnloading>fileName}"
+                                    url="{PhotoModelUnloading>url}"
+                                    mediaType="{mediaType}"
+                                    thumbnailUrl="{PhotoModelUnloading>src}"
+                                    uploadState="{uploadState}">
+                                <upload:markers>
+                                    <ObjectMarker
+                                            type="{type}"
+                                            visibility="TextOnly"/>
+                                </upload:markers>
+                                
+                                <upload:statuses>
+                                    <ObjectStatus
+                                            title="{PhotoModelUnloading>photoType}"
+                                            text="{text}"
+                                            state="{state}"
+                                            icon="{icon}"
+                                            active="{active}"/>
+                                </upload:statuses>
+                            
+                            </upload:UploadSetItem>
+                        </upload:items>
+                    </upload:UploadSet>
+
+                    <List id="fotoListe" items="{PhotoModelUnloading>/results}" mode="Delete" delete="onDelete" visible="false" showNoData="false">
                         <CustomListItem >
                             <HBox >
-                                <Image src="{FotoModelAbladen>fotoSrc}" width="7em" height="auto"/>
+                                <Image src="{PhotoModelUnloading>fotoSrc}" height="auto"/>
                                 <form:SimpleForm >
                                     <form:content>
-                                        <Text text="{FotoModelAbladen>fotoId}"/>
+                                        <Text text="{PhotoModelUnloading>fotoId}"/>
                                     </form:content>
                                 </form:SimpleForm>
                             </HBox>
                         </CustomListItem>
                     </List>
+                    </form:content>
                 </form:SimpleForm>
             </content>
             <beginButton>
-                <Button id="clearNVEOkBtn" icon="sap-icon://accept" text="{i18n>ok}" press="nveClearingDialogConfirm"/>
+                <Button id="clearNVEOkBtn" icon="sap-icon://accept" type="Emphasized" text="{i18n>ok}" press="nveClearingDialogConfirm"/>
             </beginButton>
             <endButton>
-                <Button id="clearNVEBackBtn" icon="sap-icon://error" text="{i18n>Zurück}" press="nveClearingDialogReject"/>
+                <Button id="clearNVEBackBtn" icon="sap-icon://error" type="Emphasized" text="{i18n>Zurück}" press="nveClearingDialogReject"/>
             </endButton>
     </Dialog>
 </core:FragmentDefinition>

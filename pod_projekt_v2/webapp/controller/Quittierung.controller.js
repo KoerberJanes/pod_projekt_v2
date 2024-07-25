@@ -268,8 +268,7 @@ sap.ui.define([
                     this.showNotEnoughSpaceError();
                 }
                 this.clearPhotoModel();
-                
-            },       
+            },
 
             onUploadSelectedButton:function(){
                 MessageToast.show("Hier werden dann die Selektierten Fotos hochgeladen!", {

@@ -149,6 +149,12 @@
           "photos": []
         }
       },
+      "PhotoModelUnloading": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
       "PhotoTypeModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {

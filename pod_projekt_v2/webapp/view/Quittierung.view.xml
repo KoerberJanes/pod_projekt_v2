@@ -74,13 +74,13 @@
                     <TextArea id="idTextarea" visible="{settings>/remarksSwitch}"/>
 
                     <Label id="photoItems" text="Fotoliste anzeigen"/>
-                    <ToggleButton id="photoItemsToggleButton" text="{i18n>showPhotos}" pressed="{settings>/photoListVisible}"></ToggleButton>
+                    <ToggleButton id="photoItemsToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoliste}" pressed="{settings>/photoListVisible}"></ToggleButton>
                     <Label/>
                     <upload:UploadSet id="photoItemsList" visible="{= ${settings>/photoListVisible}}" fileTypes="png, image/*" instantUpload="false"
                         items="{path:'PhotoModel>/photos', 
                             sorter: {path:'photoType', descending: false, 
                                 group: true},
-                                    groupHeaderFactory:'.formatter.getPhotoTypeHeader'}"> <!--'PhotoTypeModel>/photoTypes'}--> <!--items="{PhotoModel>/photos}"-->
+                                    groupHeaderFactory:'.formatter.getPhotoTypeHeader'}"> 
                         <upload:toolbar>
                             <OverflowToolbar >
                                 <ToolbarSpacer/>

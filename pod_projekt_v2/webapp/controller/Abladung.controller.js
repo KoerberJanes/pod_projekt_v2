@@ -274,6 +274,7 @@ sap.ui.define([
                     value: oSelectedReason
                 });
 
+                //Methode für das Entfernen der NVE aus dem Model und zwischenspeichern oder so
                 this.nveClearingDialogClose();
             },
 
@@ -287,6 +288,7 @@ sap.ui.define([
                     value: aSelectedAttributeWithValue
                 });
 
+                //Methode für das Entfernen der NVE aus dem Model und zwischenspeichern oder so
                 this.nveClearingDialogClose();
             },
 
@@ -317,16 +319,15 @@ sap.ui.define([
                 var sArticleId;
                 var oEnteredLoadingUnit=undefined;
                 
-                //Leider nicht zu verallgemeinern, da sehr spezifisch
+                //Leider nicht zu verallgemeinern, da sehr spezifisch --> Oder eben sArticleId anstatt 'Objekt.externalId'
                 for(var i in aLoadingUnits){
-                    sExternalId=aLoadingUnits[i].externalId; //Oder eben sArticleId
-                    if(sExternalId===sManualNveUserInput){ //Oder eben articleId
+                    var sLabelId=aLoadingUnits[i].label1.substring(0, aLoadingUnits[i].label1.indexOf(" "));
+                    if(sLabelId===sManualNveUserInput){
                         oEnteredLoadingUnit=aLoadingUnits[i];
-                    } 
+                    }
                 }
 
                 this.removeEnteredLoadingUnit(oEnteredLoadingUnit);
-                this.receiptEnteredLoadingUnit(oEnteredLoadingUnit);
             },
 
             removeEnteredLoadingUnit:function(oEnteredLoadingUnit){
@@ -334,23 +335,17 @@ sap.ui.define([
                 var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
                 var iIndexOfLoadingUnit=aRemainingNves.indexOf(oEnteredLoadingUnit);
 
-                if(iIndexOfLoadingUnit!==-1){
+                if(iIndexOfLoadingUnit!==-1){ //Wenn Nve in der Liste
+                    //TODO: Hier andere Möglichkeit nutzen, damit Model automatisch auf der View aktualisiert wird
                     aRemainingNves.splice(iIndexOfLoadingUnit, 1);
+                    oLoadingUnitsModel.refresh();
+                    this.receiptEnteredLoadingUnit(oEnteredLoadingUnit);
+                } else{ //Wenn Nve nicht in der Liste
+                    this.noNveFoundError();
+                    //Optional, da ggf. der gescannte Barcode angezeigt bleiben soll
+                    //this.clearManualNveInput(); 
                 }
-                oLoadingUnitsModel.refresh();
-            },
-
-            
-
-            selectOnlyThis:function(oEvent){
-                var sEventId=oEvent.getSource().getId();
-                var oList=this.getView().byId("checkBoxList");
-
-                for(var i in oList){
-                    oList[i].setSelected
-                }
-
-                console.log("Success");
+                
             },
 
             receiptEnteredLoadingUnit:function(oEnteredLoadingUnit){
@@ -362,6 +357,24 @@ sap.ui.define([
                 oCurrentSittingReceiptNvesModel.setProperty("/results", aUpdatedCurrentReceiptNves); //Setzen der neuen NVEs in das Model
                 //oTotalReceiptNvesModel.refresh();
                 this.onManualNveInputFragmentClose();
+            },
+
+            setInputFocus:function(){
+                this.getView().byId("barcodeInput").focus();
+            },
+
+            clearManualNveInput:function(){
+                var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel");
+
+                oManualNveInputModel.setProperty("/manualInput", "");
+            },
+
+            noNveFoundError:function(){
+                MessageBox.error(this._oBundle.getText("noNveFound"), {
+                    onClose:function(){
+                        //NOP:
+                    }.bind(this)
+                });
             },
 
             showNotAllNvesProcessedError:function(){
@@ -394,6 +407,178 @@ sap.ui.define([
                 oRouter.navTo("Quittierung");
             },
 
+
+
+
+            addCameraPlayerToCameraDialog:function(){ //Erstellen des VideoPlayers für den CameraStream und diesen in den Dialog setzen
+                this.onPhotoTypesSelectChange(); //Initiales setzen des Models für die gemachten Fotos
+                var oVideoContainer = this.byId("photoDialogClearingVideoFeedContainer"); 
+                oVideoContainer.setContent("<video id='clearingVideoPlayer' width='100%' autoplay></video>"); //an das HTML Element in der XML view einen videoplayer für die Kamera anheften
+                this.enableVideoStream();
+            },
+
+            onPhotoTypesSelectChange:function(){
+
+            },
+
+            enableVideoStream:function(){// Video starten
+                navigator.mediaDevices.getUserMedia({  video:true  })
+                .then((stream) => {
+                    clearingVideoPlayer.srcObject = stream;
+                });
+            },
+
+            disableVideoStreams:function(){//Video beenden
+                var oVideoStream = document.getElementById("clearingVideoPlayer");
+                if (oVideoStream) {
+                    var oMediaStream = oVideoStream.srcObject;
+                    if (oMediaStream) {
+                        oMediaStream.getTracks().forEach(track => track.stop());
+                    }
+                }
+            },
+
+            checkIfPhotoNeedsToBeCleared:function(){ //Prüfen ob bereits ein Foto angezeigt wird
+                var oPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel");
+                var oSavedPhoto=oPhotoModel.getProperty("/photo");
+
+                if(Object.keys(oSavedPhoto).length !== 0){ //Wenn Objekt Attribute enthält, vermeindliches Foto loeschen
+                    this.clearPhotoModel();
+                } 
+
+                this.onSnappPicture();
+            },
+
+            onSnappPicture:function(){ //(neues) Foto machen
+                var oVideoFeed=document.getElementById("clearingVideoPlayer"); //VideoStream
+                var canvas=document.createElement('canvas');
+                var context = canvas.getContext('2d');
+                var oDateAndTime= sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.YYYY HH:mm:ss" }).format(new Date()); //Datum inklusive Uhrzeit
+                var sParentNodeId=this.getView().byId("ClearingList").getSelectedItem().getId(); 
+                var aClearingListItems=this.getView().byId("ClearingList").getItems();
+                var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel").getProperty("/results");
+                
+                var oSelectedModelItem=Helper.findModelObjectSlimm(sParentNodeId, aClearingListItems, oCurrentSittingClearingNvesModel);
+
+                canvas.width = oVideoFeed.videoWidth;
+                canvas.height = oVideoFeed.videoHeight;
+                context.drawImage(oVideoFeed, 0, 0, canvas.width, canvas.height);
+
+                var oImageData=canvas.toDataURL("image/png"); //Base 64 encoded Bild-String
+
+                var oImage= {
+                    src: oImageData,
+                    width: "100%",
+                    height: "auto",
+                    dateAndTime: oDateAndTime,
+                    photoType: oSelectedModelItem.Description,
+                    fileName: oDateAndTime + ".png",
+                    mediaType: "image/png",
+                    uploadState: "Ready"
+                }; //Objekt wirde erzeugt und ist bereit als Image in der View interpretiert zu werden
+
+                this.saveNewImage(oImage);
+            },
+
+            saveNewImage:function(oImage){ //Speichern von zu letzt geschossenem Foto
+                var oPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel");
+                oPhotoModel.setProperty("/photo", oImage);
+                //this.setNewPhotoInPhotoList(oImage);
+                oPhotoModel.refresh();
+            },
+
+            clearPhotoModel:function(){
+                var oPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel"); //Model in dem das geschossene Foto gespeichert wird
+
+                oPhotoModel.setProperty("/photo", {});
+            },
+
+            onOpenPhotoDialogClearing:function(){
+                this.oPhotoDialogClearing ??= this.loadFragment({
+                    name: "podprojekt.view.fragments.photoDialogClearing",
+                });
+          
+                this.oPhotoDialogClearing.then((oDialog) => oDialog.open());
+            },
+
+            onPhotoDialogClearingClose:function(){
+                this.disableVideoStreams();
+                this.clearPhotoModel();
+                this.byId("photoDialogClearing").close();
+            },
+
+            onCheckIfPhotoTaken:function(){
+                var oLatestPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel"); 
+                var oTakenPhoto= oLatestPhotoModel.getProperty("/photo"); //'Geschossenes' Foto
+
+                //Muss geprüft werden weil Model-Inhalt leeres Objekt ist
+                if(Object.keys(oTakenPhoto).length !== 0){ //Wenn Objekt Attribute enthält, exisitert ein Foto
+                    this.confirmFoto();
+                } else{
+                    MessageToast.show("Es wurde kein Foto geschossen!", {
+                        duration: 1000,
+                        width:"15em"
+                    });
+                }
+            },
+
+            confirmFoto:function(){ //Foto bestätigen und übernehmen
+                var oLatestPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel"); 
+                var oTakenPhoto= oLatestPhotoModel.getProperty("/photo"); //Geschossenes Foto
+
+                var oPhotoModelUnloadingModel=this.getOwnerComponent().getModel("PhotoModelUnloading");//Model mit gespeichertem Foto-Typ
+                var aPhotoModelUnloading=oPhotoModelUnloadingModel.getProperty("/results"); //Selektierter Foto-Typ 
+                var bEnoughSpace=this.checkPhotoLimit(); //Platz für weitere Fotos?
+
+                if(bEnoughSpace===true){
+                    var aNewPhoto=[oTakenPhoto]; //Erstellen eines Arrays mit Aktuellem Foto
+                    var aUpdatedPhotos=aPhotoModelUnloading.concat(aNewPhoto); //Erstellen eines Arrays mit alten Fotos und neuem Foto darin
+                    oPhotoModelUnloadingModel.setProperty("/results", aUpdatedPhotos);//Setzen der neuen Fotos in das Model
+                    //this.refreshFragmentTitle(oPhotoTypeSelectedModel);
+                } else{
+                    this.showNotEnoughSpaceError();
+                }
+                this.clearPhotoModel();
+                
+            },
+
+            checkPhotoLimit:function(){ //Wirft eine Fehlermeldung, wenn Menge an Fotos überschritten wird
+                
+                var oPhotoTypeSelectedModel=this.getOwnerComponent().getModel("PhotoModelUnloading");//Model mit gespeichertem Foto-Typ
+                var oSelectedType=oPhotoTypeSelectedModel.getProperty("/results"); //Selektierter Foto-Typ 
+                var iAllowedPhotos=5;//TODO: hier kann angepasst werden ob die maximale Anzahl Fotos stimmt
+                var bEnoughSpace=true;
+
+                if(oSelectedType.length === iAllowedPhotos){
+                    bEnoughSpace=false;
+                }
+                
+                return bEnoughSpace;
+            },
+
+            showNotEnoughSpaceError:function(){
+                MessageBox.error(this._oBundle.getText("notEnoughSpace"),{
+                    onClose: function() {
+                        //Bisher funktionslos
+                    }.bind(this)
+                });
+            },
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             nveClearingDialogOpen:function(){ //Oeffnen des Klaer-Dialoges
                 this.oNveClearingDialog ??= this.loadFragment({
                     name: "podprojekt.view.fragments.nveClearingDialog",
@@ -416,6 +601,7 @@ sap.ui.define([
 
             onManualNveInputFragmentClose:function(){ //Schließen des Handeingabe fragmentes
                 this.byId("ManualNveInputDialogId").close();
+                this.clearManualNveInput();
             },
 
             onBreakpoint:function(){ //Breakpoint für den Debugger

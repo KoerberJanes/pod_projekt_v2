@@ -1,5 +1,10 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form">
-	<Dialog id="TourstartDialog" initialFocus="kilometer">
+<core:FragmentDefinition 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core" 
+	xmlns:layout="sap.ui.layout" 
+	xmlns:form="sap.ui.layout.form">
+
+	<Dialog id="TourstartDialog" initialFocus="kilometerInput" afterOpen="setInputFocus">
 		<customHeader>
 			<Bar>
 				<contentMiddle>
@@ -8,45 +13,21 @@
 			</Bar>
 		</customHeader>
 		<content>
-			<form:SimpleForm>
+			<form:SimpleForm id="TourstartForm" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2">
 				<form:content>
-					<Label text="{i18n>KennzEing}">
-						<layoutData>
-							<layout:GridData span="L12 M12 S12"/>
-						</layoutData>       
-					</Label>
-					<Input id="kennzeichen" value="{TourStartFragmentModel>/tour/licensePlate}" editable="false">
-						<layoutData>
-							<layout:GridData span="L12 M12 S12"/>
-						</layoutData>
-					</Input>
-					<Label text="{i18n>KilomEing}">
-						<layoutData>
-							<layout:GridData span="L12 M12 S12"/>
-						</layoutData>       
-					</Label>
-					<Input id="kilometer" value="{TourStartFragmentModel>/mileage}" type="Number">
-						<layoutData>
-							<layout:GridData span="L12 M12 S12"/>
-						</layoutData>
-					</Input>
+					<Label text="{i18n>KennzEing}"/>
+					<Input id="kennzeichenInput" value="{TourStartFragmentModel>/tour/licensePlate}" editable="false"/>
+					<Label text="{i18n>KilomEing}"/>
+					<Input id="kilometerInput" value="{TourStartFragmentModel>/mileage}" type="Number" showClearIcon="true"/>
 				</form:content>
 			</form:SimpleForm>
 		</content>
-		<form:SimpleForm>
-			<form:content>
-				<Button id="TourstartFragmentButtonConfirm" text="{i18n>dialogOkButtonText}" press="onTourStartDialogButtonCallback">
-					<layoutData>
-						<layout:GridData span="L6 M6 S6"/>
-					</layoutData>
-				</Button>
-				<Button id="TourstartFragmentButtonAbort" text="{i18n>dialogCloseButtonText}" press="onTourStartDialogButtonCallback">
-					<layoutData>
-						<layout:GridData span="L6 M6 S6"/>
-					</layoutData>
-				</Button>
-			</form:content>
-		</form:SimpleForm>
-			
+
+		<beginButton>
+            <Button id="TourstartFragmentButtonConfirm" text="{i18n>dialogOkButtonText}" type="Emphasized" press="onTourStartDialogButtonCallback"/>
+        </beginButton>
+        <endButton>
+            <Button id="TourstartFragmentButtonAbort" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onTourStartDialogButtonCallback"/>
+        </endButton>		
 	</Dialog>
 </core:FragmentDefinition>

@@ -67,7 +67,7 @@
                     <Button text="{i18n>save}" id="savebtn" press="onSave"/>
                 </contentLeft>
                 <contentMiddle>
-                    <Button type="Emphasized" text="Test" press="onTest"/>
+                    <!--<Button type="Emphasized" text="Test" press="onTest"/>-->
                 </contentMiddle>
                 <contentRight>
                     <Button text="{i18n>dialogCloseButtonText}" press="checkForUnsavedNves"/>

@@ -1,8 +1,9 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
+    xmlns:form="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
 
-    <Dialog id="ManualNveInputDialogId" title="{i18n>handeingabe}" initialFocus="barcodeinput" afterClose="">
+    <Dialog id="ManualNveInputDialogId" title="{i18n>handeingabe}" initialFocus="barcodeInput" afterClose="" afterOpen="setInputFocus" resizable="false">
         
         <customHeader>
             <Bar id="inputDialogHeaderBar">
@@ -11,20 +12,20 @@
                 </contentMiddle>    
             </Bar>
         </customHeader>
-            <content>
-                <Text id="barcodetxt" text="{i18n>barcode}"/> <!--class="sapUiSmallMarginBegin" -->
-                <Input id="barcodeinput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>enterbarcode}" submit="onCloseInputDialog"></Input><!--width="90%" class="sapUiSmallMarginBeginEnd" -->
-            </content>
-
-            
-            <footer>
-                <Toolbar id="inputDialogTB">
-                    <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press="onNveClearingDialogCallbackConfirm"/>
-                    <ToolbarSpacer/>
-                    <Button id="inputDialogClearBtn" text="{i18n>clearinput}" type="Emphasized" press=""/>
-                    <ToolbarSpacer/>
-                    <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onNveClearingDialogCallbackReject"/>
-                </Toolbar>
-            </footer>
+        <content>
+            <form:SimpleForm id="ManualNveInputForm" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2">
+                <form:content>
+                    <Label id="barcodeLabel" text="{i18n>barcode}"/>
+                    <Input id="barcodeInput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>enterbarcode}" submit="onCloseInputDialog" showClearIcon="true"/>
+                </form:content>
+            </form:SimpleForm>
+        </content>
+        
+        <beginButton>
+            <Button id="inputDialogOkBtn" text="{i18n>dialogOkButtonText}" type="Emphasized" press="onNveClearingDialogCallbackConfirm"/>
+        </beginButton>
+        <endButton>
+            <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onNveClearingDialogCallbackReject"/>
+        </endButton>
     </Dialog>
 </core:FragmentDefinition>
