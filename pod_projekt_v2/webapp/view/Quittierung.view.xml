@@ -39,7 +39,7 @@
                     <Input id="recipientNameInp" value="{RecipientNameModel>/recipient/name}" visible="{= ${settings>/recipientFound} }"/>
 
                     <Label text="{i18n>showDeliveryItems}"/>
-                    <ToggleButton id="deliveryItemsToggleButton" text="{i18n>deliveryItems}" press="onToggleListVisibility" pressed="{settings>/deliveryItemsVisible}"></ToggleButton>
+                    <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" press="onToggleListVisibility" pressed="{settings>/deliveryItemsVisible}"></ToggleButton>
                     <Label ></Label>
                     <List  id="deliveryNoteList" mode="None" includeItemInSelection="true" items="{DeliveryNoteModel>/results}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="Keine Lieferscheine"> 
                         <items>
@@ -70,13 +70,13 @@
                     </List>
 
                     <Label id="remarks" text="{i18n>remarks}"/>
-                    <Switch id="remarksSwitch" state="{settings>/remarksSwitch}" customTextOff="{i18n>no}" customTextOn="{i18n>yes}"/>
+                    <Switch id="remarksSwitch" state="{settings>/confirmationPage/remarksSwitch}" customTextOff="{i18n>no}" customTextOn="{i18n>yes}"/>
                     <TextArea id="idTextarea" visible="{settings>/remarksSwitch}"/>
 
                     <Label id="photoItems" text="Fotoliste anzeigen"/>
                     <ToggleButton id="photoItemsToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoliste}" pressed="{settings>/photoListVisible}"></ToggleButton>
                     <Label/>
-                    <upload:UploadSet id="photoItemsList" visible="{= ${settings>/photoListVisible}}" fileTypes="png, image/*" instantUpload="false"
+                    <upload:UploadSet id="photoItemsList" visible="{settings>/photoListVisible}" fileTypes="png, image/*" instantUpload="false"
                         items="{path:'PhotoModel>/photos', 
                             sorter: {path:'photoType', descending: false, 
                                 group: true},

@@ -64,9 +64,10 @@
           "recipientFound": true,
           "complaintsSwitch": false,
           "remarksSwitch": false,
-          "deliveryItemsVisible": false,
+          "deliveryItemsVisible": true,
           "loadingDevicesVisible": false,
-          "photoListVisible": false
+          "photoListVisible": false,
+          "photoListClearingVisible": false
         }
       },
       "": {
@@ -96,7 +97,7 @@
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "tour": {},
-          "mileage":""
+          "mileage":"380000"
         }
       }, 
       "RecipientNameModel":{
