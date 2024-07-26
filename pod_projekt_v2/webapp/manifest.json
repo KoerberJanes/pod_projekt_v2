@@ -215,13 +215,25 @@
           "results": []
         }
       },
-      "TotalReceiptNvesModel": {
+      "TotalClearedNvesModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "results": []
         }
       },
-      "CurrentSittingReceiptNvesModel": {
+      "CurrentSittingClearedNvesModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "TotalLoadedNvesModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "results": []
+        }
+      },
+      "CurrentSittingLoadedNvesModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "results": []

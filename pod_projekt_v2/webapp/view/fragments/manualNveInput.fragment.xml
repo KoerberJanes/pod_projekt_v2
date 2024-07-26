@@ -13,7 +13,7 @@
             </Bar>
         </customHeader>
         <content>
-            <form:SimpleForm id="ManualNveInputForm" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2">
+            <form:SimpleForm id="ManualNveInputForm" layout="ResponsiveGridLayout" title="" labelSpanXL="2" WlabelSpanL="2" labelSpanM="2">
                 <form:content>
                     <Label id="barcodeLabel" text="{i18n>barcode}"/>
                     <Input id="barcodeInput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>enterbarcode}" submit="onCloseInputDialog" showClearIcon="true"/>
@@ -22,7 +22,7 @@
         </content>
         
         <beginButton>
-            <Button id="inputDialogOkBtn" text="{i18n>dialogOkButtonText}" type="Emphasized" press="onNveClearingDialogCallbackConfirm"/>
+            <Button id="inputDialogOkBtn" text="{i18n>dialogOkButtonText}" type="Emphasized" press="findLoadingNve"/>
         </beginButton>
         <endButton>
             <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onNveClearingDialogCallbackReject"/>

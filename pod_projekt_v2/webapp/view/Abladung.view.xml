@@ -42,7 +42,7 @@
                             <ToolbarSpacer ></ToolbarSpacer>
                             <Button id="testBreakpointButton" press="onBreakpoint" icon="sap-icon://refresh" type="Emphasized"></Button>
                             <ToolbarSpacer/>
-                            <Text id="txtNVEAnzahl" text="{= ${TotalReceiptNvesModel>/results}.length + ${CurrentSittingReceiptNvesModel>/results}.length}  /{= ${ReceivedLoadingUnitsModel>/results}.length}"></Text>
+                            <Text id="txtNVEAnzahl" text="{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /{= ${ReceivedLoadingUnitsModel>/results}.length}"></Text>
                         </content>
                     </OverflowToolbar>
                     <Tree id="NVETree" items="{LoadingUnitsModel>/results}" ><!-- toggleOpenState="onExpand" -->
@@ -64,7 +64,7 @@
         <footer>
             <Bar>
                 <contentLeft>
-                    <Button text="{i18n>save}" id="savebtn" press="onSave"/>
+                    <Button text="{i18n>save}" id="savebtn" press="checkIfSavingIsNesseccary"/>
                 </contentLeft>
                 <contentMiddle>
                     <!--<Button type="Emphasized" text="Test" press="onTest"/>-->

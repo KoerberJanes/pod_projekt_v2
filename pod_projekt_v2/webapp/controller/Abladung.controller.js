@@ -85,32 +85,35 @@ sap.ui.define([
                 var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
 
                 if(aRemainingNves.length>0){ //Wenn mehr als eine NVE zu quittieren ist
-                    this.onReceiptAllRemainingNves(oLoadingUnitsModel, aRemainingNves);
+                    this.onLoadAllRemainingNves(oLoadingUnitsModel, aRemainingNves);
                 } else{
                     this.driverNveReceiptBackDescisionBox(); 
                 }
             },
 
-            onReceiptAllRemainingNves:function(oLoadingUnitsModel, aRemainingNves){ //NVEs werden alle quittiert
-                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs dieser sitzung
-                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
-                var aUpdatedCurrentReceiptNves=aCurrentReceiptNves.concat(aRemainingNves); //Neues Array erstellen damit Model automatisch aktualisiert wird
+            onLoadAllRemainingNves:function(oLoadingUnitsModel, aRemainingNves){ //NVEs werden alle quittiert
 
-                oCurrentSittingReceiptNvesModel.setProperty("/results", aUpdatedCurrentReceiptNves);
-                oLoadingUnitsModel.setProperty("/results", []); //Model anpassen
+                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
+                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
+                var aUpdatedLoadingNvesTemp=aLoadingNvesTemp.concat(aRemainingNves); //zusammenfuehren der Nves
+
+                oLoadingNvesTempModel.setProperty("/results", aUpdatedLoadingNvesTemp); //Model der Temp verladenen Nves fuellen
+                oLoadingUnitsModel.setProperty("/results", []); //Model der noch zu bearbeitenden Nves leeren
             },
 
             checkForUnsavedNves:function(){ //In der View Auskommentiert
-                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs dieser sitzung
-                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
+                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
+                var aClearingNvesTemp=oClearingNvesTempModel.getProperty("/results"); //geklaerte Nves
 
-                if(aCurrentReceiptNves.length>0){ //Eine Nve wurde quittiert
+                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
+                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
+
+                if(aClearingNvesTemp.length > 0 || aLoadingNvesTemp.length > 0){ //Mindestens eine Nve wurde entweder verladen oder geklaert
                     this.driverNveReceiptDescisionBox(); //Abfragen ob diese Gespeichert werden soll
                 } else{
                     this.navBackToQuittierung(); //Zurück zur vorherigen Seite
                 }
             },
-
 
             driverNveReceiptDescisionBox:function(){
                 MessageBox.show(
@@ -121,9 +124,10 @@ sap.ui.define([
                         emphasizedAction: MessageBox.Action.YES,
                         onClose: function (oAction) { 
                             if(oAction==="YES"){
-                                this.onSave();
+                                this.onSaveAllTempStoredNVEs();
+                                this.navBackToQuittierung();
                             } else{
-                                this.onAbortCurrentReceiptNves();
+                                this.AbortCurrentLoadedAndClearedNves();
                             }
                         }.bind(this)
                     }
@@ -148,54 +152,93 @@ sap.ui.define([
                 );
             },
 
-            onAbortCurrentReceiptNves:function(){ //Herstellen des Ursprünglichen zustandes der Bearbeitung
-                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für quittierte NVEs dieser sitzung
-                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Noch nicht quittierte Nves
-                var aLoadingUnits=oLoadingUnitsModel.getProperty("/results");
-                var aUpdatedLoadingUnits= aLoadingUnits.concat(aCurrentReceiptNves);
+            AbortCurrentLoadedAndClearedNves:function(){
+                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
+                var aClearingNvesTemp=oClearingNvesTempModel.getProperty("/results"); //geklaerte Nves
+
+                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
+                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
+
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Offene Nves Model
+                var aLoadingUnits=oLoadingUnitsModel.getProperty("/results"); //Noch nicht quittierte Nves
+
+                var aAccumulatedTempNves=aClearingNvesTemp.concat(aLoadingNvesTemp); //Temp verladen und geklaerte Nves zusammenfassen
+                var aUpdatedLoadingUnits=aLoadingUnits.concat(aAccumulatedTempNves); //Zusammengefaste Nves mit den unbearbeiteten zusmmenfassen
 
                 oLoadingUnitsModel.setProperty("/results", aUpdatedLoadingUnits);
-                this.emptyCurrentSittingNvesModel();
+                this.emptyTempClearedAndLoadedModels();
                 this.navBackToQuittierung();
             },
 
-            onSave:function(){ //Speichern des aktuellen zustandes der Bearbeitung; In der View auskommentiert
-                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs dieser sitzung
-                var oTotalReceiptNvesModel=this.getOwnerComponent().getModel("TotalReceiptNvesModel"); //Model für bereits vorher Quittierte NVEs
-                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results");
-                var aTotalReceiptNves=oTotalReceiptNvesModel.getProperty("/results");
+            checkIfNvesWhereLoaded:function(){
+                var bTempLoadedNves=false;
+                var aLoadingNvesTemp=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel").getProperty("/results"); //verladene Nves
 
-                if(aCurrentReceiptNves.length>0){ //Wenn mindestens eine neue NVE quittiert wurde abfragen ob gespeichert werden soll
-                    var aUpdatedTotalReceiptNves=aTotalReceiptNves.concat(aCurrentReceiptNves);//zusammenführen der Nves
-                    oTotalReceiptNvesModel.setProperty("/results", aUpdatedTotalReceiptNves);
-                    this.emptyCurrentSittingNvesModel();
+                if(aLoadingNvesTemp.length > 0){
+                    bTempLoadedNves=true;
+                }
+                return bTempLoadedNves;
+            },
 
-                    MessageToast.show("Nves wurden gesichert!", {
-                        duration: 1000,
-                        width:"15em"
-                    });
-                } else{
-                    //Keine Ahnung was gemacht werden soll, wenn keine Änderung stattgefunden hat.
+            checkIfNvesWhereCleared:function(){
+                var bTempClearedNves=false;
+                var aClearingNvesTemp=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel").getProperty("/results"); //geklaerte Nves
+
+                if(aClearingNvesTemp.length > 0){
+                    bTempClearedNves= true;
+                }
+
+                return bTempClearedNves;
+            },
+
+            checkIfSavingIsNesseccary:function(){
+                if(!this.checkIfNvesWhereCleared() && !this.checkIfNvesWhereLoaded()){ //Wenn weder geklaert noch verladen wurde --> Message Toast
                     MessageToast.show("Es gab keine Nves die inzwischen bearbeitet wurden!", {
                         duration: 1000,
                         width:"15em"
                     });
+                } else{
+                    this.onSaveAllTempStoredNVEs();
                 }
-                
             },
 
-            emptyCurrentSittingNvesModel:function(){ //Erstmal vorhanden weil es eventuell nochmal gebraucht wird
-                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für quittierte NVEs dieser sitzung
-                oCurrentSittingReceiptNvesModel.setProperty("/results", []);
+            onSaveAllTempStoredNVEs:function(){
+                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
+                var aClearingNvesTemp=oClearingNvesTempModel.getProperty("/results"); //geklaerte Nves
+
+                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
+                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
+
+                var oTotalClearedNvesModel=this.getOwnerComponent().getModel("TotalClearedNvesModel"); //Model fuer gespeicherte geklaerte Nves
+                var oTotalLoadedNvesModel=this.getOwnerComponent().getModel("TotalLoadedNvesModel"); //Model fuer gespeicherte verladene Nves
+
+                if(this.checkIfNvesWhereCleared()){ //bTempClearedNves
+                    var aUpdatedTotalClearedNves=oTotalClearedNvesModel.getProperty("/results").concat(aClearingNvesTemp);//zusammenführen der Nves
+                    oTotalClearedNvesModel.setProperty("/results", aUpdatedTotalClearedNves);
+                }
+
+                if(this.checkIfNvesWhereLoaded()){//bTempLoadedNves
+                    var aUpdatedTotalLoadedNves=oTotalLoadedNvesModel.getProperty("/results").concat(aLoadingNvesTemp);//zusammenführen der Nves
+                    oTotalLoadedNvesModel.setProperty("/results", aUpdatedTotalLoadedNves);
+                }
+
+                this.emptyTempClearedAndLoadedModels(); //Leeren der Temporaeren Nves
             },
 
-            nveClearingDialogConfirm:function(oEvent){ 
+            emptyTempClearedAndLoadedModels:function(){
+                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
+                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
+
+                oLoadingNvesTempModel.setProperty("/results", []);
+                oClearingNvesTempModel.setProperty("/results", []);
+                //this.navBackToQuittierung();
+            },
+            
+            nveClearingDialogConfirm:function(){ 
                 //Platz fuer zusaetzliche Funktionen, die gemacht werden können
-                
                 this.chekIfAtLeastOneErrorReasonIsSelected();
             },
-
+            
             chekIfAtLeastOneErrorReasonIsSelected:function(){
                 var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
                 var aCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
@@ -206,8 +249,6 @@ sap.ui.define([
                 } else{ //kein Klaergrund wurde ausgewaehlt
                     this.noClearingReasonSelectedError();
                 }
-        
-               var oSelectedClearingReason="";
             },
 
             
@@ -224,11 +265,8 @@ sap.ui.define([
                     this.setSelectedClearingAttributes(oCurrentClearingReasons);
                 }
             },
-            
 
-            
             getSelectedClearingReasonQuantity:function(aCurrentClearingReasons){ //Gibt Array mit Anzahl der Selectierten Klaergruende zurueck
-                //return Object.entries(aCurrentClearingReasons).filter(([, bool]) => bool).map(e => e[0]);
                 var aAcumulatedErrorReasons=[];
                 var aSelectedClearingReasons=[];
                 for(var i in aCurrentClearingReasons){
@@ -240,12 +278,11 @@ sap.ui.define([
                 return aAcumulatedErrorReasons;
             },
             
-
+            
             setSelectedClearingAttributes:function(oCurrentClearingReasons){ //Setzen der Klaergruende in die zu klaerende NVE
                 var aSelectedAttributeWithValue=[];
 
                 for (var i in oCurrentClearingReasons) { //Jedes Atrtibut wird durchlaufen
-                    //console.log(`${property}: ${oCurrentClearingReasons[property]}`);
                     if(oCurrentClearingReasons[i].value===true){
 
                         var sPropertyName=oCurrentClearingReasons[i].Description;
@@ -268,94 +305,115 @@ sap.ui.define([
                 var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel");
                 var oClearingNve=oClearingNveModel.getProperty("/clearingNve");
 
-                //Einzelnes Objekt
-                var oSelectedReason=aSelectedAttributeWithValue[0];
-                Object.defineProperty(oClearingNve, "clearingReason", {
-                    value: oSelectedReason
-                });
+                oClearingNve.clearingReason={}; //Neues Attribut fuer die Nve erstellen
+                var oClearingReason=aSelectedAttributeWithValue[0]; //da nur ein Klaergrund mitgegeben werden kann
+                oClearingNve.clearingReason=oClearingReason; //Attribut mit Infos fuellen
 
                 //Methode für das Entfernen der NVE aus dem Model und zwischenspeichern oder so
-                this.nveClearingDialogClose();
+                this.findClearingNve();
             },
 
             setClearingResonsInNve:function(aSelectedAttributeWithValue){
                 var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel");
                 var oClearingNve=oClearingNveModel.getProperty("/clearingNve");
 
+                oClearingNve.aClearingReasons={}; //Neues Attribut fuer die Nve erstellen
+                oClearingNve.aClearingReasons=aSelectedAttributeWithValue; //Attribut mit Infos fuellen
 
-                //Fue mehrere Klaergruende
-                Object.defineProperty(oClearingNve, "aClearingReasons", {
-                    value: aSelectedAttributeWithValue
-                });
-
-                //Methode für das Entfernen der NVE aus dem Model und zwischenspeichern oder so
-                this.nveClearingDialogClose();
+                //Nur einkommentieren, wenn die setClearingReasonInNve-Methode nicht verwendet wird.
+                //Diese Methode wird nur nicht verwendet, wenn mehrere Klaergruende fuer eine Nve verwendet werden koennen
+                //this.findClearingNve(); 
             },
 
 
             nveClearingDialogReject:function(){
                 //Platz fuer zusaetzliche Funktionen, die gemacht werden können
                 this.nveClearingDialogClose();
+            },            
+
+            findClearingNve:function(){ //Ganantiert ein Klaer-Objekt vorhanden durch vorherige zwischenschritte
+                //Klaer-Objekt finden
+                var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel"); //Model der zu klaerenden Nve
+                var oClearingNve=oClearingNveModel.getProperty("/clearingNve"); //Einzelne klaer-Nve
+                this.differenciateNveProcessingType(oClearingNve); //Schnittstelle von Klaer- und Verlade-Nves
             },
 
-            onNveClearingDialogCallbackConfirm:function(){ //Bestaetigen im Dialog wurde geklickt
-                //Platz fuer zusaetzliche Funktionen, die gemacht werden können
-                this.checkIfEnteredNveInList();
+            findLoadingNve:function(){
+                //Verlade-Objekt finden
+                var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel");
+                var sManualNveUserInput=oManualNveInputModel.getProperty("/manualInput"); //UserInput aus Feld auslesen
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für noch zu bearbeitende NVEs
+                var aLoadingUnits=oLoadingUnitsModel.getProperty("/results"); //Array aus zu bearbeitenden Nves
+                var oLoadingNve=undefined;
+                
+                //Leider nicht zu verallgemeinern, da sehr spezifisch --> Oder eben 'Objekt.sArticleId' anstatt 'Objekt.externalId'
+                for(var i in aLoadingUnits){
+                    var sLabelId=aLoadingUnits[i].label1.substring(0, aLoadingUnits[i].label1.indexOf(" "));
+                    if(sLabelId===sManualNveUserInput){
+                        oLoadingNve=aLoadingUnits[i];
+                    }
+                }
+
+                if(oLoadingNve!==undefined){
+                    this.differenciateNveProcessingType(oLoadingNve);
+                } else{
+                    this.noNveFoundError();
+                }
+            },
+            
+            differenciateNveProcessingType:function(oDiffNve){
+                if(oDiffNve.clearingReason || oDiffNve.aClearingReasons){ //Alternativ aClearingReasons bei mehreren Klärgründen
+                    this.saveTempClearing(oDiffNve);
+                } else{
+                    this.saveTempLoading(oDiffNve);
+                }
+            },
+
+            saveTempClearing:function(oClearingNve){
+                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel");
+                var aClearingNvesTemp=oClearingNvesTempModel.getProperty("/results");
+
+                var aClearingUnit=[oClearingNve];//Erstellen eines Arrays mit quittierter NVE
+                var aUpdatedClearingNvesTemp=aClearingNvesTemp.concat((aClearingUnit));//Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
+
+                oClearingNvesTempModel.setProperty("/results", aUpdatedClearingNvesTemp);//Setzen der neuen NVEs in das Model
+                this.removeProcessedNve(oClearingNve);
+            },
+
+            saveTempLoading:function(oLoadingNve){
+                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");
+                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results");
+
+                var aLoadingUnit=[oLoadingNve];//Erstellen eines Arrays mit quittierter NVE
+                var aUpdatedLoadingNvesTemp=aLoadingNvesTemp.concat((aLoadingUnit));//Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
+
+                oLoadingNvesTempModel.setProperty("/results", aUpdatedLoadingNvesTemp);//Setzen der neuen NVEs in das Model
+                this.removeProcessedNve(oLoadingNve);
+            },
+
+            removeProcessedNve:function(oDiffNve){
+                //NVE wurde entweder geklärt oder verladen --> entfernen aus dem Model der NVEs ("LoadingUnitsModel")
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
+                var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
+                var iIndexOfLoadingUnit=aRemainingNves.indexOf(oDiffNve);
+
+                aRemainingNves.splice(iIndexOfLoadingUnit, 1);
+                oLoadingUnitsModel.refresh();
+
+                this.decideWichDialogShouldBeClosed(oDiffNve);                
+            },
+
+            decideWichDialogShouldBeClosed:function(oDiffNve){
+                if(oDiffNve.clearingReason || oDiffNve.aClearingReasons){ //Alternativ aClearingReasons bei mehreren Klärgründen
+                    this.nveClearingDialogClose();
+                } else{
+                    this.onManualNveInputFragmentClose();
+                }
             },
 
             onNveClearingDialogCallbackReject:function(){ //Abbrechen im Dialog wurde geklickt
 
                 //Platz fuer zusaetzliche Funktionen, die gemacht werden können
-                this.onManualNveInputFragmentClose();
-            },
-
-            checkIfEnteredNveInList:function(){
-                //Hier muss dann nach bestimmten Werten geprüft werden ob die NVE existiert
-                var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel");
-                var sManualNveUserInput=oManualNveInputModel.getProperty("/manualInput");
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für Quittierte NVEs
-                var aLoadingUnits=oLoadingUnitsModel.getProperty("/results");
-                var sExternalId;
-                var sArticleId;
-                var oEnteredLoadingUnit=undefined;
-                
-                //Leider nicht zu verallgemeinern, da sehr spezifisch --> Oder eben sArticleId anstatt 'Objekt.externalId'
-                for(var i in aLoadingUnits){
-                    var sLabelId=aLoadingUnits[i].label1.substring(0, aLoadingUnits[i].label1.indexOf(" "));
-                    if(sLabelId===sManualNveUserInput){
-                        oEnteredLoadingUnit=aLoadingUnits[i];
-                    }
-                }
-
-                this.removeEnteredLoadingUnit(oEnteredLoadingUnit);
-            },
-
-            removeEnteredLoadingUnit:function(oEnteredLoadingUnit){
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
-                var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
-                var iIndexOfLoadingUnit=aRemainingNves.indexOf(oEnteredLoadingUnit);
-
-                if(iIndexOfLoadingUnit!==-1){ //Wenn Nve in der Liste
-                    //TODO: Hier andere Möglichkeit nutzen, damit Model automatisch auf der View aktualisiert wird
-                    aRemainingNves.splice(iIndexOfLoadingUnit, 1);
-                    oLoadingUnitsModel.refresh();
-                    this.receiptEnteredLoadingUnit(oEnteredLoadingUnit);
-                } else{ //Wenn Nve nicht in der Liste
-                    this.noNveFoundError();
-                    //Optional, da ggf. der gescannte Barcode angezeigt bleiben soll
-                    //this.clearManualNveInput(); 
-                }
-                
-            },
-
-            receiptEnteredLoadingUnit:function(oEnteredLoadingUnit){
-                var oCurrentSittingReceiptNvesModel=this.getOwnerComponent().getModel("CurrentSittingReceiptNvesModel"); //Model für Quittierte NVEs
-                var aCurrentReceiptNves=oCurrentSittingReceiptNvesModel.getProperty("/results"); //Merken des vorherigen Zustandes
-                var aEnteredLoadingUnit=[oEnteredLoadingUnit]; //Erstellen eines Arrays mit quittierter NVE
-                var aUpdatedCurrentReceiptNves=aCurrentReceiptNves.concat(aEnteredLoadingUnit); //Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
-
-                oCurrentSittingReceiptNvesModel.setProperty("/results", aUpdatedCurrentReceiptNves); //Setzen der neuen NVEs in das Model
-                //oTotalReceiptNvesModel.refresh();
                 this.onManualNveInputFragmentClose();
             },
 
@@ -407,9 +465,6 @@ sap.ui.define([
                 oRouter.navTo("Quittierung");
             },
 
-
-
-
             addCameraPlayerToCameraDialog:function(){ //Erstellen des VideoPlayers für den CameraStream und diesen in den Dialog setzen
                 this.onPhotoTypesSelectChange(); //Initiales setzen des Models für die gemachten Fotos
                 var oVideoContainer = this.byId("photoDialogClearingVideoFeedContainer"); 
@@ -454,7 +509,8 @@ sap.ui.define([
                 var canvas=document.createElement('canvas');
                 var context = canvas.getContext('2d');
                 var oDateAndTime= sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.YYYY HH:mm:ss" }).format(new Date()); //Datum inklusive Uhrzeit
-                var sParentNodeId=this.getView().byId("ClearingList").getSelectedItem().getId(); 
+                var oSelectedItem = this.getView().byId("ClearingList").getSelectedItem();
+                var sParentNodeId=oSelectedItem.getId(); 
                 var aClearingListItems=this.getView().byId("ClearingList").getItems();
                 var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel").getProperty("/results");
                 
@@ -493,11 +549,20 @@ sap.ui.define([
                 oPhotoModel.setProperty("/photo", {});
             },
 
+            selectCheck:function(){
+                var oSelectedItem = this.getView().byId("ClearingList").getSelectedItem();
+                if(oSelectedItem){
+                    this.onOpenPhotoDialogClearing();
+                }else{
+                    this.selectError();
+                }
+            },
+
             onOpenPhotoDialogClearing:function(){
                 this.oPhotoDialogClearing ??= this.loadFragment({
                     name: "podprojekt.view.fragments.photoDialogClearing",
                 });
-          
+                
                 this.oPhotoDialogClearing.then((oDialog) => oDialog.open());
             },
 
@@ -563,21 +628,10 @@ sap.ui.define([
                     }.bind(this)
                 });
             },
-            
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+            selectError:function(){
+                MessageBox.error(this._oBundle.getText("noSelectedItem"),{});
+            },
 
             nveClearingDialogOpen:function(){ //Oeffnen des Klaer-Dialoges
                 this.oNveClearingDialog ??= this.loadFragment({

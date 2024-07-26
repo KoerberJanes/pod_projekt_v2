@@ -1,4 +1,6 @@
 {
+    //Das hier ist alles unnötig da das Model mit den richtigen Werten in der manifest vorhanden ist!
+    //Verschwendete Zeit: ca. 20 Minuten
     "confirmationPage": {
         "recipientFound": false,
         "complaintsSwitch": true,
