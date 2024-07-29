@@ -400,15 +400,21 @@ sap.ui.define([
                 aRemainingNves.splice(iIndexOfLoadingUnit, 1);
                 oLoadingUnitsModel.refresh();
 
-                this.decideWichDialogShouldBeClosed(oDiffNve);                
+                this.decideWichDialogShouldBeClosed();                
             },
 
-            decideWichDialogShouldBeClosed:function(oDiffNve){
-                if(oDiffNve.clearingReason || oDiffNve.aClearingReasons){ //Alternativ aClearingReasons bei mehreren Klärgründen
-                    this.nveClearingDialogClose();
-                } else{
+            decideWichDialogShouldBeClosed:function(){
+               var oManualNveInputDialog=this.getView().byId("ManualNveInputDialogId");
+               var oClearDialog=this.getView().byId("clearDialog");
+                
+                if(oManualNveInputDialog!==undefined){
                     this.onManualNveInputFragmentClose();
                 }
+                
+                if(oClearDialog!==undefined){
+                    this.nveClearingDialogClose();
+                }
+                
             },
 
             onNveClearingDialogCallbackReject:function(){ //Abbrechen im Dialog wurde geklickt

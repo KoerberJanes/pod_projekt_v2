@@ -24,20 +24,8 @@ sap.ui.define([
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
             },
 
-            onRecipientFoundSwitchChange:function(){ //Switch mit Kunde nicht angetroffen
-
-            },
-
-            onFotoVisibileToggle:function(){ //Methode um geschossene Fotos ein-/auszublenden
-                //Wird derzeit einfach so gemacht, brauch ich nichts weiter machen.
-            },
-
-            onDeliveryItemVisibleToggle:function(){ //Paletten oder so ein-/ausblenden
-
-            },
-
-            onLoadingDevicesVisibleToggle:function(){ //Loading Devices oder so ein-/ausblenden
-
+            onRecipientNotFound:function(){ //Empfaenger nicht angetroffen NICHT LOESCHEN!
+                //Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
             },
 
             onDeliveryNotePressed:function(oEvent){
@@ -49,7 +37,7 @@ sap.ui.define([
             },
 
             setCurrentClearingObject:function(oPressedDeliveryNote){
-                /* Das Zeigt dann im Klärungs-Controller die Lieferscheinnummer an
+                /* Spaeteste Moeglichkeit des Backend-Calls 
                 var oCurrentClearingObjectModel=this.getOwnerComponent().getModel("CurrentClearingObjectModel");
                 oCurrentClearingObjectModel.setProperty("/clearingObject", oPressedDeliveryNote);
                 */

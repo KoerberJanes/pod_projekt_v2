@@ -168,7 +168,8 @@
                         </columns>
                     </Table>
                     <Label/>
-                    <Button id="signBtn" icon="sap-icon://signature" text="{i18n>sign}" press="checkSignConditions" visible="{= ${settings>/recipientFound}}" type="Accept"/>
+                    <Button id="signBtn" icon="sap-icon://signature" text="{i18n>sign}" press="checkSignConditions" visible="{= ${settings>/recipientFound} === true ? true : false}" type="Accept"/>
+                    <Button id="btnAbschliessen" icon="sap-icon://decline" text="{i18n>nichteingetrofen}" press="onRecipientNotFound" visible="{= ${settings>/recipientFound} === true ? false : true}" type="Reject"/>
                 </form:content>
             </form:SimpleForm>
         </content>
