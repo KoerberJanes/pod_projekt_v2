@@ -193,7 +193,7 @@ sap.ui.define([
 
             checkIfSavingIsNesseccary:function(){
                 if(!this.checkIfNvesWhereCleared() && !this.checkIfNvesWhereLoaded()){ //Wenn weder geklaert noch verladen wurde --> Message Toast
-                    MessageToast.show("Es gab keine Nves die inzwischen bearbeitet wurden!", {
+                    MessageToast.show(this._oBundle.getText("noProcessedNves"), {
                         duration: 1000,
                         width:"15em"
                     });
@@ -232,6 +232,7 @@ sap.ui.define([
                 oLoadingNvesTempModel.setProperty("/results", []);
                 oClearingNvesTempModel.setProperty("/results", []);
                 //this.navBackToQuittierung();
+                this.showSavingSuccessfullMessage();
             },
             
             nveClearingDialogConfirm:function(){ 
@@ -251,7 +252,6 @@ sap.ui.define([
                 }
             },
 
-            
             checkIfOnlyOneErrorReasonIsSelected:function(aQuantityOfSelectedReasons){
                 var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
                 var oCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
@@ -586,7 +586,7 @@ sap.ui.define([
                 if(Object.keys(oTakenPhoto).length !== 0){ //Wenn Objekt Attribute enthält, exisitert ein Foto
                     this.confirmFoto();
                 } else{
-                    MessageToast.show("Es wurde kein Foto geschossen!", {
+                    MessageToast.show(this._oBundle.getText("noPictureTaken"), {
                         duration: 1000,
                         width:"15em"
                     });
@@ -625,6 +625,13 @@ sap.ui.define([
                 }
                 
                 return bEnoughSpace;
+            },
+
+            showSavingSuccessfullMessage:function(){
+                MessageToast.show(this._oBundle.getText("successfullyLoadedNves"), {
+                    duration: 1000,
+                    width:"15em"
+                });
             },
 
             showNotEnoughSpaceError:function(){

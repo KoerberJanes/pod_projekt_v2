@@ -92,21 +92,38 @@ sap.ui.define([
                 var sRecipientName=oRecipientNameModel.getProperty("/recipient/name");
 
                 if(sRecipientName !== ""){
-                   this.checkIfTourIsFinished(); 
+                   //this.checkIfTourIsFinished(); 
+                   this.checkIfNvesAreProcessed();
                 } else{
                     this.showEmptyNameError();
                 }
             },
+
+            checkIfNvesAreProcessed:function(){ //Prüfen ob noch nicht bearbeitete Nves existieren
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
+                var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
+
+                if(aRemainingNves.length >0){ //Es sind noch Nves zu bearbeiten
+                    this.showProgressStatusError();
+                } else{ //Es sind keine Nves mehr zu bearbeiten
+                    this.onNavToUnterschrift();
+                }
+
+
+            },
             
             checkIfTourIsFinished:function(){ //Pruefen ob die Tour abgeschlossen ist
+                /*
+                //Das ist vielleicht machbar, wenn der Status der Tour Backend-seitig aktualisiert wurde
                 var oActiveTour=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
                 var sTourStatus=oActiveTour.orderStatus;
 
                 if(sTourStatus==="90"){
                     this.onNavToUnterschrift();
                 } else{
-                    this.showChekBoxError();
+                    this.showProgressStatusError();
                 }
+                */
             },
 
             onCustomerAbsent:function(){ //Kunde nicht angetroffen switch
@@ -290,8 +307,8 @@ sap.ui.define([
 
             },
             
-            showChekBoxError:function(){ //Fehler weil nicht alle Checkboxen bearbeitet wurden
-                MessageBox.error(this._oBundle.getText("haken"),{
+            showProgressStatusError:function(){ //Fehler weil nicht alle Checkboxen bearbeitet wurden
+                MessageBox.error(this._oBundle.getText("notPermitedToSignTour"),{
                     onClose: function() {
                         //Bisher funktionslos
                     }.bind(this)

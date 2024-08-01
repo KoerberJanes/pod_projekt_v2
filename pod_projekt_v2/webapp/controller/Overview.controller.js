@@ -39,7 +39,7 @@ sap.ui.define(
         this.getView().getModel("TP_VERLADUNG_SRV").read(sPathPos, {
           filters: aFilters,
 
-          success: function (oData) {
+          success: (oData) => {
               this.busyDialogClose();
               var aRecievedTours=oData.getProperty("/results");
 
@@ -49,11 +49,11 @@ sap.ui.define(
                   this.handleRecievedTours(aRecievedTours); //Setzen der Touren in Model
               }
 
-          }.bind(this),
-          error: function(oError){
+          },
+          error: (oError) => {
               this.busyDialogClose();
               //Bisher keine Funktion
-          }.bind(this)
+          }
         });
         //TODO: Sven/Dominik Fragen wegen dem 'bind(this)
       */
