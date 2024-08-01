@@ -7,7 +7,7 @@
     xmlns:u="sap.ui.unified"
     xmlns:upload="sap.m.upload">
 
-    <Dialog id="clearDialog" title="={i18n>clearing}" state="None" afterOpen="onFocusTA" afterClose="" >
+    <Dialog id="clearDialog" title="={i18n>clearingDialogTitle}" state="None" afterOpen="onFocusTA" afterClose="" >
         <customHeader>
             <!--custom Header Items-->
             <Bar id="clearDialogHeaderBar">
@@ -23,16 +23,16 @@
                     <List id="ClearingList" items="{CurrentSittingClearingNvesModel>/results}" mode="SingleSelectLeft">
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Title id="ueberschrift" text="Mögliche Klärgründe:" level="H1"/>
+                                <Title id="ueberschrift" text="{i18n>possibleClearingResons}" level="H1"/>
                             </OverflowToolbar>
                         </headerToolbar>
                         <StandardListItem title="{CurrentSittingClearingNvesModel>Description}" selected="{CurrentSittingClearingNvesModel>value}" wrapping="true" press="setPressedTour"/>
                     </List>
-                    <Label id="txtBemerkung" text="{i18n>bemerkungen}"/>
+                    <Label id="txtBemerkung" text="{i18n>remarks}"/>
                     <TextArea id="taBemerkungen" value="{CurrentSittingClearingNvesModel>/remarks}"></TextArea>
-                    <ToggleButton id="fotoListeToggleButton" icon="{=${settings>/photoListClearingVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoliste}" pressed="{settings>/photoListClearingVisible}"/>
+                    <ToggleButton id="fotoListeToggleButton" icon="{=${settings>/photoListClearingVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{settings>/photoListClearingVisible}"/>
                     <Label/>
-                    <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="selectCheck" class="sapUiVisibleOnlyOnDesktop"/>
+                    <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="selectCheck" class="sapUiVisibleOnlyOnDesktop"/>
                     <Label/>
                     <!--<u:FileUploader id="btnAddPhoto" buttonOnly="true" buttonText="{i18n>foto}" icon="sap-icon://add-photo" useMultipart="false" mimeType="image/*" change="onFotoMobile" width="100%" class="sapUiHideOnDesktop"/>-->
                     <upload:UploadSet id="photoClearingList" visible="{= ${settings>/photoListClearingVisible}}" fileTypes="png, image/*" instantUpload="false"
@@ -99,7 +99,7 @@
                 <Button id="clearNVEOkBtn" icon="sap-icon://accept" type="Emphasized" text="{i18n>ok}" press="nveClearingDialogConfirm"/>
             </beginButton>
             <endButton>
-                <Button id="clearNVEBackBtn" icon="sap-icon://error" type="Emphasized" text="{i18n>Zurück}" press="nveClearingDialogReject"/>
+                <Button id="clearNVEBackBtn" icon="sap-icon://error" type="Emphasized" text="{i18n>back}" press="nveClearingDialogReject"/>
             </endButton>
     </Dialog>
 </core:FragmentDefinition>

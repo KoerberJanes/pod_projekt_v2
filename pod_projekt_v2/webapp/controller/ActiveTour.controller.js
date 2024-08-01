@@ -92,13 +92,5 @@ sap.ui.define([
         
                 oRouter.navTo("StopInformation");
             },
-
-            onRefreshRespectiveStops:function(){ //Dummy-Refresh
-                
-                MessageToast.show("Dies ist ein Dummy-Rrefresh!", {
-                    duration: 1000,
-                    width:"15em"
-                });
-            },
         });
     });

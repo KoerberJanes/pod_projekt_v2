@@ -8,26 +8,26 @@
 		<customHeader>
 			<Bar>
 				<contentMiddle>
-					<Label design="Bold" text="{i18n>tourstarttitle}"/>
+					<Label design="Bold" text="{i18n>tourstartDialogTitle}"/>
 				</contentMiddle>
 			</Bar>
 		</customHeader>
 		<content>
 			<form:SimpleForm id="TourstartForm" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2">
 				<form:content>
-					<Label text="{i18n>KennzEing}"/>
+					<Label text="{i18n>licensePlate}"/>
 					<Input id="kennzeichenInput" value="{TourStartFragmentModel>/tour/licensePlate}" editable="false"/>
-					<Label text="{i18n>KilomEing}"/>
+					<Label text="{i18n>Mileage}"/>
 					<Input id="kilometerInput" value="{TourStartFragmentModel>/mileage}" type="Number" showClearIcon="true"/>
 				</form:content>
 			</form:SimpleForm>
 		</content>
 
 		<beginButton>
-            <Button id="TourstartFragmentButtonConfirm" text="{i18n>dialogOkButtonText}" type="Emphasized" press="onTourStartDialogButtonCallback"/>
+            <Button id="TourstartFragmentButtonConfirm" text="{i18n>ok}" type="Emphasized" press="onTourStartDialogButtonCallback"/>
         </beginButton>
         <endButton>
-            <Button id="TourstartFragmentButtonAbort" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onTourStartDialogButtonCallback"/>
+            <Button id="TourstartFragmentButtonAbort" text="{i18n>abort}" type="Emphasized" press="onTourStartDialogButtonCallback"/>
         </endButton>		
 	</Dialog>
 </core:FragmentDefinition>

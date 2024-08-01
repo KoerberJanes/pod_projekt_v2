@@ -15,7 +15,7 @@
                     -->
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>unterschrift}"/>
+                    <Label text="{i18n>signatureRequired}"/>
                 </contentMiddle>
                 <contentRight>
                     <!--Leer-->
@@ -27,7 +27,7 @@
                 <form:content>
                     <Bar>
                         <contentMiddle>
-                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
+                            <Title id="OvtbTitle" text="{i18n>driver}" level="H2" />
                         </contentMiddle>
                     </Bar>
                     <Text text="{SingleStopModel>/results/addressName1}"/>

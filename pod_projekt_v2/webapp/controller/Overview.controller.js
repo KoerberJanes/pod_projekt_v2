@@ -55,6 +55,7 @@ sap.ui.define(
               //Bisher keine Funktion
           }.bind(this)
         });
+        //TODO: Sven/Dominik Fragen wegen dem 'bind(this)
       */
 
         if(bTestCase){ //Success-Fall simulieren
@@ -176,7 +177,7 @@ sap.ui.define(
         this.getView().byId("kilometerInput").focus();
       },
 
-      noToursError:function(){ //Es konnten keine Touren geladen werden
+      noToursError:function(){
         MessageBox.error(this._oBundle.getText("noToursLoaded"), {
             onClose:function(){
                 //NOP:

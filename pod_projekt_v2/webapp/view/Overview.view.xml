@@ -6,13 +6,13 @@
     xmlns:form="sap.ui.layout.form"
     xmlns:u="sap.ui.unified" 
     xmlns:tnt="sap.tnt" displayBlock="true">
-    <Page id="overviewPageId" title="{i18n>title}">
+    <Page id="overviewPageId" title="{i18n>overviewTitle}">
         <customHeader>
                 <Bar>                    
                     <contentLeft>
                     </contentLeft>
                     <contentMiddle>
-                        <Label text="{i18n>title}"/>
+                        <Label text="{i18n>overviewTitle}"/>
                     </contentMiddle>
                     <contentRight>
                     </contentRight>
@@ -21,27 +21,16 @@
         <content>
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
-                    <!--
-                    <Bar>
-                        <contentMiddle>
-                             Nicht mehr so wichtig (S. Brenner) -> kann aber ggf. wieder rein gemacht werden
-                                Dazu müsste der gesamte 'Bar' abschnitt entfernt werden
-                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
-                            
-                        </contentMiddle>
-                    </Bar>
-                    -->
-                    <List id="tourSelectionList" items="{TourModel>/results}" noDataText="{i18n>npa}" 
+                    <List id="tourSelectionList" items="{TourModel>/results}" noDataText="{i18n>noDataAvailable}" 
                         growing="true" growingThreshold="10" busyIndicatorDelay="500">
-                        <!--selectionChange="onTourAuswahl" mode="SingleSelectMaster"-->
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Label id="ueberschrift" text="Zugewiesene Touren:"></Label>
+                                <Label id="assignedToursLabel" text="{i18n>assignedTours}"></Label>
                                 <ToolbarSpacer/>
-                                <Button id="refreshbtn" press="onRefreshTours" icon="sap-icon://refresh" type="Emphasized"></Button>
+                                <Button id="refreshBtn" press="onRefreshTours" icon="sap-icon://refresh" type="Emphasized"></Button>
                             </OverflowToolbar>
                         </headerToolbar>
-                        <!--Abfrage geht nur bis 70 weil, bei gleichbleibender Auswahl dann die default Lösunf gewählt wird (Success) -->
+                        <!--Abfrage geht nur bis Status 70 weil, bei gleichbleibender Auswahl dann die default Loesung gewählt wird (Success) -->
                         <StandardListItem title="{TourModel>routeCaption}" description="{TourModel>externalId}" wrapping="true" 
                             info="{TourModel>altRouteStatus}"
                             infoState="{= ${TourModel>altRouteStatus} === 'Freigegeben' ? 'Success' : 

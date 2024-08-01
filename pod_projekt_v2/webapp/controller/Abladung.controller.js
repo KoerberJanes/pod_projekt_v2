@@ -247,7 +247,7 @@ sap.ui.define([
                 if(aQuantityOfSelectedReasons.length>0){ //Mindestens 1 Klaergrund wurde ausgewaehlt
                     this.checkIfOnlyOneErrorReasonIsSelected(aQuantityOfSelectedReasons);
                 } else{ //kein Klaergrund wurde ausgewaehlt
-                    this.noClearingReasonSelectedError();
+                    this.selectError();
                 }
             },
 
@@ -442,7 +442,7 @@ sap.ui.define([
             },
 
             showNotAllNvesProcessedError:function(){
-                MessageBox.error(this._oBundle.getText("nvsUnbe"), {
+                MessageBox.error(this._oBundle.getText("notAllNvesProcessed"), {
                     onClose:function(){
                         //NOP:
                     }.bind(this)
@@ -628,7 +628,7 @@ sap.ui.define([
             },
 
             showNotEnoughSpaceError:function(){
-                MessageBox.error(this._oBundle.getText("notEnoughSpace"),{
+                MessageBox.error(this._oBundle.getText("notEnoughPhotoSpace"),{
                     onClose: function() {
                         //Bisher funktionslos
                     }.bind(this)
@@ -636,7 +636,11 @@ sap.ui.define([
             },
 
             selectError:function(){
-                MessageBox.error(this._oBundle.getText("noSelectedItem"),{});
+                MessageBox.error(this._oBundle.getText("noSelectedItem"), {
+                    onClose:function(){
+                        //NOP:
+                    }.bind(this)
+                });
             },
 
             nveClearingDialogOpen:function(){ //Oeffnen des Klaer-Dialoges

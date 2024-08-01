@@ -1,4 +1,4 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:unified="sap.ui.unified" xmlns:html="http://www.w3.org/1999/xhtml">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:unified="sap.ui.unified">
 	<Dialog id="FotoDialog" afterOpen="onAfterOpenAuswahl">
 		<customHeader>
 			<Bar>
@@ -12,7 +12,7 @@
 		<content>
 			<form:SimpleForm >
 				<form:content>
-					<List id="fotoartlist" noDataText="{i18n>npa}" mode="SingleSelectLeft" items="{FotoModel>/results}">
+					<List id="fotoartlist" noDataText="{i18n>noDataAvailable}" mode="SingleSelectLeft" items="{FotoModel>/results}">
 						<headerToolbar>
 							<OverflowToolbar >
 								<Label text="{i18n>fotoart}"/>

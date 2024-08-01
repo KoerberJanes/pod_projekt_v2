@@ -70,11 +70,6 @@
           "photoListClearingVisible": false
         }
       },
-      "": {
-        "dataSource": "mainService",
-        "preload": true,
-        "settings": {}
-      },
       "TourModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {

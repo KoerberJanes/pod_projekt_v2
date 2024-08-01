@@ -1,7 +1,7 @@
 <mvc:View controllerName="podprojekt.controller.Main"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m">
-    <Page id="main" title="{i18n>title}">
+    <Page id="main" title="{i18n>mainPageTitle}">
         <content>
             <Button id="overviewNavigationButton" text="Overview" press="onNavToOverview"></Button>
         </content>

@@ -6,7 +6,7 @@
     xmlns:form="sap.ui.layout.form"
     xmlns:u="sap.ui.unified" 
     xmlns:tnt="sap.tnt" displayBlock="true">
-    <Page id="activetourPageId" title="{i18n>title}">
+    <Page id="activetourPageId" title="{i18n>activetourPageTitle}">
         <customHeader>
                 <Bar>
                     
@@ -17,7 +17,7 @@
                         -->
                     </contentLeft>
                     <contentMiddle>
-                        <Label text="{i18n>touruebersicht}"/>
+                        <Label text="{i18n>activetourPageTitle}"/>
                     </contentMiddle>
                     <contentRight>
                         <!--Leer-->
@@ -28,22 +28,14 @@
         <content>
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
-                    <!--
-                    <Bar>
-                        <contentMiddle>
-                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
-                        </contentMiddle>
-                    </Bar>
-                    -->
-                    
-                    <List id="stopSelectionList" items="{StopModel>/results}" noDataText="{i18n>npa}"
-                        growing="true" growingThreshold="10" busyIndicatorDelay="500" enableBusyIndicator="true"
-                         rememberSelections="false"><!--selectionChange="onStopAuswahl" mode="SingleSelectMaster"-->
+                    <List id="stopSelectionList" items="{StopModel>/results}" noDataText="{i18n>noDataAvailable}"
+                        growing="true" growingThreshold="10" busyIndicatorDelay="500"
+                         rememberSelections="false">
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Title id="ueberschrift" text="{i18n>Tour}&#13;{TourStartFragmentModel>/tour/routeCaption}" level="H1"/>
+                                <Title id="ueberschrift" text="{i18n>activeTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" level="H1"/>
                                 <ToolbarSpacer/>
-                                <Button id="refreshbtn" press="onRefreshRespectiveStops" icon="sap-icon://refresh" type="Emphasized"></Button>
+                                <!--<Button id="refreshbtn" press="onRefreshRespectiveStops" icon="sap-icon://refresh" type="Emphasized"></Button>-->
                             </OverflowToolbar>
                         </headerToolbar>
                         

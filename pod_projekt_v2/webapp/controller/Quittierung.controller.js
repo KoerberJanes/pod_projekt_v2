@@ -307,7 +307,7 @@ sap.ui.define([
             },
                 
             showEmptyNameError:function(){ //Fehler weil kein Kundenname eingetragen
-                MessageBox.error(this._oBundle.getText("nameang"),{
+                MessageBox.error(this._oBundle.getText("nameMissing"),{
                     onClose: function() {
                         //Bisher funktionslos
                     }.bind(this)

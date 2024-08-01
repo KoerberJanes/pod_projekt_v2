@@ -10,21 +10,20 @@
                 <contentLeft>
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>confirmation}"/>
+                    <Label text="{i18n>confirmationTitle}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>
-
             </Bar>
         </customHeader>
 
         <content>
             <form:SimpleForm id="currentTourInfoForm">
                 <form:content>
-                    <Text id="driverInfo" text="{i18n>Robin Rösinger}&#10;"/>
+                    <Text id="driverInfo" text="{i18n>driver}&#10;"/>
                     <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" wrapping="true" level="H2"/>
                         <HBox justifyContent="SpaceAround">
-                            <Label text="{i18n>Adresse}"/>
+                            <Label text="{i18n>adress}"/>
                             <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
                         </HBox>
                 </form:content>
@@ -33,7 +32,7 @@
             <form:SimpleForm id="DelivererInputForm">
                 <form:content>
                     <Label id="recipientFoundControl" text="{i18n>recipientFound}"/>
-                    <Switch id="recipientFoundSwitch" type="AcceptReject" customTextOff="{i18n>no}" customTextOn="{i18n>yes}" state="{settings>/recipientFound}" change=""/>
+                    <Switch id="recipientFoundSwitch" type="AcceptReject" customTextOff="{i18n>no}" customTextOn="{i18n>yes}" state="{settings>/recipientFound}"/>
 
                     <Label id="recipientName" text="{i18n>recipientName}" visible="{= ${settings>/recipientFound} }"/>
                     <Input id="recipientNameInp" value="{RecipientNameModel>/recipient/name}" visible="{= ${settings>/recipientFound} }"/>
@@ -41,7 +40,7 @@
                     <Label text="{i18n>showDeliveryItems}"/>
                     <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" press="onToggleListVisibility" pressed="{settings>/deliveryItemsVisible}"></ToggleButton>
                     <Label ></Label>
-                    <List  id="deliveryNoteList" mode="None" includeItemInSelection="true" items="{DeliveryNoteModel>/results}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="Keine Lieferscheine"> 
+                    <List  id="deliveryNoteList" mode="None" includeItemInSelection="true" items="{DeliveryNoteModel>/results}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
                         <items>
                             <StandardListItem
                                 title="{DeliveryNoteModel>ProductId}"
@@ -73,8 +72,8 @@
                     <Switch id="remarksSwitch" state="{settings>/confirmationPage/remarksSwitch}" customTextOff="{i18n>no}" customTextOn="{i18n>yes}"/>
                     <TextArea id="idTextarea" visible="{settings>/remarksSwitch}"/>
 
-                    <Label id="photoItems" text="Fotoliste anzeigen"/>
-                    <ToggleButton id="photoItemsToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoliste}" pressed="{settings>/photoListVisible}"></ToggleButton>
+                    <Label id="photoItems" text="{i18n>showPhotos}"/>
+                    <ToggleButton id="photoItemsToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{settings>/photoListVisible}"></ToggleButton>
                     <Label/>
                     <upload:UploadSet id="photoItemsList" visible="{settings>/photoListVisible}" fileTypes="png, image/*" instantUpload="false"
                         items="{path:'PhotoModel>/photos', 
@@ -107,7 +106,6 @@
                                             type="{type}"
                                             visibility="TextOnly"/>
                                 </upload:markers>
-                                
                                 <upload:statuses>
                                     <ObjectStatus
                                             title="{PhotoModel>photoType}"
@@ -116,14 +114,13 @@
                                             icon="{icon}"
                                             active="{active}"/>
                                 </upload:statuses>
-                            
                             </upload:UploadSetItem>
                         </upload:items>
                     </upload:UploadSet>
                     <Label />
 
                     <HBox justifyContent="SpaceAround">
-                        <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>foto}" press="onOpenPhotoDialog" /> <!--press="onFotoabfrageDialogOpen"-->
+                        <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="onOpenPhotoDialog" /> <!--press="onFotoabfrageDialogOpen"-->
                         <Select id="photoTypeSelect" items="{
                                 path:'PhotoTypeModel>/photoTypes'}" change="onPhotoTypesSelectChange">
                                 <core:ListItem text="{PhotoTypeModel>photoTyp}" key="{PhotoTypeModel>photoTyp}"/>
@@ -147,34 +144,31 @@
                         <columns>
                             <Column>
                                 <header>
-                                    <Text text="{i18n>typ}"/>
+                                    <Text text="{i18n>loadingDevicesType}"/>
                                 </header>
                             </Column>
                             <Column>
                                 <header>
-                                    <Text text="{i18n>bestand}"/>
+                                    <Text text="{i18n>loadingDevicesStock}"/>
                                 </header>
                             </Column>
                             <Column>
                                 <header>
-                                    <Text text="{i18n>abladen}"/>
+                                    <Text text="{i18n>loadingDevicesUnload}"/>
                                 </header>
                             </Column>
                             <Column>
                                 <header>
-                                    <Text text="{i18n>aufladen}"/>
+                                    <Text text="{i18n>loadingDevicesLoad}"/>
                                 </header>
                             </Column>
                         </columns>
                     </Table>
                     <Label/>
                     <Button id="signBtn" icon="sap-icon://signature" text="{i18n>sign}" press="checkSignConditions" visible="{= ${settings>/recipientFound} === true ? true : false}" type="Accept"/>
-                    <Button id="btnAbschliessen" icon="sap-icon://decline" text="{i18n>nichteingetrofen}" press="onRecipientNotFound" visible="{= ${settings>/recipientFound} === true ? false : true}" type="Reject"/>
+                    <Button id="btnAbschliessen" icon="sap-icon://decline" text="{i18n>notEncountered}" press="onRecipientNotFound" visible="{= ${settings>/recipientFound} === true ? false : true}" type="Reject"/>
                 </form:content>
             </form:SimpleForm>
         </content>
-
-
-        
     </Page>
 </mvc:View>

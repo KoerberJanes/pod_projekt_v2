@@ -3,20 +3,27 @@ sap.ui.define([
 ], function () {
 	"use strict";
 	return {
-		statusText: function (sStatus, ownerComponent) {
-            const oResourceBundle = ownerComponent.getModel("i18n").getResourceBundle();
+		statusText: function (sStatus, oOwnerComponent) {
+            var oResourceBundle = oOwnerComponent.getModel("i18n").getResourceBundle();
+            var sReturnStatusText="";
             switch (sStatus) {
                 case "10":
-                    return oResourceBundle.getText("invoiceStatusFreigegeben");
+                    sReturnStatusText= oResourceBundle.getText("invoiceStatusApproved");
+                    break;
                 case "50":
-                    return oResourceBundle.getText("invoiceStatusBeladen");
+                    sReturnStatusText= oResourceBundle.getText("invoiceStatusLoaded");
+                    break;
                 case "70":
-                    return oResourceBundle.getText("invoiceStatusBeendet");
+                    sReturnStatusText= oResourceBundle.getText("invoiceStatusFinished");
+                    break;
                 case "90":
-                    return oResourceBundle.getText("invoiceStatusAbgeschlossen");
+                    sReturnStatusText= oResourceBundle.getText("invoiceStatusCompleted");
+                    break;
                 default:
-                    return "Fehlerhaft";
+                    sReturnStatusText= oResourceBundle.getText("invoiceStatusFaulty");
             }
+
+            return sReturnStatusText;
         }
 	};
 });

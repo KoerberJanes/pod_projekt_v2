@@ -6,14 +6,14 @@
     xmlns:form="sap.ui.layout.form"
     xmlns:u="sap.ui.unified" 
     xmlns:tnt="sap.tnt" displayBlock="true">
-    <Page id="stopInformationPageId" title="{i18n>title}">
+    <Page id="stopInformationPageId" title="{i18n>stopInformationTitle}">
         
         <customHeader>
             <Bar>
                 <contentLeft>
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>stopuebersicht}"/>
+                    <Label text="{i18n>stopInformationTitle}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>
@@ -27,27 +27,25 @@
                     <!--
                     <Bar>
                         <contentMiddle>
-                            <Title id="OvtbTitle" text="{i18n>Robin Rösinger}" level="H2" />
+                            <Title id="OvtbTitle" text="{i18n>driver}" level="H2" />
                         </contentMiddle>
                     </Bar>
                     -->
                     <OverflowToolbar>
-                        <Label id="tourTxt" text="{i18n>Tour}&#13;{TourStartFragmentModel>/tour/routeCaption}"></Label>
+                        <Label id="tourTxt" text="{i18n>tour}&#13;{TourStartFragmentModel>/tour/routeCaption}"></Label>
                         <ToolbarSpacer/>
-                        <Button id="stopInformationRefreshBtn" press="onRefreshRespectiveStops" icon="sap-icon://refresh" ></Button>
                     </OverflowToolbar>
                     
-                    <Label text="{i18n>Stopp}"></Label>
-                    <Input id="stopp" value="{StopInformationModel>/tour/addressName1}" editable="false"></Input>
-                    <!--Wenn hier nur die '2' wie im Original angezeit werden soll, wird der Parameter 'stopOrder' Verwendet-->
-                    <Label text="{i18n>Adresse}"></Label>
+                    <Label text="{i18n>stopp}"></Label>
+                    <Input id="stopp" value="{StopInformationModel>/tour/addressName1}" editable="false"></Input><!--Wenn hier nur die '2' wie im Original angezeit werden soll, wird der Parameter 'stopOrder' Verwendet-->
+                    <Label text="{i18n>adress}"></Label>
                     <TextArea editable="false" growing="true" value="{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"></TextArea>
                    
                     <Label/>
                     <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>Karte}"></Button>
-                    <Label text="{i18n>Hinweis}"></Label>
+                    <Label text="{i18n>note}"></Label>
                     <TextArea id="taHinweis" value="{StopInformationModel>/tour/shipmentConditionCaption}" editable="false"></TextArea>
-                    <Label text="{i18n>Avisnummer}"></Label>
+                    <Label text="{i18n>avisNumber}"></Label>
                     <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{StopInformationModel>/tour/phoneAvis}"></Button>
                     
                 </form:content>
@@ -66,7 +64,7 @@
                     -->
                 </contentMiddle>
                 <contentRight>
-                    <Button id="QuittierungBtn" text="{i18n>Quittierung}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onNavToQuittierung"></Button>
+                    <Button id="QuittierungBtn" text="{i18n>confirmationTitle}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onNavToQuittierung"></Button>
                 </contentRight>
             </Bar>
         </footer>

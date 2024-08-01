@@ -3,12 +3,12 @@
     xmlns:form="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
 
-    <Dialog id="ManualNveInputDialogId" title="{i18n>handeingabe}" initialFocus="barcodeInput" afterClose="" afterOpen="setInputFocus" resizable="false">
+    <Dialog id="ManualNveInputDialogId" title="{i18n>manualInputTitle}" initialFocus="barcodeInput" afterClose="" afterOpen="setInputFocus" resizable="false">
         
         <customHeader>
             <Bar id="inputDialogHeaderBar">
                 <contentMiddle>
-                    <Title id="inputDialogTitle" text="{i18n>handeingabe}"/>
+                    <Title id="inputDialogTitle" text="{i18n>manualInputTitle}"/>
                 </contentMiddle>    
             </Bar>
         </customHeader>
@@ -16,16 +16,16 @@
             <form:SimpleForm id="ManualNveInputForm" layout="ResponsiveGridLayout" title="" labelSpanXL="2" WlabelSpanL="2" labelSpanM="2">
                 <form:content>
                     <Label id="barcodeLabel" text="{i18n>barcode}"/>
-                    <Input id="barcodeInput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>enterbarcode}" submit="onCloseInputDialog" showClearIcon="true"/>
+                    <Input id="barcodeInput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>manualInputBarcodePlaceholder}" submit="onCloseInputDialog" showClearIcon="true"/>
                 </form:content>
             </form:SimpleForm>
         </content>
         
         <beginButton>
-            <Button id="inputDialogOkBtn" text="{i18n>dialogOkButtonText}" type="Emphasized" press="findLoadingNve"/>
+            <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press="findLoadingNve"/>
         </beginButton>
         <endButton>
-            <Button id="inputDialogCancelBtn" text="{i18n>dialogCloseButtonText}" type="Emphasized" press="onNveClearingDialogCallbackReject"/>
+            <Button id="inputDialogCancelBtn" text="{i18n>abort}" type="Emphasized" press="onNveClearingDialogCallbackReject"/>
         </endButton>
     </Dialog>
 </core:FragmentDefinition>

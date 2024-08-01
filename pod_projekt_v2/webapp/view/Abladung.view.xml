@@ -13,7 +13,7 @@
                     -->
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>abladung}"/>
+                    <Label text="{i18n>unloadingTitle}"/>
                 </contentMiddle>
                 <contentRight>
                     <!--Leer-->
@@ -24,7 +24,7 @@
 
             <form:SimpleForm id="currentTourInfoForm">
                 <form:content>
-                    <Text id="driverInfo" text="{i18n>Robin Rösinger}&#10;"/>
+                    <Text id="driverInfo" text="{i18n>driver}&#10;"/>
                     <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" wrapping="true" level="H2"/>
                         <HBox justifyContent="SpaceAround">
                             <Label text="{i18n>Adresse}"/>
@@ -40,7 +40,6 @@
                             <!-- <core:Icon id="iconId" src="sap-icon://sys-add" class="sapUiTinyMarginBegin"/> -->
                             <Text id="NVEText" text="NVEs"/>
                             <ToolbarSpacer ></ToolbarSpacer>
-                            <Button id="testBreakpointButton" press="onBreakpoint" icon="sap-icon://refresh" type="Emphasized"></Button>
                             <ToolbarSpacer/>
                             <Text id="txtNVEAnzahl" text="{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /{= ${ReceivedLoadingUnitsModel>/results}.length}"></Text>
                         </content>
@@ -56,8 +55,8 @@
                             </content>
                         </CustomTreeItem>
                     </Tree>
-                    <Button id="handeingabebtn" icon="sap-icon://simulate" text="{i18n>handeingabe}" press="onManualNveInputFragmentOpen"/>
-                    <Button id="btnAllesQuittieren" text="{i18n>allesQuittieren}" icon="sap-icon://accept" press="checkForRemainingNves"/>
+                    <Button id="handeingabebtn" icon="sap-icon://simulate" text="{i18n>manualInputTitle}" press="onManualNveInputFragmentOpen"/>
+                    <Button id="btnAllesQuittieren" text="{i18n>loadAllOpenNves}" icon="sap-icon://accept" press="checkForRemainingNves"/>
                 </form:content>
             </form:SimpleForm>
         </content>
@@ -70,7 +69,7 @@
                     <!--<Button type="Emphasized" text="Test" press="onTest"/>-->
                 </contentMiddle>
                 <contentRight>
-                    <Button text="{i18n>dialogCloseButtonText}" press="checkForUnsavedNves"/>
+                    <Button text="{i18n>abort}" press="checkForUnsavedNves"/>
                 </contentRight>
             </Bar>
         </footer>
