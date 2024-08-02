@@ -78,6 +78,7 @@ sap.ui.define([
 
                this.busyDialogClose();
                this.showBackendConfirmMessage();
+               this.onNavToOverview();
             },
 
             showBackendConfirmMessage:function(){
@@ -85,6 +86,12 @@ sap.ui.define([
                     duration: 2500,
                     width:"15em"
                 });
+            },
+
+            onNavToOverview:function(){
+                var oRouter = this.getOwnerComponent().getRouter();
+        
+                oRouter.navTo("Overview");
             }
         });
     });
