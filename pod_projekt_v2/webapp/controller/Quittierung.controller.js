@@ -112,9 +112,9 @@ sap.ui.define([
 
             },
             
-            checkIfTourIsFinished:function(){ //Pruefen ob die Tour abgeschlossen ist
+            checkIfTourIsFinished:function(){ //Pruefen ob die Tour abgeschlossen ist (Backendseitig?)
                 /*
-                //Das ist vielleicht machbar, wenn der Status der Tour Backend-seitig aktualisiert wurde
+                //Das ist vielleicht machbar, wenn der Status der Tour Backend-seitig aktualisiert wurde und von dort geprüft werden soll
                 var oActiveTour=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
                 var sTourStatus=oActiveTour.orderStatus;
 

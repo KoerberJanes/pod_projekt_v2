@@ -14,9 +14,9 @@
             <core:HTML id="videoFeedContainer"/>
             <form:SimpleForm id="sfFoto">
                 <form:content>
-                    <Button icon="sap-icon://add-photo" text="{i18n>foto}" press="checkIfPhotoNeedsToBeCleared"></Button>
+                    <Button icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="checkIfPhotoNeedsToBeCleared"></Button>
                     <Image src="{= ${LatestPhotoModel>/photo}.src}" width="{= ${LatestPhotoModel>/photo}.width}" height="{= ${LatestPhotoModel>/photo}.heigth}"/>
-                    <Button icon="sap-icon://action" text="{i18n>uebernehmen}" press="onCheckIfPhotoTaken"></Button>
+                    <Button icon="sap-icon://action" text="{i18n>usePhoto}" press="onCheckIfPhotoTaken"></Button>
                 </form:content>
             </form:SimpleForm>
 		</content>

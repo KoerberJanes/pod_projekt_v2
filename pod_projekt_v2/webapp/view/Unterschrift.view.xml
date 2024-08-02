@@ -9,59 +9,57 @@
         <customHeader>
             <Bar>
                 <contentLeft>
-                    <!--
-                    <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"/>
-                    <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onNavToQuittierung"/>
-                    -->
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>signatureRequired}"/>
+                    <Label text="{i18n>signingPageTitle}"/>
                 </contentMiddle>
                 <contentRight>
-                    <!--Leer-->
                 </contentRight>
             </Bar>
         </customHeader>
         <content>
-            <form:SimpleForm >
+            <form:SimpleForm layout="ResponsiveGridLayout">
                 <form:content>
                     <Bar>
                         <contentMiddle>
                             <Title id="OvtbTitle" text="{i18n>driver}" level="H2" />
                         </contentMiddle>
                     </Bar>
-                    <Text text="{SingleStopModel>/results/addressName1}"/>
-                    <Text text="{SingleStopModel>/results/zipCode} {SingleStopModel>/results/city}"/>
-                    <Text text="{i18n>lsnr} {= ${SingleStopModel>/results}.orders[0].shipmentNumber}"/>
-                </form:content>
-            </form:SimpleForm>
-            <form:SimpleForm >
-                <form:content>
-                    <Text text="{i18n>nves} {= ${SingleStopModel>/results}.orders[0].loadingUnits.length} {i18n>abgeladen}."></Text>
-                    <Text text="1 Lieferscheine / 0 Retouren bearbeitet."></Text><!--Platzhalter-->
-                </form:content>
-            </form:SimpleForm>
-            <form:SimpleForm >
-                <form:content>
-                    <Text text="{i18n>leihgut} {i18n>abgeladen} {i18n>aufgeladen}"></Text>
-                </form:content>
-            </form:SimpleForm>
-            <form:SimpleForm >
-                <form:content>
-                    <Text id="txtUnterschrift"></Text>
-                    <Text id="txtDatum"></Text>
-                    <Text text="{i18n>geokoordinaten}"></Text>
-                    <Text text="{i18n>b}: {= ${SingleStopModel>/results}.orders[0].startGeoB}, {i18n>l}: {= ${SingleStopModel>/results}.orders[0].startGeoL}"></Text>
+                    <Label text="{i18n>adress}"/>
+                    <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
+                    <Label text="{i18n>deliveryNoteNumber}"/>
+                    <Text text="{StopInformationModel>/tour/shipmentNumber}"/>
+                    
+                    <Label text="{i18n>numberedDispatchUnits}"/>
+                    <Text text="{= ${StopInformationModel>/tour/loadingUnits}.length} {i18n>unloaded}"/>
+                    
+                    <Text text="X Lieferscheine / Y Retouren bearbeitet."/><!--TODO: Hier muss ich noch die Liste ueberarbeiten, damit eine 2 Listen (Lieferscheine und Retouren) amgezeigt werden können-->
+                    <Label text="{i18n>loadingDevices}"/>
+                    <Text text="A {i18n>abgeladen}, B {i18n>aufgeladen}"/>
+                    <Label id="txtUnterschrift"/>
+                    <Text id="txtDatum" text="{i18n>dateAndTime}"/>
+                    <Text text="Datum hier einfuegen"/>
+                    <Label text="{i18n>geokoordinaten}"/>
+                    <Text text="B:{StopInformationModel>/tour/startGeoB}, L:{StopInformationModel>/tour/startGeoL}"></Text>
                 </form:content>
             </form:SimpleForm>
             <Label width="10%"></Label>
             <customControl:DigitalSignature id="digitalSignatureId" width="75%" height="30%"></customControl:DigitalSignature>
-            <Button width="10%" icon="sap-icon://decline" press="onClear"></Button>
-            <form:SimpleForm >
-                <form:content>
-                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onQuittieren"></Button>
-                </form:content>
-            </form:SimpleForm>
+            <Button width="10%" icon="sap-icon://decline" press="onClearSignField"></Button>
         </content>
+
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <Button text="Debugging Breakpoint" icon="sap-icon://sys-enter" press="onBreak"></Button>
+                </contentLeft>
+                <contentMiddle>
+                </contentMiddle>
+                <contentRight>
+                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onReceiptStop"></Button>
+                </contentRight>
+            </Bar>
+        </footer>
+        
     </Page>
 </mvc:View>

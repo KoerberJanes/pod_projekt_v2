@@ -17,20 +17,12 @@
                 </contentMiddle>
                 <contentRight>
                 </contentRight>
-
             </Bar>
         </customHeader>
         
         <content>
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000" labelSpanL="3" labelSpanM="3" labelSpanS="3" labelSpanXL="3">
                 <form:content>
-                    <!--
-                    <Bar>
-                        <contentMiddle>
-                            <Title id="OvtbTitle" text="{i18n>driver}" level="H2" />
-                        </contentMiddle>
-                    </Bar>
-                    -->
                     <OverflowToolbar>
                         <Label id="tourTxt" text="{i18n>tour}&#13;{TourStartFragmentModel>/tour/routeCaption}"></Label>
                         <ToolbarSpacer/>
@@ -54,14 +46,8 @@
         <footer>
             <Bar>
                 <contentLeft>
-                    <!--
-                    <Button id="ManualBackBtn" text="{i18n>Zurück}" icon="sap-icon://navigation-left-arrow" press="onNavToActiveTour"></Button>
-                    -->
                 </contentLeft>
                 <contentMiddle>
-                    <!--
-                    <Button id="TestNavBtn" text="Zur Abladung" press="onNavToAbladung"></Button>
-                    -->
                 </contentMiddle>
                 <contentRight>
                     <Button id="QuittierungBtn" text="{i18n>confirmationTitle}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onNavToQuittierung"></Button>

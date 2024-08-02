@@ -486,7 +486,7 @@
       "viewName": "podprojekt.view.App",
       "type": "XML",
       "async": true,
-      "id": "App"
+      "id": "app"
     }
   }
 }

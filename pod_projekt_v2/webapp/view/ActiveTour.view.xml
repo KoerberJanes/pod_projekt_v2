@@ -11,16 +11,11 @@
                 <Bar>
                     
                     <contentLeft>
-                        <!--
-                        <Button id="contact"  type="Transparent" icon="sap-icon://menu2" press="contactButton"></Button>
-                        <Button id="help" type="Transparent" icon="sap-icon://navigation-left-arrow" press="onNavToTourauswahl"></Button>
-                        -->
                     </contentLeft>
                     <contentMiddle>
                         <Label text="{i18n>activetourPageTitle}"/>
                     </contentMiddle>
                     <contentRight>
-                        <!--Leer-->
                     </contentRight>
 
                 </Bar>
@@ -35,7 +30,6 @@
                             <OverflowToolbar id="OvtbTourselect">
                                 <Title id="ueberschrift" text="{i18n>activeTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" level="H1"/>
                                 <ToolbarSpacer/>
-                                <!--<Button id="refreshbtn" press="onRefreshRespectiveStops" icon="sap-icon://refresh" type="Emphasized"></Button>-->
                             </OverflowToolbar>
                         </headerToolbar>
                         

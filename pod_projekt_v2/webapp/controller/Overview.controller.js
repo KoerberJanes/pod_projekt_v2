@@ -25,6 +25,20 @@ sap.ui.define(
         //this.setCustomAttributes();
       },
 
+      getUrlParameters() {
+        let sIdEumDev;
+        try {                // Abfragen der Startup-Parameter, wenn die App innerhalb einer Fiori-Umgebung läuft
+            const startupParams = this.getOwnerComponent().getComponentData().startupParameters;
+            sIdEumDev = startupParams.IdEumDev[0]; 
+        } catch (e) {// Abfragen der URL-Parameter direkt aus der URL, falls kein Startup-Parameter verfügbar ist
+            sIdEumDev = jQuery.sap.getUriParameters().get("IdEumDev");
+            if (!sIdEumDev){
+                sIdEumDev = 3;
+            }
+        }
+        this._IvIdEumDev = sIdEumDev;
+    },
+
       simulateBackendCallForTours:function(bTestCase){
         this.onBusyDialogOpen(); //Dialog oeffnen um Backend-Call abzuwarten.
         //Methoden und Filter können hier erstellt werden.
@@ -55,8 +69,7 @@ sap.ui.define(
               //Bisher keine Funktion
           }
         });
-        //TODO: Sven/Dominik Fragen wegen dem 'bind(this)
-      */
+        */
 
         if(bTestCase){ //Success-Fall simulieren
           this.onBusyDialogClose();
