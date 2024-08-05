@@ -47,18 +47,24 @@ sap.ui.define([
             },
 
             createNewStop:function(oCurrentStop, sTargetGeoL, sTargetGeoB){ //Erstellen eines Stops
-                var oGeoMapStopModel=this.getOwnerComponent().getModel("SpotModel")
+                var oGeoMapStopModel=this.getOwnerComponent().getModel("SpotModel");
+
+                //Zuruecksetzen notwendig, weil sonst immer wieder der gleiche Stopp drin ist
+                //Anpassung notwendig, wenn ganze Tour abgebildet sein soll
+                oGeoMapStopModel.setProperty("/spot", []); 
+
                 var aGeoMapSpots=oGeoMapStopModel.getProperty("/spot");
+                
 
                 var oStop={
                     "pos": sTargetGeoL+";"+sTargetGeoB,
                     "tooltip": oCurrentStop.city,
                     "type": "Inactive",
                     "text": oCurrentStop.addressName1
-                }
+                };
 
-                aGeoMapSpots.push(oStop);
-                oGeoMapStopModel.refresh(); //Refresh notwendig weil das Model bereits geladen wurde bevor der Stop hinzugefuegt wurde
+                var aUpdatedSpots=aGeoMapSpots.concat([oStop]); //Array wird mit neuem Stopp erstellt, dass angezeigt wird
+                oGeoMapStopModel.setProperty("/spot", aUpdatedSpots); //damit ist kein Model.refresh() mehr notwendig
 
                 this.setInitialPosition(sTargetGeoL, sTargetGeoB); //Anschließend oeffnen der Map
             },
@@ -71,7 +77,7 @@ sap.ui.define([
 
             onClickGeoMapSpot:function(oEvent){
                 //Funktioniert noch nicht, hier gibt es eine Änderung seit dem letzten Coding von mir
-                oEvent.getSource().openDetailWindow("My Detail Window", "0", "0" );
+                //oEvent.getSource().openDetailWindow("My Detail Window", "0", "0" );
             },
 
             onGetCurrentPosition:function(){ //Zurücksetzen der Map Position auf aktuellen Ort?

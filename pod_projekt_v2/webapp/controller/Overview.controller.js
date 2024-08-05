@@ -3,7 +3,7 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/base/util/deepClone",
     "sap/ui/core/IconPool",
-    "podprojekt/model/formatter",
+    "podprojekt/utils/formatter",
     "podprojekt/utils/Helper",
     "sap/m/MessageToast",
     "sap/ui/model/Filter"
@@ -26,7 +26,8 @@ sap.ui.define(
       },
 
       getUrlParameters() {
-        let sIdEumDev;
+        var oCustomerModel=this.getOwnerComponent().getModel("CustomerModel");
+        var sIdEumDev;
         try {                // Abfragen der Startup-Parameter, wenn die App innerhalb einer Fiori-Umgebung läuft
             const startupParams = this.getOwnerComponent().getComponentData().startupParameters;
             sIdEumDev = startupParams.IdEumDev[0]; 
@@ -36,7 +37,9 @@ sap.ui.define(
                 sIdEumDev = 3;
             }
         }
-        this._IvIdEumDev = sIdEumDev;
+
+        //Vielleicht noch das Setzen des Namens
+        oCustomerModel.setProperty("/customerId", sIdEumDev);
     },
 
       simulateBackendCallForTours:function(bTestCase){

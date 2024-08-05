@@ -93,7 +93,7 @@ sap.ui.define([
 
             onLoadAllRemainingNves:function(oLoadingUnitsModel, aRemainingNves){ //NVEs werden alle quittiert
 
-                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
+                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel"); //Temp verladene Nves Model
                 var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
                 var aUpdatedLoadingNvesTemp=aLoadingNvesTemp.concat(aRemainingNves); //zusammenfuehren der Nves
 
@@ -159,13 +159,13 @@ sap.ui.define([
                 var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
                 var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
 
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Offene Nves Model
-                var aLoadingUnits=oLoadingUnitsModel.getProperty("/results"); //Noch nicht quittierte Nves
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel"); //Offene Nves Model
+                var aLoadingUnits=oLoadingUnitsModel.getProperty("/tour/loadingUnits"); //Noch nicht quittierte Nves
 
                 var aAccumulatedTempNves=aClearingNvesTemp.concat(aLoadingNvesTemp); //Temp verladen und geklaerte Nves zusammenfassen
                 var aUpdatedLoadingUnits=aLoadingUnits.concat(aAccumulatedTempNves); //Zusammengefaste Nves mit den unbearbeiteten zusmmenfassen
 
-                oLoadingUnitsModel.setProperty("/results", aUpdatedLoadingUnits);
+                oLoadingUnitsModel.setProperty("/tour/loadingUnits", aUpdatedLoadingUnits);
                 this.emptyTempClearedAndLoadedModels();
                 this.navBackToQuittierung();
             },
@@ -309,8 +309,8 @@ sap.ui.define([
                 var oClearingReason=aSelectedAttributeWithValue[0]; //da nur ein Klaergrund mitgegeben werden kann
                 oClearingNve.clearingReason=oClearingReason; //Attribut mit Infos fuellen
 
-                //Methode für das Entfernen der NVE aus dem Model und zwischenspeichern oder so
-                this.findClearingNve();
+                //Undefined ist notwendig um die verschiedenen Dialoge auseinander zu halten.
+                this.findClearingNve(undefined);
             },
 
             setClearingResonsInNve:function(aSelectedAttributeWithValue){
@@ -331,19 +331,19 @@ sap.ui.define([
                 this.nveClearingDialogClose();
             },            
 
-            findClearingNve:function(){ //Ganantiert ein Klaer-Objekt vorhanden durch vorherige zwischenschritte
+            findClearingNve:function(oEvent){ //Ganantiert ein Klaer-Objekt vorhanden durch vorherige zwischenschritte
                 //Klaer-Objekt finden
                 var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel"); //Model der zu klaerenden Nve
                 var oClearingNve=oClearingNveModel.getProperty("/clearingNve"); //Einzelne klaer-Nve
-                this.differenciateNveProcessingType(oClearingNve); //Schnittstelle von Klaer- und Verlade-Nves
+                this.differenciateNveProcessingType(oClearingNve, oEvent); //Schnittstelle von Klaer- und Verlade-Nves
             },
 
-            findLoadingNve:function(){
+            findLoadingNve:function(oEvent){
                 //Verlade-Objekt finden
                 var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel");
                 var sManualNveUserInput=oManualNveInputModel.getProperty("/manualInput"); //UserInput aus Feld auslesen
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel"); //Model für noch zu bearbeitende NVEs
-                var aLoadingUnits=oLoadingUnitsModel.getProperty("/results"); //Array aus zu bearbeitenden Nves
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel"); //Model für noch zu bearbeitende NVEs
+                var aLoadingUnits=oLoadingUnitsModel.getProperty("/tour/loadingUnits"); //Array aus zu bearbeitenden Nves
                 var oLoadingNve=undefined;
                 
                 //Leider nicht zu verallgemeinern, da sehr spezifisch --> Oder eben 'Objekt.sArticleId' anstatt 'Objekt.externalId'
@@ -355,17 +355,22 @@ sap.ui.define([
                 }
 
                 if(oLoadingNve!==undefined){
-                    this.differenciateNveProcessingType(oLoadingNve);
+                    this.differenciateNveProcessingType(oLoadingNve, oEvent);
                 } else{
                     this.noNveFoundError();
                 }
             },
             
-            differenciateNveProcessingType:function(oDiffNve){
-                if(oDiffNve.clearingReason || oDiffNve.aClearingReasons){ //Alternativ aClearingReasons bei mehreren Klärgründen
-                    this.saveTempClearing(oDiffNve);
-                } else{
-                    this.saveTempLoading(oDiffNve);
+            differenciateNveProcessingType:function(oDiffNve, oEvent){
+                var sManualNveInputDialogTitle=this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("manualInputTitle");
+
+                if(oEvent === undefined){ //Handelt sich um den Klaer-Dialog als Ausgangspunkt
+                    this.saveTempClearing(oDiffNve); //Geklaerte Nve speichern
+                } else{ //Handelt sich um den ManualClearing-Dialog als Ausgangspunkt, Titel des Dialoges speichern
+                    var sDialogTitle= oEvent.getSource().getParent().getTitle();
+                }
+                if(sDialogTitle=== sManualNveInputDialogTitle){ //Abgleichen von Soll-Titel und Ist-Titel
+                    this.saveTempLoading(oDiffNve); //Geklaerte Nve speichern
                 }
             },
 
@@ -393,8 +398,8 @@ sap.ui.define([
 
             removeProcessedNve:function(oDiffNve){
                 //NVE wurde entweder geklärt oder verladen --> entfernen aus dem Model der NVEs ("LoadingUnitsModel")
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
-                var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aRemainingNves=oLoadingUnitsModel.getProperty("/tour/loadingUnits");
                 var iIndexOfLoadingUnit=aRemainingNves.indexOf(oDiffNve);
 
                 aRemainingNves.splice(iIndexOfLoadingUnit, 1);

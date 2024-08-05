@@ -22,81 +22,6 @@ sap.ui.define([
              */
             init: function () {
 
-                //erstellen von Testmodels
-                //Model für die Touren
-            /*this.setModel(new sap.ui.model.json.JSONModel({ //neue Mockupdaten unten
-                results:[{
-                    TourNr:"1009982232",
-                    Description:"10X1 - 09.11.2023",
-                    Status:"Completed"
-                },
-                {
-                    TourNr:"10094165410",
-                    Description:"10X2 - 10.11.2023",
-                    Status:"Released" 
-                },
-                {
-                    TourNr:"10009459843",
-                    Description:"10X3 - 11.11.2023",
-                    Status:"Loaded"
-                }]
-            }), "TourModel");
-
-            this.setModel(new sap.ui.model.json.JSONModel({
-                results:[{
-                    StopBezeichnung:"2 - Porsche AG, Blaufeld GFP",
-                    StopAdresse:"Porschestraße 911 \n DE 71287 Weissach",
-                    NveAnzahl:"2",
-                    StopNr:"3550",
-                    Tour:"10X1"
-                },
-                {
-                    StopBezeichnung:"3 - Rud. Otto Meyer Technik GmbH & Co. KG",
-                    StopAdresse:"Veitstraße 3 \n DE 74564 Crailsheim",
-                    NveAnzahl:"2",
-                    StopNr:"4550",
-                    Tour:"10X1"
-                },
-                {
-                    StopBezeichnung:"2 - Robert Bosch GmbH",
-                    StopAdresse:"Robert-Bosch-Campus 1\n DE 71272 Renningen",
-                    NveAnzahl:"3",
-                    StopNr:"5550",
-                    Tour:"10X2"
-                },
-                {
-                    StopBezeichnung:"3 - BASF Coatings GmbH",
-                    StopAdresse:"Glasuritstr. 1 \n DE 48165 Münster",
-                    NveAnzahl:"3",
-                    StopNr:"6550",
-                    Tour:"10X2"
-                },
-                {
-                    StopBezeichnung:"2 - Mercedes Benz Arena",
-                    StopAdresse:"Mercedesstraße 87 \n DE 70372 Stuttgart",
-                    NveAnzahl:"4",
-                    StopNr:"7550",
-                    Tour:"10X3"
-                },
-                {
-                    StopBezeichnung:"3 - Pfizer Deutschland GmbH",
-                    StopAdresse:"Pfizerstraße 1 \n DE 76139 Karlsruhe",
-                    NveAnzahl:"4",
-                    StopNr:"8550",
-                    Tour:"10X3"
-                }]
-            }), "StopModel");*/
-
-            
-
-            this.setModel(new sap.ui.model.json.JSONModel({
-                geloeschteStops:[]
-            }), "AllStops");
-
-            this.setModel(new sap.ui.model.json.JSONModel({
-                results:[]
-            }), "UrsprünglicheStops");
-
             this.setModel(new sap.ui.model.json.JSONModel({
                 results: [{
 					"mandator": "17160",
@@ -1541,36 +1466,6 @@ sap.ui.define([
 					}]
 				}]
 			}), "TourModel");
-            
-            this.setModel(new sap.ui.model.json.JSONModel({
-            }), "StopModel");
-			
-
-			this.setModel(new sap.ui.model.json.JSONModel({
-            }), "SingleStopModel");
-
-			this.setModel(new sap.ui.model.json.JSONModel({
-			}), "KlaerungsModel");
-
-			this.setModel(new sap.ui.model.json.JSONModel({
-			}), "KlaerNVEModel");
-
-			this.setModel(new sap.ui.model.json.JSONModel({
-				results: [{
-					fotoArt: "Zum Stopp",
-					fotos: []
-				},
-				{
-					fotoArt: "Test",
-					fotos: []
-				}]
-			}), "FotoModel");
-
-			this.setModel(new sap.ui.model.json.JSONModel({
-				results: [
-					
-				]
-			}), "FotoModelAbladen");
 
 			this.setModel(new sap.ui.model.json.JSONModel({
 				results: [{

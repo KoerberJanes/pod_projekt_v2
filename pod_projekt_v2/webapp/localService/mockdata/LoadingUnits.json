@@ -1,4 +1,5 @@
-[
+{
+  "items":[
     {
       "mandator": "17160",
       "loadingUnitId": "10",
@@ -87,3 +88,4 @@
       "sortingNo": ""
     }
   ]
+}

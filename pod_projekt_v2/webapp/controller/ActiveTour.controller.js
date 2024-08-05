@@ -23,29 +23,26 @@ sap.ui.define([
             alterStopDescriptionForOrder:function(){ //Anpassung der Beschreibung, damit alles so aussieht wie auf der Vorlage
                 var oStopModel=this.getOwnerComponent().getModel("StopModel");
                 var aStops=oStopModel.getProperty("/results");
-                var sActualDescription="";
-                var iStopnumber=2;
 
-                
                 for(var i in aStops){
+                    var sActualDescription=aStops[i].addressName1;
+                    var iSequence=aStops[i].sequence;
                     var sNewDescription="";
-                    sActualDescription=aStops[i].addressName1;
 
-                    if(iStopnumber<10){ //Kleiner 10
-                        sNewDescription=sNewDescription.concat("00" + iStopnumber +"-"+ sActualDescription);
-                        aStops[i].addressName1=sNewDescription;
+                    if(iSequence < 10){ //kleiner 10
+                        sNewDescription= "00" + iSequence + "-" +sActualDescription;
                     }
 
-                    if(iStopnumber>=10 && iStopnumber<100){ //Größer gleich 10 aber kleiner 100
-                        sNewDescription=sNewDescription.concat("0" + iStopnumber +"-"+ sActualDescription);
-                        aStops[i].addressName1=sNewDescription;
+                    if(iSequence >= 10 && iSequence < 100){ //Größer gleich 10 aber kleiner 100
+                        sNewDescription= "0" + iSequence + "-" +sActualDescription;
                     }
 
-                    if(iStopnumber>=100){ //Größer gleich 100
-                        sNewDescription=sNewDescription.concat(iStopnumber +"-"+ sActualDescription);
-                        aStops[i].addressName1=sNewDescription;
+                    if(iSequence >= 100){ //Größer 100
+                        sNewDescription= iSequence + "-" +sActualDescription;
                     }
-                    iStopnumber++;
+
+                    aStops[i].addressName1=""; //erstellen des Attributes fuer das Objekt --> kann ggf. weggelassen werden
+                    aStops[i].addressName1=sNewDescription;
                 }
                 
                 oStopModel.refresh();
@@ -66,7 +63,7 @@ sap.ui.define([
 
             },
 
-            onStopListItemPressed:function(oEvent){ //Herausfinden welcher Stop in der Liste ausgewaehlt wurde
+            onSetStoppInformation:function(oEvent){ //Herausfinden welcher Stop in der Liste ausgewaehlt wurde
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var sStopId=oEvent.getSource().getId(); //Event-Id vom Objekt
                 var aListItems=this.getView().byId("stopSelectionList").getItems(); //Array an Items in der Liste

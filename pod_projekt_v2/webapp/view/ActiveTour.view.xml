@@ -33,7 +33,7 @@
                             </OverflowToolbar>
                         </headerToolbar>
                         
-                        <CustomListItem press="onStopListItemPressed" type="Active">
+                        <CustomListItem press="onSetStoppInformation" type="Active">
                             <Bar class="sapUiTinyMarginBottom">
                                 <contentLeft>
                                     <Title text="{StopModel>addressName1}" level="H5"></Title>

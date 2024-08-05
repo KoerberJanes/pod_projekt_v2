@@ -7,7 +7,7 @@
     xmlns:u="sap.ui.unified"
     xmlns:upload="sap.m.upload">
 
-    <Dialog id="clearDialog" title="={i18n>clearingDialogTitle}" state="None" afterOpen="onFocusTA" afterClose="" >
+    <Dialog id="clearDialog" title="={i18n>clearingDialogTitle}" afterOpen="onFocusTA" >
         <customHeader>
             <!--custom Header Items-->
             <Bar id="clearDialogHeaderBar">

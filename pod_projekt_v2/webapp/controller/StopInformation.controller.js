@@ -29,22 +29,25 @@ sap.ui.define([
                 oRouter.navTo("MapView");
             },
 
-            /*onNavToAbladung:function(){ //Navigation zur Abladung View
-                var oRouter = this.getOwnerComponent().getRouter();
-        
-                oRouter.navTo("Abladung");
-            },*/
+            onCreateDeliveryNote:function(){
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var oTourInformation=oStopInformationModel.getProperty("/tour");
+                var oNewDeliveryNote={
+                    "shipmentNumber": oTourInformation.shipmentNumber,
+                    "shipmentCondition": oTourInformation.shipmentCondition,
+                    "shipmentConditionCaption": oTourInformation.shipmentConditionCaption
+                };
+
+                oTourInformation.aDeliveryNotes=[];
+                var aNewDeliveryNotes=oTourInformation.aDeliveryNotes.concat([oNewDeliveryNote]);
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes", aNewDeliveryNotes);
+                this.onNavToQuittierung();
+            },
 
             onNavToQuittierung:function(){ //Navigation zur Quittierung View
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("Quittierung");
             },
-
-            /*onNavToActiveTour:function(){ //Navigation zur AvtiveTour View
-                var oRouter = this.getOwnerComponent().getRouter();
-        
-                oRouter.navTo("ActiveTour");
-            },*/
         });
     });

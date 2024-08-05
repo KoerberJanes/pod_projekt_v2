@@ -45,12 +45,12 @@ sap.ui.define([
             },
 
             findPressedDeliverynote:function(sEventTriggerId, aListOfItems){
-                var oDeliveryNoteModel=this.getOwnerComponent().getModel("DeliveryNoteModel");
-                var aDeliveryItems=oDeliveryNoteModel.getProperty("/results");
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aDeliveryNotes=oStopInformationModel.getProperty("/tour/aDeliveryNotes");
+
                 var getIndex= (element) => element.getId() === sEventTriggerId; //
                 var iIndexOfSelectedDeliveryNote= aListOfItems.findIndex(getIndex); //Index des ausgewählten Model-Objektes erfahren 
-
-                return aDeliveryItems[iIndexOfSelectedDeliveryNote];
+                return aDeliveryNotes[iIndexOfSelectedDeliveryNote];
 
             },
 

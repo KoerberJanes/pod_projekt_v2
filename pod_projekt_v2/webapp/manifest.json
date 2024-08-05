@@ -70,11 +70,16 @@
           "photoListClearingVisible": false
         }
       },
-      "TourModel": {
+      "CustomerModel":{
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
-          "results": []
+          "customerId": "",
+          "customerName": "Default Driver"
         }
+      },
+      "TourModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "localService/mockdata/Routes.json"
       },
       "StopModel": {
         "type": "sap.ui.model.json.JSONModel",
@@ -101,21 +106,6 @@
           "recipient": {
             "name": ""
           }
-        }
-      },
-      "DeliveryNoteModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": [
-            {
-              "Name":"TestName 1",
-              "ProductId": "42069"
-            },
-            {
-              "Name":"TestName 2",
-              "ProductId": "69420"
-            }
-          ]
         }
       },
       "ComplaintsModel": {
@@ -169,34 +159,7 @@
       },
       "LoadingDeviceModel": {
         "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "items": [
-            {
-              "Typ": "Testleih",
-              "Bestand": "1"
-            },
-            {
-              "Typ": "Stammdaten-012",
-              "Bestand": "2"
-            },
-            {
-              "Typ": "Europalette",
-              "Bestand": "3"
-            },
-            {
-              "Typ": "Gestell",
-              "Bestand": "4"
-            },
-            {
-              "Typ": "Gitterbox",
-              "Bestand": "5"
-            },
-            {
-              "Typ": "Rollwagen",
-              "Bestand": "6"
-            }
-          ]
-        }
+        "uri": "localService/mockdata/LoadingUnits.json"
       },
       "ReceivedLoadingUnitsModel": {
         "type": "sap.ui.model.json.JSONModel",
@@ -296,22 +259,7 @@
           "manualInput": ""
         }
       },
-      "tours": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "localService/mockdata/Routes.json"
-      },
-      "stops": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "localService/mockdata/Stops.json"
-      },
-      "orders": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "localService/mockdata/Orders.json"
-      },
-      "loadingUnits": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "localService/mockdata/LoadingUnits.json"
-      },"SpotModel": {
+      "SpotModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "spot": []

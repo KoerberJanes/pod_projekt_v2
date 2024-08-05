@@ -19,7 +19,7 @@
 
             <form:SimpleForm id="currentTourInfoForm">
                 <form:content>
-                    <Text id="driverInfo" text="{i18n>driver}&#10;"/>
+                    <Text id="driverInfo" text="{CustomerModel>/customerName}&#10;"/>
                     <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" wrapping="true" level="H2"/>
                         <HBox justifyContent="SpaceAround">
                             <Label text="{i18n>Adresse}"/>
@@ -38,11 +38,11 @@
                             <Text id="txtNVEAnzahl" text="{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /{= ${ReceivedLoadingUnitsModel>/results}.length}"></Text>
                         </content>
                     </OverflowToolbar>
-                    <Tree id="NVETree" items="{LoadingUnitsModel>/results}" >
+                    <Tree id="NVETree" items="{StopInformationModel>/tour/loadingUnits}" >
                         <CustomTreeItem type="Active">
                             <content>
                                 <HBox>
-                                    <Title text="{LoadingUnitsModel>label1}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/>
+                                    <Title text="{StopInformationModel>label1}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/><!--{StopInformationModel>articleCaption} -->
                                     <Button text="{i18n>clearing}" visible="{= ${LoadingUnitsModel>DetailedInformations} === undefined ? false : true}" press="onClearingButtonPress"></Button>
                                 </HBox>
                             </content>
