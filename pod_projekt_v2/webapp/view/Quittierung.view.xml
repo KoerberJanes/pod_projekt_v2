@@ -10,7 +10,7 @@
                 <contentLeft>
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>confirmationTitle}"/>
+                    <Label id="confirmationTitleId" text="{i18n>confirmationTitle}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>
@@ -38,9 +38,9 @@
                     <Input id="recipientNameInp" value="{RecipientNameModel>/recipient/name}" visible="{= ${settings>/recipientFound} }"/>
 
                     <Label text="{i18n>showDeliveryItems}"/>
-                    <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" press="onToggleListVisibility" pressed="{settings>/deliveryItemsVisible}"></ToggleButton>
+                    <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{settings>/deliveryItemsVisible}"></ToggleButton>
                     <Label ></Label>
-                    <List  id="deliveryNoteList" mode="None" includeItemInSelection="true" items="{StopInformationModel>/tour/aDeliveryNotes}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
+                    <List  id="deliveryNoteList" includeItemInSelection="true" items="{StopInformationModel>/tour/aDeliveryNotes}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
                         <items>
                             <StandardListItem
                                 title="{StopInformationModel>shipmentNumber}"
@@ -73,7 +73,7 @@
                     <TextArea id="idTextarea" visible="{settings>/remarksSwitch}"/>
 
                     <Label id="photoItems" text="{i18n>showPhotos}"/>
-                    <ToggleButton id="photoItemsToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{settings>/photoListVisible}"></ToggleButton>
+                    <ToggleButton id="photoItemsToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{settings>/photoListVisible}"/>
                     <Label/>
                     <upload:UploadSet id="photoItemsList" visible="{settings>/photoListVisible}" fileTypes="png, image/*" instantUpload="false"
                         items="{path:'PhotoModel>/photos', 
@@ -128,7 +128,7 @@
                     </HBox>
 
                     <Label id="loadingDevices" text="{i18n>loadingDevices}"/>
-                    <ToggleButton id="loadingDevicesToggleButton" text="{i18n>loadingDevices}" pressed="{settings>/loadingDevicesVisible}"></ToggleButton>
+                    <ToggleButton id="loadingDevicesToggleButton" text="{i18n>loadingDevices}" pressed="{settings>/loadingDevicesVisible}"/>
                     <Label/>
                     <Table id="loadingDevicesTable" items="{LoadingDeviceModel>/items}" visible="{settings>/loadingDevicesVisible}">
                         <items>

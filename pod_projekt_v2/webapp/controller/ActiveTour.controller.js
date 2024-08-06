@@ -65,21 +65,32 @@ sap.ui.define([
 
             onSetStoppInformation:function(oEvent){ //Herausfinden welcher Stop in der Liste ausgewaehlt wurde
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
-                var sStopId=oEvent.getSource().getId(); //Event-Id vom Objekt
-                var aListItems=this.getView().byId("stopSelectionList").getItems(); //Array an Items in der Liste
-                var aModelItems=this.getOwnerComponent().getModel("StopModel").getProperty("/results"); //Array an Objekten im Model
-                var oPressedModelObject=Helper.findModelObjectSlimm(sStopId, aListItems, aModelItems);
+                var oPressedModelObject=oEvent.getSource().getBindingContext("StopModel").getObject();
                 var oPressedModelObjectDetails=oPressedModelObject.orders[0]; //Detailreichere Informationen über das Modelobjekt
                 
                 oStopInformationModel.setProperty("/tour", oPressedModelObjectDetails);
-                this.setLoadingUnits(oPressedModelObjectDetails);
+                this.alterLoadingUnits(oPressedModelObjectDetails);
             },
 
-            setLoadingUnits:function(oPressedModelObjectDetails){ //Zu Verladenen NVEs in Model setzen
+            alterLoadingUnits:function(oPressedModelObjectDetails){
                 var aLoadingUnits=oPressedModelObjectDetails.loadingUnits;
+
+                for(var i in aLoadingUnits){
+                    //erstellen der Unterstruktur
+                    var oCurrentDefaultLoadingUnit=aLoadingUnits[i];
+                    oCurrentDefaultLoadingUnit.detailedInformation=[{
+                        "accurateDescription": oCurrentDefaultLoadingUnit.amount + "x " + oCurrentDefaultLoadingUnit.articleCaption
+                    }];
+                    //erstellen der richtigen Bezeichnung
+                    oCurrentDefaultLoadingUnit.accurateDescription= oCurrentDefaultLoadingUnit.label1 +" "+ oCurrentDefaultLoadingUnit.lodingDeviceTypeCaption;
+                }
+                this.onNavToStopInformation();
+            },
+
+            setLoadingUnits:function(aDefaultLoadingUnits){ //Zu Verladenen NVEs in Model setzen
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
 
-                oLoadingUnitsModel.setProperty("/results", aLoadingUnits);
+                oLoadingUnitsModel.setProperty("/results", aDefaultLoadingUnits);
 
                 this.onNavToStopInformation();
             },

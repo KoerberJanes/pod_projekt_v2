@@ -8,12 +8,12 @@
     xmlns:tnt="sap.tnt" displayBlock="true">
     <Page id="activetourPageId" title="{i18n>activetourPageTitle}">
         <customHeader>
-                <Bar>
+                <Bar id="activeTourPageBar">
                     
                     <contentLeft>
                     </contentLeft>
                     <contentMiddle>
-                        <Label text="{i18n>activetourPageTitle}"/>
+                        <Label id="activeTourTitleId" text="{i18n>activetourPageTitle}"/>
                     </contentMiddle>
                     <contentRight>
                     </contentRight>

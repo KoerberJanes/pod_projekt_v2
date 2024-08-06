@@ -17,7 +17,7 @@
             </Bar>
         </customHeader>
             <content>
-                <form:SimpleForm id="clearDialogForm" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2"  >
+                <form:SimpleForm id="clearDialogForm" editable="true" layout="ResponsiveGridLayout" title="">
                     <form:content>
                 
                     <List id="ClearingList" items="{CurrentSittingClearingNvesModel>/results}" mode="SingleSelectLeft">

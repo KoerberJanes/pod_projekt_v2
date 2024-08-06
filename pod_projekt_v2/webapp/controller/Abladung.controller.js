@@ -63,12 +63,11 @@ sap.ui.define([
             },
 
             getSelectedModelItem:function(oEvent){ //Das gedrueckte Element im Model erfassen
-                var sParentNodeId=oEvent.getSource().getEventingParent().getParent().getId();  
-                var aNveTreeItems=this.byId("NVETree").getItems();
-                var aModelItems=this.getOwnerComponent().getModel("LoadingUnitsModel").getProperty("/results");
+                var oTreeModelParent=oEvent.getSource().getBindingContext("StopInformationModel").getObject();
 
-                var oTreeModelParent=Helper.findModelObjectSlimm(sParentNodeId, aNveTreeItems, aModelItems);
-                //var oPressedModelObject=oTreeModelParent.DetailedInformations;
+                if(oTreeModelParent===undefined){
+                    console.log("Element konnte nicht gefunden werden!");
+                }
 
                 this.setClearingNveModel(oTreeModelParent);
             },
@@ -81,8 +80,8 @@ sap.ui.define([
             },
 
             checkForRemainingNves:function(){ //Prüfen ob noch Nves zu quittieren sind
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
-                var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
+                var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aRemainingNves=oLoadingUnitsModel.getProperty("/tour/loadingUnits");
 
                 if(aRemainingNves.length>0){ //Wenn mehr als eine NVE zu quittieren ist
                     this.onLoadAllRemainingNves(oLoadingUnitsModel, aRemainingNves);
@@ -98,7 +97,7 @@ sap.ui.define([
                 var aUpdatedLoadingNvesTemp=aLoadingNvesTemp.concat(aRemainingNves); //zusammenfuehren der Nves
 
                 oLoadingNvesTempModel.setProperty("/results", aUpdatedLoadingNvesTemp); //Model der Temp verladenen Nves fuellen
-                oLoadingUnitsModel.setProperty("/results", []); //Model der noch zu bearbeitenden Nves leeren
+                oLoadingUnitsModel.setProperty("/tour/loadingUnits", []); //Model der noch zu bearbeitenden Nves leeren
             },
 
             checkForUnsavedNves:function(){ //In der View Auskommentiert
@@ -348,7 +347,7 @@ sap.ui.define([
                 
                 //Leider nicht zu verallgemeinern, da sehr spezifisch --> Oder eben 'Objekt.sArticleId' anstatt 'Objekt.externalId'
                 for(var i in aLoadingUnits){
-                    var sLabelId=aLoadingUnits[i].label1.substring(0, aLoadingUnits[i].label1.indexOf(" "));
+                    var sLabelId=aLoadingUnits[i].label1;
                     if(sLabelId===sManualNveUserInput){
                         oLoadingNve=aLoadingUnits[i];
                     }
@@ -397,13 +396,19 @@ sap.ui.define([
             },
 
             removeProcessedNve:function(oDiffNve){
-                //NVE wurde entweder geklärt oder verladen --> entfernen aus dem Model der NVEs ("LoadingUnitsModel")
+                //NVE wurde entweder geklärt oder verladen --> entfernen aus dem Model der NVEs 
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var aRemainingNves=oLoadingUnitsModel.getProperty("/tour/loadingUnits");
-                var iIndexOfLoadingUnit=aRemainingNves.indexOf(oDiffNve);
+                var aNewFilteredNves=[];
 
-                aRemainingNves.splice(iIndexOfLoadingUnit, 1);
-                oLoadingUnitsModel.refresh();
+                for(var i in aRemainingNves){ //Aufbauen eines neuen Arrays, dass die unbearbeiteten Nves enthält um die Models zu aktualisieren
+                    var oCurrentNve=aRemainingNves[i];
+                    if(oCurrentNve!==oDiffNve){ //Solange nicht die verarbeitete Nve, zu den noch zu bearbeitenden Nves hinzufügen
+                        aNewFilteredNves=aNewFilteredNves.concat([oCurrentNve]);
+                    }
+                }
+
+                oLoadingUnitsModel.setProperty("/tour/loadingUnits", aNewFilteredNves);
 
                 this.decideWichDialogShouldBeClosed();                
             },

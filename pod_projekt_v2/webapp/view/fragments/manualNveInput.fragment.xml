@@ -3,7 +3,7 @@
     xmlns:form="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
 
-    <Dialog id="ManualNveInputDialogId" title="{i18n>manualInputTitle}" initialFocus="barcodeInput" afterOpen="setInputFocus" resizable="false">
+    <Dialog id="ManualNveInputDialogId" title="{i18n>manualInputTitle}" initialFocus="barcodeInput" afterOpen="setInputFocus">
         
         <customHeader>
             <Bar id="inputDialogHeaderBar">
@@ -13,7 +13,7 @@
             </Bar>
         </customHeader>
         <content>
-            <form:SimpleForm id="ManualNveInputForm" layout="ResponsiveGridLayout" title="" labelSpanXL="2" WlabelSpanL="2" labelSpanM="2">
+            <form:SimpleForm id="ManualNveInputForm" layout="ResponsiveGridLayout" title="">
                 <form:content>
                     <Label id="barcodeLabel" text="{i18n>barcode}"/>
                     <Input id="barcodeInput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>manualInputBarcodePlaceholder}" submit="onCloseInputDialog" showClearIcon="true"/>

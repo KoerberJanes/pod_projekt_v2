@@ -4,15 +4,14 @@
     xmlns="sap.m" 
     xmlns:layout="sap.ui.layout" 
     xmlns:form="sap.ui.layout.form"
-    xmlns:u="sap.ui.unified" 
-    xmlns:tnt="sap.tnt" displayBlock="true">
+    displayBlock="true">
     <Page id="overviewPageId" title="{i18n>overviewTitle}">
         <customHeader>
                 <Bar>                    
                     <contentLeft>
                     </contentLeft>
                     <contentMiddle>
-                        <Label text="{i18n>overviewTitle}"/>
+                        <Label id="overviewTitleId" text="{i18n>overviewTitle}"/>
                     </contentMiddle>
                     <contentRight>
                     </contentRight>
@@ -25,9 +24,9 @@
                         growing="true" growingThreshold="10" busyIndicatorDelay="500">
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Label id="assignedToursLabel" text="{i18n>assignedTours}"></Label>
+                                <Label id="assignedToursLabel" text="{i18n>assignedTours}"/>
                                 <ToolbarSpacer/>
-                                <Button id="refreshBtn" press="onRefreshTours" icon="sap-icon://refresh" type="Emphasized"></Button>
+                                <Button id="refreshBtn" press="onRefreshTours" icon="sap-icon://refresh" type="Emphasized"/>
                             </OverflowToolbar>
                         </headerToolbar>
                         <!--Abfrage geht nur bis Status 70 weil, bei gleichbleibender Auswahl dann die default Loesung gewählt wird (Success) -->

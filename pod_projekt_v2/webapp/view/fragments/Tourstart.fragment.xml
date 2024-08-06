@@ -13,7 +13,7 @@
 			</Bar>
 		</customHeader>
 		<content>
-			<form:SimpleForm id="TourstartForm" layout="ResponsiveGridLayout" title="" labelSpanXL="2" labelSpanL="2" labelSpanM="2">
+			<form:SimpleForm id="TourstartForm" layout="ResponsiveGridLayout" title="">
 				<form:content>
 					<Label text="{i18n>licensePlate}"/>
 					<Input id="kennzeichenInput" value="{TourStartFragmentModel>/tour/licensePlate}" editable="false"/>

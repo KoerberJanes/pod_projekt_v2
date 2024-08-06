@@ -5,11 +5,11 @@
     xmlns:form="sap.ui.layout.form">
     <Page id="AbladungPageId">
         <customHeader>
-            <Bar>                    
+            <Bar id="undloadingPageBar">                    
                 <contentLeft>
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>unloadingTitle}"/>
+                    <Label id="unloadingTitleId" text="{i18n>unloadingTitle}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>
@@ -22,7 +22,7 @@
                     <Text id="driverInfo" text="{CustomerModel>/customerName}&#10;"/>
                     <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" wrapping="true" level="H2"/>
                         <HBox justifyContent="SpaceAround">
-                            <Label text="{i18n>Adresse}"/>
+                            <Label text="{i18n>adress}"/>
                             <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
                         </HBox>
                 </form:content>
@@ -30,20 +30,21 @@
 
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
-                    <OverflowToolbar active="false" id="NVEBar">
+                    <OverflowToolbar id="NVEBar">
                         <content>
                             <Text id="NVEText" text="NVEs"/>
-                            <ToolbarSpacer ></ToolbarSpacer>
                             <ToolbarSpacer/>
-                            <Text id="txtNVEAnzahl" text="{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /{= ${ReceivedLoadingUnitsModel>/results}.length}"></Text>
+                            <ToolbarSpacer/>
+                            <Text id="txtNVEAnzahl" text="{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /
+                                {= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length + ${StopInformationModel>/tour/loadingUnits}.length}"></Text>
                         </content>
                     </OverflowToolbar>
                     <Tree id="NVETree" items="{StopInformationModel>/tour/loadingUnits}" >
                         <CustomTreeItem type="Active">
                             <content>
                                 <HBox>
-                                    <Title text="{StopInformationModel>label1}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/><!--{StopInformationModel>articleCaption} -->
-                                    <Button text="{i18n>clearing}" visible="{= ${LoadingUnitsModel>DetailedInformations} === undefined ? false : true}" press="onClearingButtonPress"></Button>
+                                    <Title text="{StopInformationModel>accurateDescription}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/>
+                                    <Button text="{i18n>clearing}" visible="{= ${StopInformationModel>detailedInformation} === undefined ? false : true}" press="onClearingButtonPress"></Button>
                                 </HBox>
                             </content>
                         </CustomTreeItem>

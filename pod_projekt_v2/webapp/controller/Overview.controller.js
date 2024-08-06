@@ -122,10 +122,7 @@ sap.ui.define(
 
       setPressedTour:function(oEvent){ //Ausgewählte Tour-Infos in Model für Fragment setzen
         var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
-        var sObjectId=oEvent.getSource().getId(); //Event-Id vom Objekt
-        var aListItems=this.getView().byId("tourSelectionList").getItems(); //Array an Items in der Liste
-        var aModelItems=this.getOwnerComponent().getModel("TourModel").getProperty("/results"); //Array an Objekten im Model
-        var oPressedModelObject=Helper.findModelObjectSlimm(sObjectId, aListItems, aModelItems);
+        var oPressedModelObject=oEvent.getSource().getBindingContext("TourModel").getObject();
 
         oTourStartFragmentModel.setProperty("/tour", oPressedModelObject);
         this.openTourStartFragment();

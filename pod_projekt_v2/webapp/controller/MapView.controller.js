@@ -25,7 +25,7 @@ sap.ui.define([
             onAfterRendering: function() {
             
             },
-
+            /*
             getTourInformationData:function(){ //Hinzufügen aller Stops der Tour in die GeoMap
                 var oTourStopModel=this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
                 var aTourStops=oTourStopModel.stops;
@@ -36,7 +36,7 @@ sap.ui.define([
                     var sTargetGeoB=oCurrentStop.targetGeoB;
                     this.createNewStop(oCurrentStop, sTargetGeoL, sTargetGeoB);
                 }
-            },
+            },*/
 
             getStopInformationData:function(){ //Hinzufügen eines einzelnen Stops für die GeoMap
                 var oCurrentStop=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
