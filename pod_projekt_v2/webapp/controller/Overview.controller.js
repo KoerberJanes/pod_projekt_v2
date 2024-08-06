@@ -39,7 +39,7 @@ sap.ui.define(
         }
 
         //Vielleicht noch das Setzen des Namens
-        oCustomerModel.setProperty("/customerId", sIdEumDev);
+        oCustomerModel.setProperty("/driverId", sIdEumDev);
     },
 
       simulateBackendCallForTours:function(bTestCase){

@@ -20,7 +20,7 @@
         <content>
             <form:SimpleForm id="currentTourInfoForm">
                 <form:content>
-                    <Text id="driverInfo" text="{CustomerModel>/customerName}&#10;"/>
+                    <Text id="driverInfo" text="{CustomerModel>/driverName}&#10;"/>
                     <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" wrapping="true" level="H2"/>
                         <HBox justifyContent="SpaceAround">
                             <Label text="{i18n>adress}"/>
@@ -35,7 +35,7 @@
                     <Switch id="recipientFoundSwitch" type="AcceptReject" customTextOff="{i18n>no}" customTextOn="{i18n>yes}" state="{settings>/recipientFound}"/>
 
                     <Label id="recipientName" text="{i18n>recipientName}" visible="{= ${settings>/recipientFound} }"/>
-                    <Input id="recipientNameInp" value="{RecipientNameModel>/recipient/name}" visible="{= ${settings>/recipientFound} }"/>
+                    <Input id="recipientNameInp" value="{CustomerModel>/customerName}" visible="{= ${settings>/recipientFound} }"/>
 
                     <Label text="{i18n>showDeliveryItems}"/>
                     <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{settings>/deliveryItemsVisible}"></ToggleButton>

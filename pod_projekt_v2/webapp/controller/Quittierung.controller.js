@@ -7,10 +7,7 @@ sap.ui.define([
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller,
-	JSONModel,
-	MessageBox,
-	MessageToast) {
+    function (Controller, JSONModel, MessageBox, MessageToast) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Quittierung", {
@@ -88,11 +85,10 @@ sap.ui.define([
             },
 
             checkSignConditions:function(){ //Pruefen ob zur bedingungen erfuellt sind zur Unterschrift View zu wechseln
-                var oRecipientNameModel=this.getOwnerComponent().getModel("RecipientNameModel")
-                var sRecipientName=oRecipientNameModel.getProperty("/recipient/name");
+                var oRecipientNameModel=this.getOwnerComponent().getModel("CustomerModel")
+                var sRecipientName=oRecipientNameModel.getProperty("/customerName");
 
                 if(sRecipientName !== ""){
-                   //this.checkIfTourIsFinished(); 
                    this.checkIfNvesAreProcessed();
                 } else{
                     this.showEmptyNameError();

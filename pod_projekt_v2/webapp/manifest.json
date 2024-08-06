@@ -73,8 +73,9 @@
       "CustomerModel":{
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
-          "customerId": "",
-          "customerName": "Default Driver"
+          "driverId": "",
+          "driverName": "Default Driver",
+          "customerName": ""
         }
       },
       "TourModel": {

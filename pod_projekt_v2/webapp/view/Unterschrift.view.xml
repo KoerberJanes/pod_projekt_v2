@@ -22,7 +22,7 @@
                 <form:content>
                     <Bar>
                         <contentMiddle>
-                            <Title id="OvtbTitle" text="{CustomerModel>/customerName}" level="H2" />
+                            <Title id="OvtbTitle" text="{CustomerModel>/driverName}" level="H2" />
                         </contentMiddle>
                     </Bar>
                     <Label text="{i18n>adress}"/>
