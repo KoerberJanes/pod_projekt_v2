@@ -6,12 +6,13 @@ sap.ui.define(
     "podprojekt/utils/formatter",
     "podprojekt/utils/Helper",
     "sap/m/MessageToast",
-    "sap/ui/model/Filter"
+    "sap/ui/model/Filter",
+    "sap/base/assert"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, deepClone, IconPool, formatter, Helper, MessageToast, Filter) {
+  function (Controller, deepClone, IconPool, formatter, Helper, MessageToast, Filter, assert) {
     "use strict";
 
     return Controller.extend("podprojekt.controller.Overview", {
@@ -46,10 +47,10 @@ sap.ui.define(
         this.onBusyDialogOpen(); //Dialog oeffnen um Backend-Call abzuwarten.
         //Methoden und Filter können hier erstellt werden.
         var sPathPos="/ABAP_FUNKTIONSBAUSTEIN"; //Methode am Backend um Daten zu erhalten.
-        var oFilter1 = new Filter(); //Filter Attribut 1
-        var oFilter2 = new Filter(); //Filter Attribut 2
-        var oFilter3 = new Filter(); //Filter Attribut 3
-        var aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+        //var oFilter1 = new Filter(); //Filter Attribut 1
+        //var oFilter2 = new Filter(); //Filter Attribut 2
+        //var oFilter3 = new Filter(); //Filter Attribut 3
+        //var aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
 
 
         /*
@@ -168,6 +169,10 @@ sap.ui.define(
 
         var iRespectiveTourMileage= oTourStartFragmentModel.getProperty("/tour/mileage");
         var iRespectiveTourMileageTolerance=oTourStartFragmentModel.getProperty("/tour/mileageTolerance");
+        
+        //!Test
+        assert(iTourStartFragmentInput >= (iRespectiveTourMileage-iRespectiveTourMileageTolerance) && 
+        iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance), "Entered value was not in range of tollerance!");
 
         if(iTourStartFragmentInput >= (iRespectiveTourMileage-iRespectiveTourMileageTolerance) && 
             iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance)){
@@ -186,10 +191,6 @@ sap.ui.define(
         this.onNavToActiveTour();
       },
 
-      setInputFocus:function(){
-        this.getView().byId("kilometerInput").focus();
-      },
-
       noToursError:function(){
         MessageBox.error(this._oBundle.getText("noToursLoaded"), {
             onClose:function(){
@@ -201,6 +202,15 @@ sap.ui.define(
       resetTourStartFragmentUserInput:function(){ //Tolleranz nicht eingehalten, zuruecksetzen des Eingabefeldes
         var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
         oTourStartFragmentModel.setProperty("/mileage", "");
+        this.setFocusIntoMileageInput();
+      },
+
+      setFocusIntoMileageInput:function(){
+        //Habe leider keine bessere Moeglichkeit gesehen den Fokus wieder zu setzen
+        setTimeout(() =>{
+          this.getView().byId("kilometerInput").focus();
+        }, 50);
+        
       },
 
       

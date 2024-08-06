@@ -12,7 +12,24 @@ sap.ui.define([
 
         return Controller.extend("podprojekt.controller.Unterschrift", {
             onInit: function () {
+                this.saftyPig();
+            },
 
+            saftyPig:function(){
+                console.log("                         _");
+                console.log(" _._ _..._ .-',     _.._(`))");
+                console.log("'-. `     '  /-._.-'    ',/");
+                console.log("   )         \            '.");
+                console.log("  / _    _    |             \"");
+                console.log(" |  a    a    /              |");
+                console.log(" \   .-.                     ;  ");
+                console.log("  '-('' ).-'       ,'       ;");
+                console.log("     '-;           |      .'");
+                console.log("        \           \    /");
+                console.log("        | 7  .__  _.-\   \"");
+                console.log("        | |  |  ``/  /`  /");
+                console.log("       /,_|  |   /,_/   /");
+                console.log("          /,_/      '`-'");
             },
 
             onAfterRendering: function() {

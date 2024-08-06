@@ -2,12 +2,13 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageBox",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+    "sap/base/assert"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, JSONModel, MessageBox, MessageToast) {
+    function (Controller, JSONModel, MessageBox, MessageToast, assert) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Quittierung", {
@@ -21,8 +22,16 @@ sap.ui.define([
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
             },
 
-            onRecipientNotFound:function(){ //Empfaenger nicht angetroffen NICHT LOESCHEN!
-                //Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
+            onRecipientNotFound:function(){ //Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
+                
+                MessageToast.show("Tour fertig machen und abschicken! Navigation zur Tourübersicht erfolgt in 2 Sekunden!", {
+                    duration: 2500,
+                    width:"15em"
+                });
+
+                setTimeout(() => {
+                    this.onNavToOverview();
+                }, 2000);
             },
 
             onDeliveryNotePressed:function(oEvent){
@@ -81,12 +90,14 @@ sap.ui.define([
                 });
           
                 this.oAddFotoDialog.then((oDialog) => oDialog.open());
-                //this.clearPhotoModel();
             },
 
             checkSignConditions:function(){ //Pruefen ob zur bedingungen erfuellt sind zur Unterschrift View zu wechseln
                 var oRecipientNameModel=this.getOwnerComponent().getModel("CustomerModel")
                 var sRecipientName=oRecipientNameModel.getProperty("/customerName");
+
+                //!Test
+                assert(sRecipientName.length > 0, "No user input has been provided");
 
                 if(sRecipientName !== ""){
                    this.checkIfNvesAreProcessed();
@@ -99,41 +110,20 @@ sap.ui.define([
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
                 var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
 
+                //!Test
+                assert(aRemainingNves.length > 0, "Not all remaining nves have been processed!");
+
                 if(aRemainingNves.length >0){ //Es sind noch Nves zu bearbeiten
                     this.showProgressStatusError();
                 } else{ //Es sind keine Nves mehr zu bearbeiten
                     this.onNavToUnterschrift();
                 }
-
-
-            },
-            
-            checkIfTourIsFinished:function(){ //Pruefen ob die Tour abgeschlossen ist (Backendseitig?)
-                /*
-                //Das ist vielleicht machbar, wenn der Status der Tour Backend-seitig aktualisiert wurde und von dort geprüft werden soll
-                var oActiveTour=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
-                var sTourStatus=oActiveTour.orderStatus;
-
-                if(sTourStatus==="90"){
-                    this.onNavToUnterschrift();
-                } else{
-                    this.showProgressStatusError();
-                }
-                */
-            },
-
-            onCustomerAbsent:function(){ //Kunde nicht angetroffen switch
-
             },
 
             onAddFotoDialogClose:function(){ //Schließen Dialog
                 this.disableVideoStreams();
                 this.clearPhotoModel();
                 this.byId("FotoMachenDialog").close();
-            },
-
-            onPhotoQueryDialogClose:function(){ //Schließen Y Dialog
-                this.byId("FotoDialog").close();
             },
 
             checkIfPhotoNeedsToBeCleared:function(){ //Prüfen ob bereits ein Foto angezeigt wird
@@ -187,9 +177,6 @@ sap.ui.define([
                 var sSelectedPhotoTypeText=oSelectedPhotoType.getText();
                 var oSelectedType=this.getSelectedPhotoTypeObject(sSelectedPhotoTypeText);
                 this.setPhotoTypeSelectedModel(oSelectedType);
-                
-                //Es besteht die Option hier den Select-Typen der voll ist, zu deaktivieren
-                //var bEoughSpace=this.checkPhotoLimit();
             },
 
             setPhotoTypeSelectedModel:function(oSelectedType){
@@ -346,6 +333,12 @@ sap.ui.define([
                 var oRouter = this.getOwnerComponent().getRouter();
         
                 oRouter.navTo("Unterschrift");
+            },
+
+            onNavToOverview:function(){
+                var oRouter = this.getOwnerComponent().getRouter();
+        
+                oRouter.navTo("Overview");
             }
 
         });

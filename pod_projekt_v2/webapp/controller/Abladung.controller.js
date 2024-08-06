@@ -6,12 +6,13 @@ sap.ui.define([
     "sap/m/MessageToast",
     "sap/m/MessageBox",
 	"podprojekt/utils/Helper",
-    "sap/base/util/deepClone"
+    "sap/base/util/deepClone",
+    "sap/base/assert"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Button, Dialog, JSONModel, MessageToast, MessageBox, Helper, deepClone) {
+    function (Controller, Button, Dialog, JSONModel, MessageToast, MessageBox, Helper, deepClone, assert) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Abladung", {
@@ -344,6 +345,9 @@ sap.ui.define([
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel"); //Model für noch zu bearbeitende NVEs
                 var aLoadingUnits=oLoadingUnitsModel.getProperty("/tour/loadingUnits"); //Array aus zu bearbeitenden Nves
                 var oLoadingNve=undefined;
+
+                //!Test
+                assert(sManualNveUserInput.length > 0, "No user input has been provided! Hence no nve has been found.");
                 
                 //Leider nicht zu verallgemeinern, da sehr spezifisch --> Oder eben 'Objekt.sArticleId' anstatt 'Objekt.externalId'
                 for(var i in aLoadingUnits){
