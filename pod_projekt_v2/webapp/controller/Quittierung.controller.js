@@ -95,7 +95,7 @@ sap.ui.define([
                 var sRecipientName=oRecipientNameModel.getProperty("/customerName");
 
                 //!Test
-                assert(sRecipientName.length > 0, "No user input has been provided");
+                //assert(sRecipientName.length > 0, "No user input has been provided");
 
                 if(sRecipientName !== ""){
                    this.checkIfNvesAreProcessed();
@@ -109,7 +109,7 @@ sap.ui.define([
                 var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
 
                 //!Test
-                assert(aRemainingNves.length > 0, "Not all remaining nves have been processed!");
+                //assert(aRemainingNves.length > 0, "Not all remaining nves have been processed!");
 
                 if(aRemainingNves.length >0){ //Es sind noch Nves zu bearbeiten
                     this.showProgressStatusError();

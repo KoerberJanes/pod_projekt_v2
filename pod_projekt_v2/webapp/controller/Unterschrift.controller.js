@@ -34,18 +34,31 @@ sap.ui.define([
 
             onAfterRendering: function() {
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
-
             },
 
             onClearSignField:function(){
-                var digitalSignatureId = this.byId("digitalSignatureId");
-			    digitalSignatureId.clearArea();
-                console.log(digitalSignatureId.getSignatureAsString());
+                var sDigitalSignatureId = this.byId("digitalSignatureId");
+			    sDigitalSignatureId.clearArea();
             },
 
-            onReceiptStop:function(){
-                //TODO: Hier muss geprüft werden ob auch tatsaechlich unterschrieben wurde!
-                this.simulateBackendCall();
+            onCheckIfStopSigned:function(){
+                var sDigitalSignatureId = this.byId("digitalSignatureId");
+                var sSignedFieldBase64=sDigitalSignatureId.getSignatureAsString();
+                //var sSignedFieldPng=sDigitalSignatureId.getSignatureAsPng();
+
+                if(sSignedFieldBase64!==""){ //Feld ist leer und wurde nicht Unterschrieben!
+                    this.simulateBackendCall();
+                } else{
+                    this.notSignedError();
+                }
+            },
+
+            notSignedError:function(){
+                MessageBox.error(this._oBundle.getText("noSignatureDetected"), {
+                    onClose:function(){
+                        //NOP
+                    }.bind(this)
+                });
             },
 
             busyDialogOpen:function(){

@@ -4,7 +4,7 @@
     xmlns="sap.m" 
     xmlns:layout="sap.ui.layout" 
     xmlns:form="sap.ui.layout.form" displayBlock="true"
-    xmlns:customControl="podprojekt.custom">
+    xmlns:customControl="podprojekt.utils">
     <Page id="UnterschriftPageId">
         <customHeader>
             <Bar>
@@ -42,7 +42,7 @@
                     <Text text="Y {i18n>retoures} {i18n>processed}"/>
                     <Label id="idLeihgutLabel" text="{i18n>loadingDevices}"/>
                     <Text text="A {i18n>unloaded}"/>
-                    <Text text="B {i18n>aufgeladen}"/>
+                    <Text text="B {i18n>charged}"/>
                     <Label id="idLabelplaceholder"/>
                     <Label id="idUnterschriftLabel" text="{i18n>signature}"></Label>
                     <Text text="{CustomerModel>/customerName}"></Text>
@@ -65,7 +65,7 @@
                 <contentMiddle>
                 </contentMiddle>
                 <contentRight>
-                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onReceiptStop"></Button>
+                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onCheckIfStopSigned"></Button>
                 </contentRight>
             </Bar>
         </footer>

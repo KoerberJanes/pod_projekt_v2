@@ -347,7 +347,7 @@ sap.ui.define([
                 var oLoadingNve=undefined;
 
                 //!Test
-                assert(sManualNveUserInput.length > 0, "No user input has been provided! Hence no nve has been found.");
+                //assert(sManualNveUserInput.length > 0, "No user input has been provided! Hence no nve has been found.");
                 
                 //Leider nicht zu verallgemeinern, da sehr spezifisch --> Oder eben 'Objekt.sArticleId' anstatt 'Objekt.externalId'
                 for(var i in aLoadingUnits){
