@@ -44,6 +44,7 @@
                         <items>
                             <StandardListItem
                                 title="{StopInformationModel>shipmentNumber}"
+                                info="{StopInformationModel>deliveryType}"
                                 type="Navigation"
                                 press="onDeliveryNotePressed"/>
                         </items>

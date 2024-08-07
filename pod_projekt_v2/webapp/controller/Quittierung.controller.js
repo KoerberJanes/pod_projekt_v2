@@ -35,11 +35,15 @@ sap.ui.define([
             },
 
             onDeliveryNotePressed:function(oEvent){
+                /*
                 var oPressedDeliveryNote=oEvent.getSource().getBindingContext("StopInformationModel").getObject();
 
                 this.linkNvesToDeliveryNote(oPressedDeliveryNote);
+                */
+               this.onNavToAbladung();
             },
 
+            /*
             linkNvesToDeliveryNote:function(oPressedDeliveryNote){
                 var sDeliveryNoteShipmentNumber= oPressedDeliveryNote.shipmentNumber;
 
@@ -52,16 +56,7 @@ sap.ui.define([
                 }
                 this.onNavToAbladung();
             },
-
-            findPressedDeliverynote:function(sEventTriggerId, aListOfItems){
-                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
-                var aDeliveryNotes=oStopInformationModel.getProperty("/tour/aDeliveryNotes");
-
-                var getIndex= (element) => element.getId() === sEventTriggerId; //
-                var iIndexOfSelectedDeliveryNote= aListOfItems.findIndex(getIndex); //Index des ausgewählten Model-Objektes erfahren 
-                return aDeliveryNotes[iIndexOfSelectedDeliveryNote];
-
-            },
+            */
 
             addCameraPlayerToCameraDialog:function(){ //Erstellen des VideoPlayers für den CameraStream und diesen in den Dialog setzen
                 this.onPhotoTypesSelectChange(); //Initiales setzen des Models für die gemachten Fotos

@@ -87,13 +87,14 @@ sap.ui.define([
                 this.onNavToStopInformation();
             },
 
+            /*
             setLoadingUnits:function(aDefaultLoadingUnits){ //Zu Verladenen NVEs in Model setzen
                 var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
 
                 oLoadingUnitsModel.setProperty("/results", aDefaultLoadingUnits);
 
                 this.onNavToStopInformation();
-            },
+            },*/
 
             onNavToStopInformation:function(){ //Navigation zur StopInformation View
                 var oRouter = this.getOwnerComponent().getRouter();

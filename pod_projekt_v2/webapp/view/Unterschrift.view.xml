@@ -18,28 +18,41 @@
             </Bar>
         </customHeader>
         <content>
-            <form:SimpleForm layout="ResponsiveGridLayout">
+            <form:SimpleForm layout="ResponsiveGridLayout"
+            labelSpanXL="2"
+            labelSpanL="2"
+            labelSpanM="2"
+            labelSpanS="4"
+            emptySpanXL="4"
+            emptySpanL="4"
+            emptySpanM="2"
+            emptySpanS="0"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2"> 
                 <form:content>
                     <Bar>
                         <contentMiddle>
                             <Title id="OvtbTitle" text="{CustomerModel>/driverName}" level="H2" />
                         </contentMiddle>
                     </Bar>
-                    <Label text="{i18n>adress}"/>
+                    <Label id="idAdresseLabel" text="{i18n>adress}"/>
                     <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
-                    <Label text="{i18n>deliveryNoteNumber}"/>
-                    <Text text="{StopInformationModel>/tour/shipmentNumber}"/>
-                    <Label text="{i18n>numberedDispatchUnits}"/>
-                    <Text text="{= ${TotalLoadedNvesModel>/results}.length} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
-                    <Text text="{= ${TotalClearedNvesModel>/results}.length} {i18n>cleared}"/>
                     
+                    <Label id="idLSNrLabel" text="{i18n>deliveryNoteNumber}"/>
+                    <Text text="{StopInformationModel>/tour/shipmentNumber}"/>
+                    <Label id="idNVEsLabel" text="{i18n>numberedDispatchUnits}"/>
+                    <Text text="{= ${TotalLoadedNvesModel>/results}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
+                    <Text text="{= ${TotalClearedNvesModel>/results}.length} {i18n>nves} {i18n>cleared}"/>
+
+                    <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
                     <Text text="X Lieferscheine / Y Retouren bearbeitet."/><!--TODO: Hier muss ich noch die Liste ueberarbeiten, damit eine 2 Listen (Lieferscheine und Retouren) amgezeigt werden können-->
-                    <Label text="{i18n>loadingDevices}"/>
+                    <Label id="idLeihgutLabel" text="{i18n>loadingDevices}"/>
                     <Text text="A {i18n>abgeladen}, B {i18n>aufgeladen}"/>
-                    <Label id="txtUnterschrift"/>
-                    <Text id="txtDatum" text="{i18n>dateAndTime}"/>
+                    <Label id="idLabelplaceholder"/>
+                    <Label id="idDatumUhrzeitLabel" text="{i18n>dateAndTime}"/>
                     <Text text="Datum hier einfuegen"/>
-                    <Label text="{i18n>geokoordinaten}"/>
+                    <Label id="idGeokoordinatenLabel" text="{i18n>geokoordinaten}"/>
                     <Text text="B:{StopInformationModel>/tour/startGeoB}, L:{StopInformationModel>/tour/startGeoL}"></Text>
                 </form:content>
             </form:SimpleForm>
