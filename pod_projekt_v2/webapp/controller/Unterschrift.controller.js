@@ -65,15 +65,16 @@ sap.ui.define([
             simulateBackendCall:function(){
                 this.busyDialogOpen();
 
-                var sPathPos="/ABAP_FUNKTIONSBAUSTEIN"; //Methode am Backend um Daten zu erhalten.
-                var oFilter1 = new Filter(); //Filter Attribut 1
-                var oFilter2 = new Filter(); //Filter Attribut 2
-                var oFilter3 = new Filter(); //Filter Attribut 3
-                var aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+                var sPath="/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+                var oODataModel= this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
+                //var oFilter1 = new Filter(); //Filter Attribut 1
+                //var oFilter2 = new Filter(); //Filter Attribut 2
+                //var oFilter3 = new Filter(); //Filter Attribut 3
+                //var aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
 
 
                 /*
-                 this.getView().getModel("TP_VERLADUNG_SRV").read(sPathPos, {
+                oODataModel.read(sPath, {
                 filters: aFilters,
 
                 success: (oData) => {

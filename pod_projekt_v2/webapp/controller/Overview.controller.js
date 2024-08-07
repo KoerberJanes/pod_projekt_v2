@@ -46,7 +46,9 @@ sap.ui.define(
       simulateBackendCallForTours:function(bTestCase){
         this.onBusyDialogOpen(); //Dialog oeffnen um Backend-Call abzuwarten.
         //Methoden und Filter können hier erstellt werden.
-        var sPathPos="/ABAP_FUNKTIONSBAUSTEIN"; //Methode am Backend um Daten zu erhalten.
+
+        var sPath="/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+        var oODataModel= this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
         //var oFilter1 = new Filter(); //Filter Attribut 1
         //var oFilter2 = new Filter(); //Filter Attribut 2
         //var oFilter3 = new Filter(); //Filter Attribut 3
@@ -54,7 +56,7 @@ sap.ui.define(
 
 
         /*
-        this.getView().getModel("TP_VERLADUNG_SRV").read(sPathPos, {
+        oODataModel.read(sPath, {
           filters: aFilters,
 
           success: (oData) => {
