@@ -40,6 +40,7 @@ sap.ui.define([
             onClearSignField:function(){
                 var digitalSignatureId = this.byId("digitalSignatureId");
 			    digitalSignatureId.clearArea();
+                console.log(digitalSignatureId.getSVGString());
             },
 
             onBreak:function(){
@@ -47,6 +48,7 @@ sap.ui.define([
             },
 
             onReceiptStop:function(){
+                //TODO: Hier muss geprüft werden ob auch tatsaechlich unterschrieben wurde!
                 this.simulateBackendCall();
             },
 
@@ -97,6 +99,12 @@ sap.ui.define([
                this.busyDialogClose();
                this.showBackendConfirmMessage();
                this.onNavToOverview();
+            },
+
+            onRefreshDateAndTime:function(){
+                var oCustomerModel=this.getOwnerComponent().getModel("CustomerModel");
+                var sDateAndTime= sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.YYYY HH:mm:ss" }).format(new Date()); //Datum inklusive Uhrzeit
+                oCustomerModel.setProperty("/dateAndTime", sDateAndTime);
             },
 
             showBackendConfirmMessage:function(){

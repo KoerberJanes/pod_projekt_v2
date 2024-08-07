@@ -35,6 +35,9 @@
                         <contentMiddle>
                             <Title id="OvtbTitle" text="{CustomerModel>/driverName}" level="H2" />
                         </contentMiddle>
+                        <contentRight>
+                            <Button id="idDateRefreshButton" type="Emphasized" icon="sap-icon://refresh" press="onRefreshDateAndTime" width="20%"/>
+                        </contentRight>
                     </Bar>
                     <Label id="idAdresseLabel" text="{i18n>adress}"/>
                     <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
@@ -46,13 +49,15 @@
                     <Text text="{= ${TotalClearedNvesModel>/results}.length} {i18n>nves} {i18n>cleared}"/>
 
                     <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
-                    <Text text="X Lieferscheine / Y Retouren bearbeitet."/><!--TODO: Hier muss ich noch die Liste ueberarbeiten, damit eine 2 Listen (Lieferscheine und Retouren) amgezeigt werden können-->
+                    <Text text="X {i18n>deliveryItems} {i18n>processed}"/><!--TODO: Hier muss ich noch die Liste ueberarbeiten, damit eine 2 Listen (Lieferscheine und Retouren) amgezeigt werden können-->
+                    <Text text="Y {i18n>retoures} {i18n>processed}"/>
                     <Label id="idLeihgutLabel" text="{i18n>loadingDevices}"/>
-                    <Text text="A {i18n>abgeladen}, B {i18n>aufgeladen}"/>
+                    <Text text="A {i18n>unloaded}"/>
+                    <Text text="B {i18n>aufgeladen}"/>
                     <Label id="idLabelplaceholder"/>
                     <Label id="idDatumUhrzeitLabel" text="{i18n>dateAndTime}"/>
-                    <Text text="Datum hier einfuegen"/>
-                    <Label id="idGeokoordinatenLabel" text="{i18n>geokoordinaten}"/>
+                    <Text text="{CustomerModel>/dateAndTime}"/>
+                    <Label id="idGeoCoordinatesLabel" text="{i18n>geoCoordinates}"/>
                     <Text text="B:{StopInformationModel>/tour/startGeoB}, L:{StopInformationModel>/tour/startGeoL}"></Text>
                 </form:content>
             </form:SimpleForm>

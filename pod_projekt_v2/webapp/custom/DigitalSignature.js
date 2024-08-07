@@ -173,12 +173,12 @@ sap.ui.define(
 					if (calculate) {
 						var xLast = (xyAddLast.x + xyLast.x + xyAdd.x) / 3;
 						var yLast = (xyAddLast.y + xyLast.y + xyAdd.y) / 3;
-						pixels.push(xLast, yLast);
+						pixels.push([xLast, yLast]);
 					} else {
 						calculate = true;
 					}
 					context.quadraticCurveTo(xyLast.x, xyLast.y, xyAdd.x, xyAdd.y);
-					pixels.push(xyAdd.x, xyAdd.y);
+					pixels.push([xyAdd.x, xyAdd.y]);
 					context.stroke();
 					context.beginPath();
 					context.moveTo(xyAdd.x, xyAdd.y);
@@ -200,7 +200,7 @@ sap.ui.define(
 					context.beginPath();
 					pixels.push("moveStart");
 					context.moveTo(xy.x, xy.y);
-					pixels.push(xy.x, xy.y);
+					pixels.push([xy.x, xy.y]);
 					xyLast = xy;
 
 					if (context.signDoneTrue === false) {

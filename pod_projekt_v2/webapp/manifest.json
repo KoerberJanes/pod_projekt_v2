@@ -73,6 +73,7 @@
       "CustomerModel":{
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
+          "dateAndTime": "",
           "driverId": "",
           "driverName": "Default Driver",
           "customerName": ""

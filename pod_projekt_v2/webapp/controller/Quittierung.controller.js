@@ -114,8 +114,17 @@ sap.ui.define([
                 if(aRemainingNves.length >0){ //Es sind noch Nves zu bearbeiten
                     this.showProgressStatusError();
                 } else{ //Es sind keine Nves mehr zu bearbeiten
-                    this.onNavToUnterschrift();
+                    //this.onNavToUnterschrift();
+                    this.setSigningDateAndTime();
                 }
+            },
+
+            setSigningDateAndTime:function(){
+                var oCustomerModel=this.getOwnerComponent().getModel("CustomerModel");
+                var sDateAndTime= sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.YYYY HH:mm:ss" }).format(new Date()); //Datum inklusive Uhrzeit
+                oCustomerModel.setProperty("/dateAndTime", sDateAndTime);
+
+                this.onNavToUnterschrift();
             },
 
             onAddFotoDialogClose:function(){ //Schließen Dialog
