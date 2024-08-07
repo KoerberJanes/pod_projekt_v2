@@ -18,18 +18,7 @@
             </Bar>
         </customHeader>
         <content>
-            <form:SimpleForm layout="ResponsiveGridLayout"
-            labelSpanXL="2"
-            labelSpanL="2"
-            labelSpanM="2"
-            labelSpanS="4"
-            emptySpanXL="4"
-            emptySpanL="4"
-            emptySpanM="2"
-            emptySpanS="0"
-            columnsXL="2"
-            columnsL="2"
-            columnsM="2"> 
+            <form:SimpleForm layout="ResponsiveGridLayout" labelSpanXL="2" labelSpanL="2" labelSpanM="2" labelSpanS="4" emptySpanXL="4" emptySpanL="4" emptySpanM="2" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="2"> 
                 <form:content>
                     <Bar>
                         <contentMiddle>
@@ -55,6 +44,8 @@
                     <Text text="A {i18n>unloaded}"/>
                     <Text text="B {i18n>aufgeladen}"/>
                     <Label id="idLabelplaceholder"/>
+                    <Label id="idUnterschriftLabel" text="{i18n>signature}"></Label>
+                    <Text text="{CustomerModel>/customerName}"></Text>
                     <Label id="idDatumUhrzeitLabel" text="{i18n>dateAndTime}"/>
                     <Text text="{CustomerModel>/dateAndTime}"/>
                     <Label id="idGeoCoordinatesLabel" text="{i18n>geoCoordinates}"/>

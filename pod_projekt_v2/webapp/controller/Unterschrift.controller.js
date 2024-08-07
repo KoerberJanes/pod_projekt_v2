@@ -40,11 +40,7 @@ sap.ui.define([
             onClearSignField:function(){
                 var digitalSignatureId = this.byId("digitalSignatureId");
 			    digitalSignatureId.clearArea();
-                console.log(digitalSignatureId.getSVGString());
-            },
-
-            onBreak:function(){
-                console.log("Debugging-time");
+                console.log(digitalSignatureId.getSignatureAsString());
             },
 
             onReceiptStop:function(){
@@ -118,6 +114,11 @@ sap.ui.define([
                 var oRouter = this.getOwnerComponent().getRouter();
 
                 oRouter.navTo("Overview");
-            }
+            },
+            
+
+            onBreak:function(){
+                console.log("Debugging-time");
+            },
         });
     });
