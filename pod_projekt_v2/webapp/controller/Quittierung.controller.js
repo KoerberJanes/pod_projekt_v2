@@ -35,18 +35,21 @@ sap.ui.define([
             },
 
             onDeliveryNotePressed:function(oEvent){
-                var sEventTriggerId=oEvent.getSource().getId(); //Id des Elements der betätigt wurde
-                var aListOfItems=oEvent.getSource().getParent().getItems();
-                var oPressedDeliveryNote=this.findPressedDeliverynote(sEventTriggerId, aListOfItems);
+                var oPressedDeliveryNote=oEvent.getSource().getBindingContext("StopInformationModel").getObject();
 
-                this.setCurrentClearingObject(oPressedDeliveryNote);
+                this.linkNvesToDeliveryNote(oPressedDeliveryNote);
             },
 
-            setCurrentClearingObject:function(oPressedDeliveryNote){
-                /* Spaeteste Moeglichkeit des Backend-Calls 
-                var oCurrentClearingObjectModel=this.getOwnerComponent().getModel("CurrentClearingObjectModel");
-                oCurrentClearingObjectModel.setProperty("/clearingObject", oPressedDeliveryNote);
-                */
+            linkNvesToDeliveryNote:function(oPressedDeliveryNote){
+                var sDeliveryNoteShipmentNumber= oPressedDeliveryNote.shipmentNumber;
+
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aLoadingUnits=oStopInformationModel.getProperty("/tour/loadingUnits");
+
+                for(var i in aLoadingUnits){ //Alle Nves des Lieferscheins durchgehen
+                    var oCurrentLoadingUnit=aLoadingUnits[i]; 
+                    oCurrentLoadingUnit.deliveryNoteShipmentNumber= sDeliveryNoteShipmentNumber; //Erstellen und Beschreiben eines neuen Attributes um die Zuordnung zum Lieferschein zu machen
+                }
                 this.onNavToAbladung();
             },
 
@@ -325,19 +328,19 @@ sap.ui.define([
             
             onNavToAbladung:function(){ //Navigation zur Abladung View
                 var oRouter = this.getOwnerComponent().getRouter();
-        
+
                 oRouter.navTo("Abladung");
             },
 
             onNavToUnterschrift:function(){ //Navigation zur Unterschrift View
                 var oRouter = this.getOwnerComponent().getRouter();
-        
+
                 oRouter.navTo("Unterschrift");
             },
 
-            onNavToOverview:function(){
+            onNavToOverview:function(){ //Navigation zurueck zur Uebersicht
                 var oRouter = this.getOwnerComponent().getRouter();
-        
+
                 oRouter.navTo("Overview");
             }
 

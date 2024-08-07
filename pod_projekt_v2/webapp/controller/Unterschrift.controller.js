@@ -12,7 +12,7 @@ sap.ui.define([
 
         return Controller.extend("podprojekt.controller.Unterschrift", {
             onInit: function () {
-                this.saftyPig();
+                //this.saftyPig();
             },
 
             saftyPig:function(){
@@ -107,7 +107,7 @@ sap.ui.define([
 
             onNavToOverview:function(){
                 var oRouter = this.getOwnerComponent().getRouter();
-        
+
                 oRouter.navTo("Overview");
             }
         });

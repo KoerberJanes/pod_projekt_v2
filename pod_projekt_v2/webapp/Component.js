@@ -1,7 +1,3 @@
-/**
- * eslint-disable @sap/ui5-jsdocs/no-jsdoc
- */
-
 sap.ui.define([
         "sap/ui/core/UIComponent",
         "sap/ui/Device",
@@ -1466,21 +1462,6 @@ sap.ui.define([
 					}]
 				}]
 			}), "TourModel");
-
-			this.setModel(new sap.ui.model.json.JSONModel({
-				results: [{
-					complaintText: "Abladen nicht möglich - Annahmeverweigerung"
-				},
-				{
-					complaintText: "Abladen nicht möglich - Kunde nicht angetroffen"
-				},
-				{
-					complaintText: "Abladen nicht möglich - Sonstiges"
-				},
-				{
-					complaintText: "Beschädigung (gesamte Sendung)"
-				}]
-			}), "ComplaintsModel");
 
                 // call the base component's init function
                 UIComponent.prototype.init.apply(this, arguments);
