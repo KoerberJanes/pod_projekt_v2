@@ -141,9 +141,9 @@ sap.ui.define([
             },
 
             toCurrentPosition:function(sCurrentGeoL, sCurrentGeoB){
-                var sAltitude="15"; // von 0 (weit weg) bis 20 oder so (sehr nah)
+                var sAltitude=15; // von 0 (weit weg) bis 20 oder so (sehr nah)
                 var oGeoMap=this.getView().byId("GeoMap");
-                oGeoMap.zoomToGeoPosition(parseFloat(sCurrentGeoL), parseFloat(sCurrentGeoB), parseFloat(sAltitude));
+                oGeoMap.zoomToGeoPosition(parseFloat(sCurrentGeoL), parseFloat(sCurrentGeoB), sAltitude);
 
             },
 
