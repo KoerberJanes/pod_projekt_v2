@@ -59,7 +59,7 @@ sap.ui.define([
                 var oStop={
                     "pos": sTargetGeoL+";"+sTargetGeoB,
                     "tooltip": oCurrentStop.city,
-                    "type": "Inactive",
+                    "type": "Success",
                     "text": oCurrentStop.addressName1
                 };
 
@@ -76,39 +76,41 @@ sap.ui.define([
             },
 
             onClickGeoMapSpot:function(oEvent){
-                //Funktioniert noch nicht, hier gibt es eine Änderung seit dem letzten Coding von mir
-                //oEvent.getSource().openDetailWindow("My Detail Window", "0", "0" );
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var oStop=oStopInformationModel.getProperty("/tour");
+                oEvent.getSource().openDetailWindow(oStop.sequence + " " + oStop.addressName1,"0", "0");
             },
 
             onGetCurrentPosition:function(){ //Zurücksetzen der Map Position auf aktuellen Ort?
-                this.onBusyDialogOpen(); //Dialog oeffnen um Backend-Call abzuwarten.
-                navigator.geolocation.getCurrentPosition(function(position){
-                     //'watchPosition' sei zuverlässiger als 'getCurrentPosition', kann ich pauschal nicht bestätigen
-                     //Auf jeden Fall prüft es den Standort in bestimmten Intervallen wieder
-                    this.onBusyDialogClose();
-                    var sCurrentGeoL=position.coords.longitude;
-                    var sCurrentGeoB=position.coords.latitude;
-                    //var sAltitude=position.coords.altitude;
-                    var sAccuracy=position.coords.accuracy;
-                    //var sSpeed=position.coords.speed;
+                this.onBusyDialogOpen();
 
-                    if(sAccuracy>100){ //Pruefen ob die Daten überhaupt genau genug sind!
-                        MessageToast.show("Trying to fetch more accurate data! Accuracy is not good enough!");
-                        //this.onGetCurrentPosition();
-                    } else{
-                        this.toCurrentPosition(sCurrentGeoL, sCurrentGeoB);
+                navigator.geolocation.getCurrentPosition(
+                    (oPosition) => {
+                        this.onBusyDialogClose();
+                        var sCurrentGeoL=oPosition.coords.longitude;
+                        var sCurrentGeoB=oPosition.coords.latitude;
+                        //var sAltitude=oPosition.coords.altitude;
+                        var sAccuracy=oPosition.coords.accuracy;
+                        //var sSpeed=oPosition.coords.speed;
+
+                        if(sAccuracy>100){ //Pruefen ob die Daten überhaupt genau genug sind!
+                            MessageToast.show("Trying to fetch more accurate data! Accuracy is not good enough!");
+                            //this.onGetCurrentPosition();
+                        } else{
+                            this.toCurrentPosition(sCurrentGeoL, sCurrentGeoB);
+                        }
+                    },
+                    (oError) =>{
+                        this.onBusyDialogClose();
+                        MessageToast.show("Unknown error occured!");
+                    },
+                    {
+                        //Attributes for better GPS-Data
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
                     }
-
-                }.bind(this), 
-                function(error){
-                    this.onBusyDialogClose();
-                    MessageToast.show("Unknown error occured!");
-                }.bind(this),
-                {
-                    enableHighAccuracy:true,
-                    timeout: 5000,
-                    maximumAge: 0
-                });
+                );
             },
 
             toCurrentPosition:function(sCurrentGeoL, sCurrentGeoB){
@@ -122,7 +124,7 @@ sap.ui.define([
                 var oCurrentStop=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
                 var sTargetGeoL=oCurrentStop.targetGeoL;
                 var sTargetGeoB=oCurrentStop.targetGeoB;
-                var sAltitude="10"; // von 0 (weit weg) bis 20 oder so (sehr nah)
+                var sAltitude="15"; // von 0 (weit weg) bis 20 oder so (sehr nah)
                 var oGeoMap=this.getView().byId("GeoMap");
 
                 oGeoMap.zoomToGeoPosition(parseFloat(sTargetGeoL), parseFloat(sTargetGeoB), parseFloat(sAltitude)); //Werte muessen als float angegeben werden

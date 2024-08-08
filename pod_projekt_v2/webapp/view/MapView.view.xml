@@ -11,9 +11,9 @@
 
           <vbm:GeoMap id="GeoMap" width="100%" height="30em" centerPosition="7.46;51.5643" initialZoom="7" mapConfiguration="{GeoMapProvider>/mapConfig}">
               <vbm:vos>
-                  <vbm:Spots click="onClickGeoMapSpot" scaleChangeable="false" items="{SpotModel>/spot}">
+                  <vbm:Spots scaleChangeable="false" items="{SpotModel>/spot}"> <!--click="onClickGeoMapSpot" -->
                     <vbm:items>
-                      <vbm:Spot id="Spot" position="{SpotModel>pos}" text="{SpotModel>text}" tooltip="{SpotModel>tooltip}" type="{SpotModel>type}" contextMenu="onContextMenuSpot">
+                      <vbm:Spot id="Spot" position="{SpotModel>pos}" icon="sap-icon://shipping-status" tooltip="{SpotModel>tooltip}" type="{SpotModel>type}" click="onClickGeoMapSpot"><!--text="{SpotModel>text}"-->
                       </vbm:Spot>
                     </vbm:items>
                   </vbm:Spots>
