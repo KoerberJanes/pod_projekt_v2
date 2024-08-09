@@ -31,10 +31,13 @@
                         </headerToolbar>
                         <!--Abfrage geht nur bis Status 70 weil, bei gleichbleibender Auswahl dann die default Loesung gewählt wird (Success) -->
                         <StandardListItem title="{TourModel>routeCaption}" description="{TourModel>externalId}" wrapping="true" 
-                            info="{TourModel>altRouteStatus}"
-                            infoState="{= ${TourModel>altRouteStatus} === 'Freigegeben' ? 'Success' : 
-                                            ${TourModel>altRouteStatus} === 'Beladen' ? 'Error' :
-                                                ${TourModel>altRouteStatus} === 'Beendet' ? 'Information' : 'Success'}"
+                            info="{= ${TourModel>routeStatus} === '10' ? ${i18n>invoiceStatusApproved} : 
+                                    ${TourModel>routeStatus} === '50' ? ${i18n>invoiceStatusLoaded} :
+                                        ${TourModel>routeStatus} === '70' ? ${i18n>invoiceStatusFinished} : ${i18n>invoiceStatusCompleted}}"
+
+                            infoState="{= ${TourModel>routeStatus} === '10' ? ${i18n>success} : 
+                                            ${TourModel>routeStatus} === '50' ? ${i18n>error} :
+                                                ${TourModel>routeStatus} === '70' ? ${i18n>information} : ${i18n>success}}"
                                                     
                             icon="{= ${TourModel>routeStatus} === '10' ? 'sap-icon://employee-approvals' : 
                                         ${TourModel>routeStatus} === '50' ? 'sap-icon://shipping-status' :

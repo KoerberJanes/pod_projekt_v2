@@ -70,7 +70,7 @@ sap.ui.define([
             },
 
             busyDialogClose:function(){
-                setTimeout(() => { this.byId("BusyDialog").close() },1000);
+                setTimeout(() => { this.byId("BusyDialog").close() },500);
             },
 
             simulateBackendCall:function(){
@@ -107,7 +107,7 @@ sap.ui.define([
 
                this.busyDialogClose();
                this.showBackendConfirmMessage();
-               this.onNavToOverview();
+               this.setCurrentStopAsFinished();
             },
 
             onRefreshDateAndTime:function(){
@@ -121,6 +121,34 @@ sap.ui.define([
                     duration: 2500,
                     width:"15em"
                 });
+            },
+
+            setCurrentStopAsFinished:function(){ //!Statuscodes müssen abgesprochen werden
+                var oTourStartModel=this.getOwnerComponent().getModel("StopInformationModel"); //Infos über derzeitigen Stopp
+
+                oTourStartModel.setProperty("/tour/orderStatus", '70');
+                this.checkIfAllStopsAreCompleted();
+            },
+
+            checkIfAllStopsAreCompleted:function(){ //!Statuscodes müssen abgesprochen werden
+                var oTourStartModel=this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
+                var aStopsOfCurrentTour=oTourStartModel.getProperty("/tour/stops");
+
+                var bStatusNotFinished = (element) => element.stopStatus === "90";
+
+                if(aStopsOfCurrentTour.some(bStatusNotFinished)){ //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
+                    this.getOwnerComponent().getModel("TourStartFragmentModel").refresh(); //Die Infos werden richtig in den Models verwaltet, jedoch wird auf der ActiveTour View weiterhin die 3 für die NVEs angezeigt
+                    //Refresh funktioniert noch nicht. Das ist ein Problem für den Janes von Montag
+                    this.onNavToActiveTour();
+                } else{
+                    this.onNavToOverview();
+                }
+            },
+
+            onNavToActiveTour:function(){
+                var oRouter = this.getOwnerComponent().getRouter();
+
+                oRouter.navTo("ActiveTour");
             },
 
             onNavToOverview:function(){

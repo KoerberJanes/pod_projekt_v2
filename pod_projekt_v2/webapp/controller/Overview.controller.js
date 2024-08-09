@@ -98,7 +98,6 @@ sap.ui.define(
         var aFilteredTours=this.filterFinishedStops(aRecievedTours);
         
         oTourModel.setProperty("/results", aFilteredTours);
-        this.setCustomAttributes();
       },
 
       filterFinishedStops: function(aRecievedTours) { //Beendete oder Abgeschlossene Touren werden gefiltert
@@ -110,17 +109,6 @@ sap.ui.define(
             }
         }
         return aRecievedTours;
-    },
-
-      setCustomAttributes:function(){ //Erstellen der anzuzeigenden Stati für Touren in der View
-        var oTourModel=this.getOwnerComponent().getModel("TourModel");
-        var aTourModelItems = oTourModel.getProperty("/results");
-
-        for(var i in aTourModelItems){
-            aTourModelItems[i].altRouteStatus=""; //Erstellen des Anzuzeigenden Attributes
-            aTourModelItems[i].altRouteStatus=formatter.statusText(aTourModelItems[i].routeStatus, this.getOwnerComponent()); //Füllen mit wert
-        }
-        oTourModel.refresh(); //Aktualisieren notwendig, da kein neues Array mit Properties in das Model gesetzt wurde
       },
 
       setPressedTour:function(oEvent){ //Ausgewählte Tour-Infos in Model für Fragment setzen
