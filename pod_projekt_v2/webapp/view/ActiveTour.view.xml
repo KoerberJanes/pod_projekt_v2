@@ -36,19 +36,23 @@
                         <CustomListItem press="onSetStoppInformation" type="Active">
                             <Bar class="sapUiTinyMarginBottom">
                                 <contentLeft>
-                                    <Title text="{StopModel>addressName1}" level="H5"></Title>
+                                    <Title level="H5"
+                                        text="{= 
+                                                ${StopModel>sequence} >= 100 ? ${StopModel>sequence} + '-' + ${StopModel>addressName1}  :
+                                                ${StopModel>sequence} >= 10 ? '0' + ${StopModel>sequence} + '-' + ${StopModel>addressName1} :
+                                                '00' + ${StopModel>sequence} + '-' + ${StopModel>addressName1}}"/>
                                 </contentLeft>
                                 <contentRight>
-                                    <Label text="{StopModel>loadingUnitsCount}"></Label>
+                                    <Label text="{= ${StopModel>orders/0/loadingUnits}.length}"/>
                                 </contentRight>
                             </Bar>
                             <HBox >
                                 <VBox width="93%" >
-                                    <Label text="{StopModel>street} {StopModel>streetNumber}" class="sapUiSmallMarginBegin"></Label>
-                                    <Label text="{StopModel>country} {StopModel>zipCode} {StopModel>city}" class="sapUiSmallMarginBegin"></Label>
+                                    <Label text="{StopModel>street} {StopModel>streetNumber}" class="sapUiSmallMarginBegin"/>
+                                    <Label text="{StopModel>country} {StopModel>zipCode} {StopModel>city}" class="sapUiSmallMarginBegin"/>
                                 </VBox>
                                 <VBox width="7%">
-                                    <core:Icon src="sap-icon://navigation-right-arrow" class="sapUiTinyMarginTop"></core:Icon>
+                                    <core:Icon src="sap-icon://navigation-right-arrow" class="sapUiTinyMarginTop"/>
                                 </VBox>
                             </HBox>
                             

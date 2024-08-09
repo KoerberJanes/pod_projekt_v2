@@ -32,7 +32,7 @@
                 <form:content>
                     <OverflowToolbar id="NVEBar">
                         <content>
-                            <Text id="NVEText" text="NVEs"/>
+                            <Text id="NVEText" text="{= ${i18n>nvesToDeliveryNote} + ' ' + ${StopInformationModel>/tour/externalId}}"/>
                             <ToolbarSpacer/>
                             <ToolbarSpacer/>
                             <Text id="txtNVEAnzahl" text="{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /

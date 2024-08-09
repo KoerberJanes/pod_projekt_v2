@@ -44,7 +44,7 @@
                         <items>
                             <StandardListItem
                                 title="{StopInformationModel>shipmentNumber}"
-                                info="{StopInformationModel>deliveryType}"
+                                info="{= ${StopInformationModel>tour/0/loadingUnits/0/isReturning} === true ? ${i18n>returning} : ${i18n>unloading}}"
                                 type="Navigation"
                                 press="onDeliveryNotePressed"/>
                         </items>

@@ -103,7 +103,7 @@ sap.ui.define(
 
       filterFinishedStops: function(aRecievedTours) { //Beendete oder Abgeschlossene Touren werden gefiltert
 
-        for (var i in aRecievedTours) {
+        for (var i in aRecievedTours) { //Filtern aller Touren mit Status 90 & 70
             var sCurrentTourStatus=aRecievedTours[i].routeStatus;
             if (sCurrentTourStatus==="90" || sCurrentTourStatus==="70") {
               aRecievedTours.splice(parseInt(i), 1);
@@ -120,7 +120,7 @@ sap.ui.define(
             aTourModelItems[i].altRouteStatus=""; //Erstellen des Anzuzeigenden Attributes
             aTourModelItems[i].altRouteStatus=formatter.statusText(aTourModelItems[i].routeStatus, this.getOwnerComponent()); //Füllen mit wert
         }
-        oTourModel.refresh(); //Aktualisieren
+        oTourModel.refresh(); //Aktualisieren notwendig, da kein neues Array mit Properties in das Model gesetzt wurde
       },
 
       setPressedTour:function(oEvent){ //Ausgewählte Tour-Infos in Model für Fragment setzen
@@ -155,18 +155,18 @@ sap.ui.define(
         var sLongButtonId = oEvent.getSource().getId();
         var sShortButtonId = sLongButtonId.substring(sLongButtonId.lastIndexOf("-") + 1,sLongButtonId.length);
 
-        if (sShortButtonId === "TourstartFragmentButtonConfirm") {
-          this.checkIfEnteredValueInRange();
+        if (sShortButtonId === "TourstartFragmentButtonConfirm") { //Bestätigen
+          this.checkIfEnteredValueInRange(); //Eingabe Pruefen
         }
 
-        if (sShortButtonId === "TourstartFragmentButtonAbort") {
-          this.onCloseTourStartFragment();
+        if (sShortButtonId === "TourstartFragmentButtonAbort") { //Abbrechen
+          this.onCloseTourStartFragment(); //Dialog Schließen
         }
       },
 
       checkIfEnteredValueInRange: function () { //Pruefen ob Tolleranz eingehalten wurde
-        var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
-        var sTourStartFragmentInput=oTourStartFragmentModel.getProperty("/mileage");
+        var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel"); //Ausgewaehlte Tour-Infos
+        var sTourStartFragmentInput=oTourStartFragmentModel.getProperty("/mileage"); //User-Eingabe
         var iTourStartFragmentInput=parseInt(sTourStartFragmentInput);
 
         var iRespectiveTourMileage= oTourStartFragmentModel.getProperty("/tour/mileage");
@@ -176,23 +176,25 @@ sap.ui.define(
         //assert(iTourStartFragmentInput >= (iRespectiveTourMileage-iRespectiveTourMileageTolerance) && iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance), "Entered value was not in range of tollerance!");
 
         if(iTourStartFragmentInput >= (iRespectiveTourMileage-iRespectiveTourMileageTolerance) && 
-            iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance)){
+            iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance)){ //Eingabe in Tolleranz
           this.setStopInformationModelData();
-        } 
-        this.resetTourStartFragmentUserInput();
+        } else{ //Eingabe nicht in Tolleranz
+          this.tourTolleranceNotAccepted();
+        }
+        this.resetTourStartFragmentUserInput(); //So oder so muss der User-Input entfernt werden
       },
 
       setStopInformationModelData:function(){ //Tolleranz eingehalten und Stops der Tour in entsprechendes Model setzen
 
-        var oStopInformationModel=this.getOwnerComponent().getModel("StopModel");
+        var oStopInformationModel=this.getOwnerComponent().getModel("StopModel"); //Stop Model
         var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
-        var aRespectiveTourStops=oTourStartFragmentModel.getProperty("/tour/stops");
+        var aRespectiveTourStops=oTourStartFragmentModel.getProperty("/tour/stops"); //Array an Stops der ausgewaehlten Tour
 
-        oStopInformationModel.setProperty("/results", aRespectiveTourStops);
+        oStopInformationModel.setProperty("/results", aRespectiveTourStops); //Setzen der Stops
         this.onNavToActiveTour();
       },
 
-      noToursError:function(){
+      noToursError:function(){ //Keine Touren wurden aus dem Backend bekommen
         MessageBox.error(this._oBundle.getText("noToursLoaded"), {
             onClose:function(){
                 //NOP:
@@ -206,17 +208,23 @@ sap.ui.define(
         this.setFocusIntoMileageInput();
       },
 
-      setFocusIntoMileageInput:function(){
-        //Habe leider keine bessere Moeglichkeit gesehen den Fokus wieder zu setzen
+      setFocusIntoMileageInput:function(){//Habe leider keine bessere Moeglichkeit gesehen den Fokus wieder zu setzen
         setTimeout(() =>{
           this.getView().byId("kilometerInput").focus();
         }, 50);
         
       },
 
+      tourTolleranceNotAccepted:function(){ //Kilometer vom User nicht akzeptiert, da nicht in Tolleranz
+        MessageToast.show(this._oBundle.getText("tolleranceNotAccepted"), {
+          duration: 1000,
+          width:"15em"
+        });
+      },
+
       
       onRefreshTours:function(){ //Refresh der Touren, bisher ein Dummy
-        MessageToast.show("Dies ist ein Dummy-Rrefresh!", {
+        MessageToast.show(this._oBundle.getText("dummyRefresh"), {
           duration: 1000,
           width:"15em"
         });

@@ -24,7 +24,7 @@ sap.ui.define([
 
             onRecipientNotFound:function(){ //Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
                 
-                MessageToast.show("Tour fertig machen und abschicken! Navigation zur Tourübersicht erfolgt in 2 Sekunden!", {
+                MessageToast.show(this._oBundle.getText("dummyProcessFinished"), {
                     duration: 2500,
                     width:"15em"
                 });
@@ -35,28 +35,8 @@ sap.ui.define([
             },
 
             onDeliveryNotePressed:function(oEvent){
-                /*
-                var oPressedDeliveryNote=oEvent.getSource().getBindingContext("StopInformationModel").getObject();
-
-                this.linkNvesToDeliveryNote(oPressedDeliveryNote);
-                */
                this.onNavToAbladung();
             },
-
-            /*
-            linkNvesToDeliveryNote:function(oPressedDeliveryNote){
-                var sDeliveryNoteShipmentNumber= oPressedDeliveryNote.shipmentNumber;
-
-                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
-                var aLoadingUnits=oStopInformationModel.getProperty("/tour/loadingUnits");
-
-                for(var i in aLoadingUnits){ //Alle Nves des Lieferscheins durchgehen
-                    var oCurrentLoadingUnit=aLoadingUnits[i]; 
-                    oCurrentLoadingUnit.deliveryNoteShipmentNumber= sDeliveryNoteShipmentNumber; //Erstellen und Beschreiben eines neuen Attributes um die Zuordnung zum Lieferschein zu machen
-                }
-                this.onNavToAbladung();
-            },
-            */
 
             addCameraPlayerToCameraDialog:function(){ //Erstellen des VideoPlayers für den CameraStream und diesen in den Dialog setzen
                 this.onPhotoTypesSelectChange(); //Initiales setzen des Models für die gemachten Fotos
@@ -114,7 +94,6 @@ sap.ui.define([
                 if(aRemainingNves.length >0){ //Es sind noch Nves zu bearbeiten
                     this.showProgressStatusError();
                 } else{ //Es sind keine Nves mehr zu bearbeiten
-                    //this.onNavToUnterschrift();
                     this.setSigningDateAndTime();
                 }
             },
