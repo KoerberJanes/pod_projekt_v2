@@ -29,7 +29,11 @@
                     </OverflowToolbar>
                     
                     <Label text="{i18n>stopp}"></Label>
-                    <Input id="stopp" value="{StopInformationModel>/tour/addressName1}" editable="false"></Input><!--Wenn hier nur die '2' wie im Original angezeit werden soll, wird der Parameter 'sequence' Verwendet-->
+                    <Input id="stopp" editable="false" 
+                        value="{= 
+                            ${StopInformationModel>/tour/sequence} >= 100 ? ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1}  :
+                            ${StopInformationModel>/tour/sequence} >= 10 ? '0' + ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1} :
+                            '00' + ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1}}" /><!--Wenn hier nur die '2' wie im Original angezeit werden soll, wird der Parameter 'sequence' Verwendet-->
                     <Label text="{i18n>adress}"></Label>
                     <TextArea editable="false" growing="true" value="{StopInformationModel>/tour/street}&#13;{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"></TextArea>
                    
