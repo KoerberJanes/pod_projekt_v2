@@ -85,8 +85,8 @@ sap.ui.define([
             },
 
             checkIfNvesAreProcessed:function(){ //Prüfen ob noch nicht bearbeitete Nves existieren
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
-                var aRemainingNves=oLoadingUnitsModel.getProperty("/results");
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aRemainingNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
                 //!Test
                 //assert(aRemainingNves.length > 0, "Not all remaining nves have been processed!");
@@ -96,6 +96,7 @@ sap.ui.define([
                 } else{ //Es sind keine Nves mehr zu bearbeiten
                     this.setSigningDateAndTime();
                 }
+                
             },
 
             setSigningDateAndTime:function(){
@@ -273,7 +274,6 @@ sap.ui.define([
                 var aUpdatedPhotos=aPhotoListItems.concat(aNewPhoto); //Erstellen eines Arrays mit alten Fotos und neuem Foto darin
 
                 oPhotoListModel.setProperty("/photos", aUpdatedPhotos);
-
             },
             
             showProgressStatusError:function(){ //Fehler weil nicht alle Checkboxen bearbeitet wurden

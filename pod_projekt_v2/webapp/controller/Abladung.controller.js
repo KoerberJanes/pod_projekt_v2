@@ -17,46 +17,34 @@ sap.ui.define([
 
         return Controller.extend("podprojekt.controller.Abladung", {
             onInit: function () {
-
+                this._oRouter = this.getOwnerComponent().getRouter();
+                this._oRouter.getRoute("Abladung").attachPatternMatched(this.setTreeStructureForModel, this);
             },
 
             onAfterRendering: function() {
                 this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-                this.alterLoadingUnitsModelDescription();
+                //this.setTreeStructureForModel();
             },
 
-            alterLoadingUnitsModelDescription:function(){ //Anpassung der Beschreibung, damit alles so aussieht wie auf der Vorlage
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("LoadingUnitsModel");
-                var aLoadingUnits=oLoadingUnitsModel.getProperty("/results");
-
-                for(var i in aLoadingUnits){
-                    var sOldLoadingUnitDescription=aLoadingUnits[i].label1; //Alter Text
-                    var sLodingDeviceTypeCaption=aLoadingUnits[i].lodingDeviceTypeCaption; //Beschreibung des Objektes
-
-                    aLoadingUnits[i].label1=sOldLoadingUnitDescription + " " + sLodingDeviceTypeCaption; //Concatination der Strings
-                }
-                this.setTreeStructureForModel(oLoadingUnitsModel, aLoadingUnits);
-            },
-
-            setTreeStructureForModel:function(oLoadingUnitsModel, aLoadingUnits){ //Struktur und Attribute für den Tree erstellen
+            setTreeStructureForModel:function(){ //Struktur und Attribute für den Tree erstellen
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aLoadingUnits=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
 
                 for(var i in aLoadingUnits){
                     var oCurerntLoadingUnit=aLoadingUnits[i]; //Aktuelles Objekt merken
                     oCurerntLoadingUnit.DetailedInformations={}; //Erstellen der neuen Struktur für Objekt
-                    oCurerntLoadingUnit.DetailedInformations.label1=""; //Attribut für die View erstellen
-                    //Contatination der Strings
-                    oCurerntLoadingUnit.DetailedInformations.label1=oCurerntLoadingUnit.amount + "x " + oCurerntLoadingUnit.articleCaption;
+                    oCurerntLoadingUnit.DetailedInformations.label1="";
+                    oCurerntLoadingUnit.DetailedInformations.label1=oCurerntLoadingUnit.amount + "x " + oCurerntLoadingUnit.articleCaption;//Attribut für die View erstellen
                 }
-                oLoadingUnitsModel.refresh();
+                oStopInformationModel.refresh();
                 this.setReceivedLoadingUnitsModel(aLoadingUnits);
             },
 
             setReceivedLoadingUnitsModel:function(aLoadingUnits){ //Setzen der Erhaltenen NVEs in ein Model für die Anzeige
-                var oReceivedLoadingUnitsModel=this.getOwnerComponent().getModel("ReceivedLoadingUnitsModel");
-                //const aStableLoadingUnits=aLoadingUnits.slice(); //Schummeln um Array by Value zu Klonnen
-                var aStableLoadingUnits=deepClone(aLoadingUnits); //deepClone ist der sichere Weg
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aStableLoadingUnits=deepClone(aLoadingUnits); //Schummeln um Array by Value zu Klonnen: deepClone ist der sichere Weg
 
-                oReceivedLoadingUnitsModel.setProperty("/results", aStableLoadingUnits);
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aConstNumberedDispatchUnits", aStableLoadingUnits);
             },
 
             onClearingButtonPress:function(oEvent){
@@ -67,7 +55,7 @@ sap.ui.define([
                 var oTreeModelParent=oEvent.getSource().getBindingContext("StopInformationModel").getObject();
 
                 if(oTreeModelParent===undefined){
-                    console.log("Element konnte nicht gefunden werden!");
+                    MessageBox.error("Ein Fehler ist aufgetreten! Bitte wernden Sie sich an Ihren Administrator!");
                 }
 
                 this.setClearingNveModel(oTreeModelParent);
@@ -81,32 +69,30 @@ sap.ui.define([
             },
 
             checkForRemainingNves:function(){ //Prüfen ob noch Nves zu quittieren sind
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel");
-                var aRemainingNves=oLoadingUnitsModel.getProperty("/tour/loadingUnits");
-
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aRemainingNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+                
                 if(aRemainingNves.length>0){ //Wenn mehr als eine NVE zu quittieren ist
-                    this.onLoadAllRemainingNves(oLoadingUnitsModel, aRemainingNves);
+                    this.onLoadAllRemainingNves(aRemainingNves);
                 } else{
                     this.driverNveReceiptBackDescisionBox(); 
                 }
+                
             },
 
-            onLoadAllRemainingNves:function(oLoadingUnitsModel, aRemainingNves){ //NVEs werden alle quittiert
-
-                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel"); //Temp verladene Nves Model
-                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
+            onLoadAllRemainingNves:function(aRemainingNves){ //NVEs werden alle quittiert
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aLoadingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs");//verladene Nves
                 var aUpdatedLoadingNvesTemp=aLoadingNvesTemp.concat(aRemainingNves); //zusammenfuehren der Nves
 
-                oLoadingNvesTempModel.setProperty("/results", aUpdatedLoadingNvesTemp); //Model der Temp verladenen Nves fuellen
-                oLoadingUnitsModel.setProperty("/tour/loadingUnits", []); //Model der noch zu bearbeitenden Nves leeren
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs", aUpdatedLoadingNvesTemp);//Model der Temp verladenen Nves fuellen
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", []);//Model der noch zu bearbeitenden Nves leeren
             },
 
-            checkForUnsavedNves:function(){ //In der View Auskommentiert
-                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
-                var aClearingNvesTemp=oClearingNvesTempModel.getProperty("/results"); //geklaerte Nves
-
-                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
-                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
+            checkForUnsavedNves:function(){ 
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aClearingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs");//geklaerte Nves
+                var aLoadingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs");//verladene Nves
 
                 if(aClearingNvesTemp.length > 0 || aLoadingNvesTemp.length > 0){ //Mindestens eine Nve wurde entweder verladen oder geklaert
                     this.driverNveReceiptDescisionBox(); //Abfragen ob diese Gespeichert werden soll
@@ -153,26 +139,23 @@ sap.ui.define([
             },
 
             AbortCurrentLoadedAndClearedNves:function(){
-                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
-                var aClearingNvesTemp=oClearingNvesTempModel.getProperty("/results"); //geklaerte Nves
-
-                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
-                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
-
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel"); //Offene Nves Model
-                var aLoadingUnits=oLoadingUnitsModel.getProperty("/tour/loadingUnits"); //Noch nicht quittierte Nves
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aClearingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs");//geklaerte Nves
+                var aLoadingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs");//verladene Nves
+                var aLoadingUnits=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
                 var aAccumulatedTempNves=aClearingNvesTemp.concat(aLoadingNvesTemp); //Temp verladen und geklaerte Nves zusammenfassen
                 var aUpdatedLoadingUnits=aLoadingUnits.concat(aAccumulatedTempNves); //Zusammengefaste Nves mit den unbearbeiteten zusmmenfassen
 
-                oLoadingUnitsModel.setProperty("/tour/loadingUnits", aUpdatedLoadingUnits);
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", aUpdatedLoadingUnits);
                 this.emptyTempClearedAndLoadedModels();
                 this.navBackToQuittierung();
             },
 
             checkIfNvesWhereLoaded:function(){
                 var bTempLoadedNves=false;
-                var aLoadingNvesTemp=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel").getProperty("/results"); //verladene Nves
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aLoadingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs");//verladene Nves
 
                 if(aLoadingNvesTemp.length > 0){
                     bTempLoadedNves=true;
@@ -182,7 +165,8 @@ sap.ui.define([
 
             checkIfNvesWhereCleared:function(){
                 var bTempClearedNves=false;
-                var aClearingNvesTemp=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel").getProperty("/results"); //geklaerte Nves
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aClearingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs");//geklaerte Nves
 
                 if(aClearingNvesTemp.length > 0){
                     bTempClearedNves= true;
@@ -199,39 +183,37 @@ sap.ui.define([
                     });
                 } else{
                     this.onSaveAllTempStoredNVEs();
+                    //this.onSaveTempDeliveryNotesNVE();
                 }
             },
 
             onSaveAllTempStoredNVEs:function(){
-                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
-                var aClearingNvesTemp=oClearingNvesTempModel.getProperty("/results"); //geklaerte Nves
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                
+                var aTempLoadedDeliveryNoteNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs"); //Temo verladen
+                var aTotalLoadedDeliveryNoteNVEs=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTotalLoadedNVEs");
+                
+                var aTempClearedDeliveryNoteNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs"); //Temp geklaert
+                var aTotalClearedDeliveryNoteNVEs=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTotalClearedNves");
 
-                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
-                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results"); //verladene Nves
-
-                var oTotalClearedNvesModel=this.getOwnerComponent().getModel("TotalClearedNvesModel"); //Model fuer gespeicherte geklaerte Nves
-                var oTotalLoadedNvesModel=this.getOwnerComponent().getModel("TotalLoadedNvesModel"); //Model fuer gespeicherte verladene Nves
-
-                if(this.checkIfNvesWhereCleared()){ //bTempClearedNves
-                    var aUpdatedTotalClearedNves=oTotalClearedNvesModel.getProperty("/results").concat(aClearingNvesTemp);//zusammenführen der Nves
-                    oTotalClearedNvesModel.setProperty("/results", aUpdatedTotalClearedNves);
+                if(aTempClearedDeliveryNoteNves.length > 0){
+                    var aUpdatedTotalClearedNves=aTotalClearedDeliveryNoteNVEs.concat(aTempClearedDeliveryNoteNves);//zusammenführen der Nves
+                    oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTotalClearedNves", aUpdatedTotalClearedNves);
                 }
-
-                if(this.checkIfNvesWhereLoaded()){//bTempLoadedNves
-                    var aUpdatedTotalLoadedNves=oTotalLoadedNvesModel.getProperty("/results").concat(aLoadingNvesTemp);//zusammenführen der Nves
-                    oTotalLoadedNvesModel.setProperty("/results", aUpdatedTotalLoadedNves);
+                if(aTempLoadedDeliveryNoteNves.length > 0){
+                    var aUpdatedTotalLoadedNves=aTotalLoadedDeliveryNoteNVEs.concat(aTempLoadedDeliveryNoteNves);//zusammenführen der Nves
+                    oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTotalLoadedNVEs", aUpdatedTotalLoadedNves);
                 }
 
                 this.emptyTempClearedAndLoadedModels(); //Leeren der Temporaeren Nves
             },
 
             emptyTempClearedAndLoadedModels:function(){
-                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");  //Temp verladene Nves Model
-                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel"); //Temp geklaerte Nves Model
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
 
-                oLoadingNvesTempModel.setProperty("/results", []);
-                oClearingNvesTempModel.setProperty("/results", []);
-                //this.navBackToQuittierung();
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs", []);
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs", []);
+
                 this.showSavingSuccessfullMessage();
             },
             
@@ -342,20 +324,11 @@ sap.ui.define([
                 //Verlade-Objekt finden
                 var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel");
                 var sManualNveUserInput=oManualNveInputModel.getProperty("/manualInput"); //UserInput aus Feld auslesen
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel"); //Model für noch zu bearbeitende NVEs
-                var aLoadingUnits=oLoadingUnitsModel.getProperty("/tour/loadingUnits"); //Array aus zu bearbeitenden Nves
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aLoadingUnits=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
                 var oLoadingNve=undefined;
 
-                //!Test
-                //assert(sManualNveUserInput.length > 0, "No user input has been provided! Hence no nve has been found.");
-                
-                //Leider nicht zu verallgemeinern, da sehr spezifisch --> Oder eben 'Objekt.sArticleId' anstatt 'Objekt.externalId'
-                for(var i in aLoadingUnits){
-                    var sLabelId=aLoadingUnits[i].label1;
-                    if(sLabelId===sManualNveUserInput){
-                        oLoadingNve=aLoadingUnits[i];
-                    }
-                }
+                oLoadingNve=aLoadingUnits.find(element => element.label1 === sManualNveUserInput);
 
                 if(oLoadingNve!==undefined){
                     this.differenciateNveProcessingType(oLoadingNve, oEvent);
@@ -378,31 +351,29 @@ sap.ui.define([
             },
 
             saveTempClearing:function(oClearingNve){
-                var oClearingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingClearedNvesModel");
-                var aClearingNvesTemp=oClearingNvesTempModel.getProperty("/results");
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aClearingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs");
+                var aUpdatedClearingNvesTemp=aClearingNvesTemp.concat([oClearingNve]);//Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
+                
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs", aUpdatedClearingNvesTemp);
 
-                var aClearingUnit=[oClearingNve];//Erstellen eines Arrays mit quittierter NVE
-                var aUpdatedClearingNvesTemp=aClearingNvesTemp.concat((aClearingUnit));//Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
-
-                oClearingNvesTempModel.setProperty("/results", aUpdatedClearingNvesTemp);//Setzen der neuen NVEs in das Model
                 this.removeProcessedNve(oClearingNve);
             },
 
             saveTempLoading:function(oLoadingNve){
-                var oLoadingNvesTempModel=this.getOwnerComponent().getModel("CurrentSittingLoadedNvesModel");
-                var aLoadingNvesTemp=oLoadingNvesTempModel.getProperty("/results");
 
-                var aLoadingUnit=[oLoadingNve];//Erstellen eines Arrays mit quittierter NVE
-                var aUpdatedLoadingNvesTemp=aLoadingNvesTemp.concat((aLoadingUnit));//Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aLoadingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs");
+                var aUpdatedLoadingNvesTemp=aLoadingNvesTemp.concat([oLoadingNve]);//Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
 
-                oLoadingNvesTempModel.setProperty("/results", aUpdatedLoadingNvesTemp);//Setzen der neuen NVEs in das Model
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs", aUpdatedLoadingNvesTemp);
                 this.removeProcessedNve(oLoadingNve);
             },
 
             removeProcessedNve:function(oDiffNve){
-                //NVE wurde entweder geklärt oder verladen --> entfernen aus dem Model der NVEs 
-                var oLoadingUnitsModel=this.getOwnerComponent().getModel("StopInformationModel");
-                var aRemainingNves=oLoadingUnitsModel.getProperty("/tour/loadingUnits");
+
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aRemainingNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
                 var aNewFilteredNves=[];
 
                 for(var i in aRemainingNves){ //Aufbauen eines neuen Arrays, dass die unbearbeiteten Nves enthält um die Models zu aktualisieren
@@ -412,7 +383,7 @@ sap.ui.define([
                     }
                 }
 
-                oLoadingUnitsModel.setProperty("/tour/loadingUnits", aNewFilteredNves);
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", aNewFilteredNves);
 
                 this.decideWichDialogShouldBeClosed();                
             },

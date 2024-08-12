@@ -163,60 +163,6 @@
         "type": "sap.ui.model.json.JSONModel",
         "uri": "localService/mockdata/LoadingUnits.json"
       },
-      "ReceivedLoadingUnitsModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "LoadingUnitsModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "TotalClearedNvesModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "CurrentSittingClearedNvesModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "TotalLoadedNvesModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "CurrentSittingLoadedNvesModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "ClearingNvesModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "CurrentClearingObjectModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "clearingObject": {}
-        }
-      },
-      "TotalClearingNvesModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
       "CurrentSittingClearingNvesModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {

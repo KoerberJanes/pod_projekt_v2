@@ -34,8 +34,8 @@
                     <Label id="idLSNrLabel" text="{i18n>deliveryNoteNumber}"/>
                     <Text text="{StopInformationModel>/tour/shipmentNumber}"/>
                     <Label id="idNVEsLabel" text="{i18n>numberedDispatchUnits}"/>
-                    <Text text="{= ${TotalLoadedNvesModel>/results}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
-                    <Text text="{= ${TotalClearedNvesModel>/results}.length} {i18n>nves} {i18n>cleared}"/>
+                    <Text text="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
+                    <Text text="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length} {i18n>nves} {i18n>cleared}"/>
 
                     <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
                     <Text text="X {i18n>deliveryItems} {i18n>processed}"/><!--TODO: Hier muss ich noch die Liste ueberarbeiten, damit eine 2 Listen (Lieferscheine und Retouren) amgezeigt werden können-->

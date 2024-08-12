@@ -137,8 +137,8 @@
                                 <cells>
                                     <Text text="{LoadingDeviceModel>lodingDeviceTypeCaption}"/>
                                     <Text text="{LoadingDeviceModel>amount}"/>
-                                    <Input/>
-                                    <Input/>
+                                    <Input type="Number" value=""/>
+                                    <Input type="Number" value=""/>
                                 </cells>
                             </ColumnListItem>
                         </items>

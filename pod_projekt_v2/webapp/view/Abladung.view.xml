@@ -32,14 +32,16 @@
                 <form:content>
                     <OverflowToolbar id="NVEBar">
                         <content>
-                            <Text id="NVEText" text="{= ${i18n>nvesToDeliveryNote} + ' ' + ${StopInformationModel>/tour/externalId}}"/>
+                            <Text id="NVEText" text="{= ${i18n>nvesToDeliveryNote} + ' ' + ${StopInformationModel>/tour/shipmentNumber}}"/>
                             <ToolbarSpacer/>
                             <ToolbarSpacer/>
-                            <Text id="txtNVEAnzahl" text="{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /
-                                {= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length + ${StopInformationModel>/tour/loadingUnits}.length}"></Text>
+                            <Text id="txtNVEAnzahl" text="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length}  / 
+                                {= ${StopInformationModel>/tour/aDeliveryNotes/0/aConstNumberedDispatchUnits}.length}"></Text>
+                            <!--{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /
+                                {= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length + ${StopInformationModel>/tour/loadingUnits}.length}-->
                         </content>
                     </OverflowToolbar>
-                    <Tree id="NVETree" items="{StopInformationModel>/tour/loadingUnits}" >
+                    <Tree id="NVETree" items="{StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}" >
                         <CustomTreeItem type="Active">
                             <content>
                                 <HBox>

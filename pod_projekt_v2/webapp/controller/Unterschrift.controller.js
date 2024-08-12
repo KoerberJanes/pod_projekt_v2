@@ -74,7 +74,7 @@ sap.ui.define([
             },
 
             simulateBackendCall:function(){
-                this.busyDialogOpen();
+                //this.busyDialogOpen();
 
                 var sPath="/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
                 var oODataModel= this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
@@ -141,11 +141,18 @@ sap.ui.define([
                 var bStatusNotFinished = (element) => element.stopStatus === "90"; //Ein Stopp mit Status '90' (unbearbeitet?) vorhanden?
 
                 if(aStopsOfCurrentTour.some(bStatusNotFinished)){ //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
-                    //TODO:Refresh funktioniert noch nicht. Das ist ein Problem für den Janes von Montag
-                    this.refreshTourStops();
+                    this.changeDisplayedNvesOfStop();
                 } else{
                     this.setTourStatusProcessed();
                 }
+            },
+            changeDisplayedNvesOfStop:function(){
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                var aRemainingNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+
+                oStopInformationModel.setProperty("/tour/loadingUnits", aRemainingNves);
+
+                this.refreshTourStops();
             },
 
             setTourStatusProcessed:function(){ //!Statuscodes müssen abgesprochen werden
@@ -156,10 +163,9 @@ sap.ui.define([
                 this.refreshTours();
             },
 
-            refreshTours:function(){
-                var oTourModel=this.getOwnerComponent().getModel("TourModel");
-                var aTours= oTourModel.getProperty("/results");
-
+            refreshTours:function(){ //Dient nur zum Aktualisieren der View. Die Daten wurden davor schon verarbeitet. Expression Binding, aktualisiert jedoch nur 1x
+                var oTourModel=this.getOwnerComponent().getModel("TourModel"); //Model fuer Touren
+                var aTours= oTourModel.getProperty("/results"); //Alle Touren dieses Fahrers
                 var aUpdatedTours=[].concat(aTours);
 
                 oTourModel.setProperty("/results", aUpdatedTours);
@@ -174,8 +180,24 @@ sap.ui.define([
 
                 oStopModel.setProperty("/results", aUpdatedStopsOfCurrentTour);
 
-
+                this.resetUserInput();
+                this.resetUserPhotos();
                 this.onNavToActiveTour();
+            },
+
+            resetUserInput:function(){
+                var oCustomerModel=this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
+                //TODO: LoadingDevices. Entweder Objekte nach erhalt vom Backend aendern oder expressionBinding verwenden
+                //var oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
+                
+                oCustomerModel.setProperty("/customerName", "");
+            },
+
+            resetUserPhotos:function(){
+                var oPhotoListModel=this.getOwnerComponent().getModel("PhotoModel");
+                //var aPhotoListItems=oPhotoListModel.getProperty("/photos");
+
+                oPhotoListModel.setProperty("/photos", []);
             },
 
             onNavToActiveTour:function(){

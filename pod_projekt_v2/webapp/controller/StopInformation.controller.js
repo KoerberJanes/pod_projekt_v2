@@ -10,7 +10,7 @@ sap.ui.define([
 
         return Controller.extend("podprojekt.controller.StopInformation", {
             onInit: function () {
-
+                
             },
 
             onAfterRendering: function() {
@@ -33,7 +33,13 @@ sap.ui.define([
                 var oNewDeliveryNote={
                     "shipmentNumber": oTourInformation.shipmentNumber,
                     "shipmentCondition": oTourInformation.shipmentCondition,
-                    "shipmentConditionCaption": oTourInformation.shipmentConditionCaption
+                    "shipmentConditionCaption": oTourInformation.shipmentConditionCaption,
+                    "aTempClearedNVEs": [],
+                    "aTotalClearedNves": [],
+                    "aTempLoadedNVEs": [],
+                    "aTotalLoadedNVEs": [],
+                    "aUnprocessedNumberedDispatchUnits": [],
+                    "aConstNumberedDispatchUnits": []
                 };
 
                 oTourInformation.aDeliveryNotes=[];
@@ -47,14 +53,14 @@ sap.ui.define([
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var aLoadingUnits=oStopInformationModel.getProperty("/tour/loadingUnits");
                 var aDeliveryNotes=oStopInformationModel.getProperty("/tour/aDeliveryNotes");
-                var oDeliveryNote=aDeliveryNotes[0]; //Angenommen, dass es nur einen Lieferschein gibt
-                //Verbindet NVEs mit Lieferschein. Zumindest dem Aktuellen.
-                var sDeliveryNoteShipmentNumber= oDeliveryNote.shipmentNumber;
+                var sDeliveryNoteShipmentNumber= aDeliveryNotes[0].shipmentNumber;//Angenommen, dass es nur einen Lieferschein gibt
 
                 for(var i in aLoadingUnits){ //Alle Nves des Lieferscheins durchgehen
                     var oCurrentLoadingUnit=aLoadingUnits[i]; 
                     oCurrentLoadingUnit.deliveryNoteShipmentNumber= sDeliveryNoteShipmentNumber; //Erstellen und Beschreiben eines neuen Attributes um die Zuordnung zum Lieferschein zu machen
                 }
+
+                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", aLoadingUnits);//Angenommen, dass es nur einen Lieferschein gibt
             },
 
             onNavToQuittierung:function(){ //Navigation zur Quittierung View
