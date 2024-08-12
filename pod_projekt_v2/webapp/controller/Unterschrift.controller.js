@@ -124,9 +124,13 @@ sap.ui.define([
             },
 
             setCurrentStopAsFinished:function(){ //!Statuscodes müssen abgesprochen werden
-                var oTourStartModel=this.getOwnerComponent().getModel("StopInformationModel"); //Infos über derzeitigen Stopp
-
-                oTourStartModel.setProperty("/tour/orderStatus", '70');
+                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel"); //Infos über derzeitigen Stopp
+                var oCurrentStop=oStopInformationModel.getProperty("/tour"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
+                var oTourStartModel=this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
+                var aStopsOfCurrentTour=oTourStartModel.getProperty("/tour/stops");//'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
+                var oFoundTour=aStopsOfCurrentTour.find(element => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
+                
+                oFoundTour.stopStatus="70"; // --> Annahme: 70 ist erledigt
                 this.checkIfAllStopsAreCompleted();
             },
 
@@ -134,15 +138,44 @@ sap.ui.define([
                 var oTourStartModel=this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
                 var aStopsOfCurrentTour=oTourStartModel.getProperty("/tour/stops");
 
-                var bStatusNotFinished = (element) => element.stopStatus === "90";
+                var bStatusNotFinished = (element) => element.stopStatus === "90"; //Ein Stopp mit Status '90' (unbearbeitet?) vorhanden?
 
                 if(aStopsOfCurrentTour.some(bStatusNotFinished)){ //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
-                    this.getOwnerComponent().getModel("TourStartFragmentModel").refresh(); //Die Infos werden richtig in den Models verwaltet, jedoch wird auf der ActiveTour View weiterhin die 3 für die NVEs angezeigt
-                    //Refresh funktioniert noch nicht. Das ist ein Problem für den Janes von Montag
-                    this.onNavToActiveTour();
+                    //TODO:Refresh funktioniert noch nicht. Das ist ein Problem für den Janes von Montag
+                    this.refreshTourStops();
                 } else{
-                    this.onNavToOverview();
+                    this.setTourStatusProcessed();
                 }
+            },
+
+            setTourStatusProcessed:function(){ //!Statuscodes müssen abgesprochen werden
+                var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
+                var oCurrentTour= oTourStartFragmentModel.getProperty("/tour");
+
+                oCurrentTour.routeStatus="10";
+                this.refreshTours();
+            },
+
+            refreshTours:function(){
+                var oTourModel=this.getOwnerComponent().getModel("TourModel");
+                var aTours= oTourModel.getProperty("/results");
+
+                var aUpdatedTours=[].concat(aTours);
+
+                oTourModel.setProperty("/results", aUpdatedTours);
+
+                this.onNavToOverview();
+            },
+
+            refreshTourStops:function(){ //Dient nur zum Aktualisieren der View. Die Daten wurden davor schon verarbeitet. Expression Binding, aktualisiert jedoch nur 1x
+                var oStopModel=this.getOwnerComponent().getModel("StopModel"); //Model fuer Stopps
+                var aStopsOfCurrentTour=oStopModel.getProperty("/results"); //Alle Stopps dieser Tour
+                var aUpdatedStopsOfCurrentTour=[].concat(aStopsOfCurrentTour);
+
+                oStopModel.setProperty("/results", aUpdatedStopsOfCurrentTour);
+
+
+                this.onNavToActiveTour();
             },
 
             onNavToActiveTour:function(){
