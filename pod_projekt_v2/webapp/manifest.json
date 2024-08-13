@@ -113,7 +113,18 @@
       "ComplaintsModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
-          "results": []
+          "results": [{
+            "complaintText": "Abladen nicht möglich - Annahmeverweigerung"
+          },
+          {
+            "complaintText": "Abladen nicht möglich - Kunde nicht angetroffen"
+          },
+          {
+            "complaintText": "Abladen nicht möglich - Sonstiges"
+          },
+          {
+            "complaintText": "Beschädigung (gesamte Sendung)"
+          }]
         }
       },
       "PhotoTypeSelectedModel": {
