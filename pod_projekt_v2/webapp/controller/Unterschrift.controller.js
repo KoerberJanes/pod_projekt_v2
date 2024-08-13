@@ -1,13 +1,12 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/m/MessageBox",
-	"sap/m/MessageToast",
-    "sap/ui/model/Filter"
+	"sap/m/MessageToast"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, MessageBox, MessageToast, Filter) {
+    function (Controller, MessageBox, MessageToast) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Unterschrift", {
@@ -210,11 +209,6 @@ sap.ui.define([
                 var oRouter = this.getOwnerComponent().getRouter();
 
                 oRouter.navTo("Overview");
-            },
-            
-
-            onBreak:function(){
-                console.log("Debugging-time");
-            },
+            }
         });
     });

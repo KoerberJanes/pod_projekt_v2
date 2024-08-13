@@ -2,10 +2,8 @@
     xmlns:core="sap.ui.core" 
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns="sap.m" 
-    xmlns:layout="sap.ui.layout" 
     xmlns:form="sap.ui.layout.form"
-    xmlns:u="sap.ui.unified" 
-    xmlns:tnt="sap.tnt" displayBlock="true">
+    displayBlock="true">
     <Page id="activetourPageId" title="{i18n>activetourPageTitle}">
         <customHeader>
                 <Bar id="activeTourPageBar">

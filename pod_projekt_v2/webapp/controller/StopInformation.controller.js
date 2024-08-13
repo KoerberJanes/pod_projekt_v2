@@ -1,11 +1,10 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/m/MessageToast"
+    "sap/ui/core/mvc/Controller"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, MessageToast) {
+    function (Controller) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.StopInformation", {

@@ -38,7 +38,7 @@
                     <Input id="recipientNameInp" value="{CustomerModel>/customerName}" visible="{= ${settings>/recipientFound} }"/>
 
                     <Label text="{i18n>showDeliveryItems}"/>
-                    <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{settings>/deliveryItemsVisible}"></ToggleButton>
+                    <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{settings>/deliveryItemsVisible}"/>
                     <Label ></Label>
                     <List  id="deliveryNoteList" includeItemInSelection="true" items="{StopInformationModel>/tour/aDeliveryNotes}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
                         <items>
@@ -121,7 +121,7 @@
                     <Label />
 
                     <HBox justifyContent="SpaceAround">
-                        <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="onOpenPhotoDialog" /> <!--press="onFotoabfrageDialogOpen"-->
+                        <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="onOpenPhotoDialog" />
                         <Select id="photoTypeSelect" items="{
                                 path:'PhotoTypeModel>/photoTypes'}" change="onPhotoTypesSelectChange">
                                 <core:ListItem text="{PhotoTypeModel>photoTyp}" key="{PhotoTypeModel>photoTyp}"/>

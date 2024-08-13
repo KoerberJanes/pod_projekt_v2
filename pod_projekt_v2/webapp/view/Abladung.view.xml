@@ -1,5 +1,4 @@
 <mvc:View controllerName="podprojekt.controller.Abladung"
-    xmlns:core="sap.ui.core" 
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns="sap.m"
     xmlns:form="sap.ui.layout.form">
@@ -36,9 +35,7 @@
                             <ToolbarSpacer/>
                             <ToolbarSpacer/>
                             <Text id="txtNVEAnzahl" text="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length}  / 
-                                {= ${StopInformationModel>/tour/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"></Text>
-                            <!--{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /
-                                {= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length + ${StopInformationModel>/tour/loadingUnits}.length}-->
+                                {= ${StopInformationModel>/tour/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
                         </content>
                     </OverflowToolbar>
                     <Tree id="NVETree" items="{StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}" >
@@ -46,7 +43,7 @@
                             <content>
                                 <HBox>
                                     <Title text="{StopInformationModel>accurateDescription}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/>
-                                    <Button text="{i18n>clearing}" visible="{= ${StopInformationModel>detailedInformation} === undefined ? false : true}" press="onClearingButtonPress"></Button>
+                                    <Button text="{i18n>clearing}" visible="{= ${StopInformationModel>detailedInformation} === undefined ? false : true}" press="onClearingButtonPress"/>
                                 </HBox>
                             </content>
                         </CustomTreeItem>

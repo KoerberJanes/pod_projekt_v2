@@ -3,7 +3,7 @@
     xmlns="sap.m">
     <Page id="main" title="{i18n>mainPageTitle}">
         <content>
-            <Button id="overviewNavigationButton" text="Overview" press="onNavToOverview"></Button>
+            <Button id="overviewNavigationButton" text="Overview" press="onNavToOverview"/>
         </content>
     </Page>
 </mvc:View>

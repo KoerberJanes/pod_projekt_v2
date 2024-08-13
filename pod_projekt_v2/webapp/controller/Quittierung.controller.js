@@ -1,6 +1,5 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/json/JSONModel",
     "sap/m/MessageBox",
 	"sap/m/MessageToast",
     "sap/base/assert"
@@ -8,7 +7,7 @@ sap.ui.define([
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, JSONModel, MessageBox, MessageToast, assert) {
+    function (Controller, MessageBox, MessageToast, assert) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Quittierung", {

@@ -1,8 +1,6 @@
-<mvc:View xmlns:table="sap.ui.mdc.table" controllerName="podprojekt.controller.Unterschrift"
-    xmlns:core="sap.ui.core" 
+<mvc:View controllerName="podprojekt.controller.Unterschrift"
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns="sap.m" 
-    xmlns:layout="sap.ui.layout" 
     xmlns:form="sap.ui.layout.form" displayBlock="true"
     xmlns:customControl="podprojekt.utils">
     <Page id="UnterschriftPageId">
@@ -44,28 +42,27 @@
                     <Text text="A {i18n>unloaded}"/>
                     <Text text="B {i18n>charged}"/>
                     <Label id="idLabelplaceholder"/>
-                    <Label id="idUnterschriftLabel" text="{i18n>signature}"></Label>
+                    <Label id="idUnterschriftLabel" text="{i18n>signature}"/>
                     <Text text="{CustomerModel>/customerName}"></Text>
                     <Label id="idDatumUhrzeitLabel" text="{i18n>dateAndTime}"/>
                     <Text text="{CustomerModel>/dateAndTime}"/>
                     <Label id="idGeoCoordinatesLabel" text="{i18n>geoCoordinates}"/>
-                    <Text text="B:{StopInformationModel>/tour/startGeoB}, L:{StopInformationModel>/tour/startGeoL}"></Text>
+                    <Text text="B:{StopInformationModel>/tour/startGeoB}, L:{StopInformationModel>/tour/startGeoL}"/>
                 </form:content>
             </form:SimpleForm>
             <Label width="10%"></Label>
             <customControl:DigitalSignature id="digitalSignatureId" width="75%" height="30%"></customControl:DigitalSignature>
-            <Button width="10%" icon="sap-icon://decline" press="onClearSignField"></Button>
+            <Button width="10%" icon="sap-icon://decline" press="onClearSignField"/>
         </content>
 
         <footer>
             <Bar>
                 <contentLeft>
-                    <Button text="Debugging Breakpoint" icon="sap-icon://sys-enter" press="onBreak"></Button>
                 </contentLeft>
                 <contentMiddle>
                 </contentMiddle>
                 <contentRight>
-                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onCheckIfStopSigned"></Button>
+                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onCheckIfStopSigned"/>
                 </contentRight>
             </Bar>
         </footer>

@@ -13,8 +13,7 @@
               <vbm:vos>
                   <vbm:Spots scaleChangeable="false" items="{SpotModel>/spot}"> <!--click="onClickGeoMapSpot" -->
                     <vbm:items>
-                      <vbm:Spot id="Spot" position="{SpotModel>pos}" icon="{= ${SpotModel>bTarget}===true ? 'sap-icon://target-group' : 'sap-icon://locate-me'}" tooltip="{SpotModel>tooltip}" type="{SpotModel>type}" click="onClickGeoMapSpot"><!--text="{SpotModel>text}"-->
-                      </vbm:Spot>
+                      <vbm:Spot id="Spot" position="{SpotModel>pos}" icon="{= ${SpotModel>bTarget}===true ? 'sap-icon://target-group' : 'sap-icon://locate-me'}" tooltip="{SpotModel>tooltip}" type="{SpotModel>type}" click="onClickGeoMapSpot"/>
                     </vbm:items>
                   </vbm:Spots>
               </vbm:vos>
@@ -34,10 +33,10 @@
         <footer>
           <Bar id="mapbar">
             <contentLeft>
-              <Button type="Emphasized" icon="sap-icon://locate-me" text="{i18n>ownLocation}" press="removeOldOwnPosition"></Button>
+              <Button type="Emphasized" icon="sap-icon://locate-me" text="{i18n>ownLocation}" press="removeOldOwnPosition"/>
             </contentLeft>
             <contentRight>
-              <Button type="Emphasized" text="{i18n>targetLocation}" icon="sap-icon://target-group" press="onToTargetPosition"></Button>
+              <Button type="Emphasized" text="{i18n>targetLocation}" icon="sap-icon://target-group" press="onToTargetPosition"/>
             </contentRight>
           </Bar>
         </footer>

@@ -1,15 +1,11 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/vbm/Spot",
-    "sap/m/MessageToast",
-    "sap/ui/vbm/GeoMap",
-    "podprojekt/utils/Helper",
+    "sap/m/MessageToast"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, JSONModel, Spot, MessageToast, GeoMap, Helper) {
+    function (Controller, MessageToast) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.MapView", {

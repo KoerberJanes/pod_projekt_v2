@@ -1,18 +1,14 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/m/Button",
-    "sap/m/Dialog",
-    "sap/ui/model/json/JSONModel",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
 	"podprojekt/utils/Helper",
-    "sap/base/util/deepClone",
     "sap/base/assert"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Button, Dialog, JSONModel, MessageToast, MessageBox, Helper, deepClone, assert) {
+    function (Controller,MessageToast, MessageBox, Helper, assert) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Abladung", {
@@ -47,7 +43,7 @@ sap.ui.define([
                 if(aRemainingNves.length>0){ //Wenn mehr als eine NVE zu quittieren ist
                     this.onLoadAllRemainingNves(aRemainingNves);
                 } else{
-                    this.driverNveReceiptBackDescisionBox(); 
+                    this.driverNveReceiptBackDescisionBox(); //Abfragen ob stattdessen zurueck navigiert werden soll
                 }
                 
             },

@@ -1,11 +1,8 @@
 <mvc:View controllerName="podprojekt.controller.StopInformation"
-    xmlns:core="sap.ui.core" 
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns="sap.m" 
-    xmlns:layout="sap.ui.layout" 
     xmlns:form="sap.ui.layout.form"
-    xmlns:u="sap.ui.unified" 
-    xmlns:tnt="sap.tnt" displayBlock="true">
+    displayBlock="true">
     <Page id="stopInformationPageId" title="{i18n>stopInformationTitle}">
         
         <customHeader>
@@ -24,7 +21,7 @@
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000" labelSpanL="3" labelSpanM="3" labelSpanS="3" labelSpanXL="3">
                 <form:content>
                     <OverflowToolbar>
-                        <Label id="tourTxt" text="{i18n>tour}&#13;{TourStartFragmentModel>/tour/routeCaption}"></Label>
+                        <Label id="tourTxt" text="{i18n>tour}&#13;{TourStartFragmentModel>/tour/routeCaption}"/>
                         <ToolbarSpacer/>
                     </OverflowToolbar>
                     
@@ -35,14 +32,13 @@
                             ${StopInformationModel>/tour/sequence} >= 10 ? '0' + ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1} :
                             '00' + ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1}}" /><!--Wenn hier nur die '2' wie im Original angezeit werden soll, wird der Parameter 'sequence' Verwendet-->
                     <Label text="{i18n>adress}"></Label>
-                    <TextArea editable="false" growing="true" value="{StopInformationModel>/tour/street}&#13;{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"></TextArea>
-                   
+                    <TextArea editable="false" growing="true" value="{StopInformationModel>/tour/street}&#13;{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"/>
                     <Label/>
-                    <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>mapTitle}"></Button>
+                    <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>mapTitle}"/>
                     <Label text="{i18n>note}"></Label>
                     <TextArea id="taHinweis" value="{StopInformationModel>/tour/comment}" growing="true" editable="false"></TextArea> <!--{StopInformationModel>/tour/shipmentConditionCaption}" ?-->
                     <Label text="{i18n>avisNumber}"></Label>
-                    <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{StopInformationModel>/tour/phoneAvis}"></Button>
+                    <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{StopInformationModel>/tour/phoneAvis}"/>
                     
                 </form:content>
             </form:SimpleForm>
@@ -54,7 +50,7 @@
                 <contentMiddle>
                 </contentMiddle>
                 <contentRight>
-                    <Button id="QuittierungBtn" text="{i18n>confirmationTitle}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onCreateDeliveryNote"></Button>
+                    <Button id="QuittierungBtn" text="{i18n>confirmationTitle}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onCreateDeliveryNote"/>
                 </contentRight>
             </Bar>
         </footer>

@@ -1,18 +1,13 @@
 sap.ui.define(
   [
     "sap/ui/core/mvc/Controller",
-    "sap/base/util/deepClone",
-    "sap/ui/core/IconPool",
-    "podprojekt/utils/formatter",
-    "podprojekt/utils/Helper",
     "sap/m/MessageToast",
-    "sap/ui/model/Filter",
     "sap/base/assert"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, deepClone, IconPool, formatter, Helper, MessageToast, Filter, assert) {
+  function (Controller, MessageToast, assert) {
     "use strict";
 
     return Controller.extend("podprojekt.controller.Overview", {
