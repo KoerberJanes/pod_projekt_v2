@@ -82,6 +82,7 @@ sap.ui.define([
                         emphasizedAction: MessageBox.Action.YES,
                         onClose: (oAction) => { 
                             if(oAction==="YES"){ //Speichern
+                                this.showSavingSuccessfullMessage();
                                 this.onSaveAllTempStoredNVEs();
                                 this.navBackToQuittierung();
                             } else{ //Abbrechen
@@ -155,8 +156,8 @@ sap.ui.define([
                         width:"15em"
                     });
                 } else{
+                    this.showSavingSuccessfullMessage();
                     this.onSaveAllTempStoredNVEs();
-                    //this.onSaveTempDeliveryNotesNVE();
                 }
             },
 
@@ -186,8 +187,6 @@ sap.ui.define([
 
                 oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs", []);
                 oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs", []);
-
-                this.showSavingSuccessfullMessage();
             },
             
             nveClearingDialogConfirm:function(){ 
@@ -198,7 +197,7 @@ sap.ui.define([
             chekIfAtLeastOneErrorReasonIsSelected:function(){
                 var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
                 var aCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
-                var aQuantityOfSelectedReasons=this.getSelectedClearingReasonQuantity(aCurrentClearingReasons);
+                var aQuantityOfSelectedReasons=aCurrentClearingReasons.filter(element => element.value === true);
 
                 if(aQuantityOfSelectedReasons.length>0){ //Mindestens 1 Klaergrund wurde ausgewaehlt
                     this.checkIfOnlyOneErrorReasonIsSelected(aQuantityOfSelectedReasons);
@@ -208,72 +207,39 @@ sap.ui.define([
             },
 
             checkIfOnlyOneErrorReasonIsSelected:function(aQuantityOfSelectedReasons){
-                var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
-                var oCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
+                //var oCurrentSittingClearingNvesModel=this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
+                //var oCurrentClearingReasons=oCurrentSittingClearingNvesModel.getProperty("/results");
 
                 //Hier kann das Intervall beschränkt werden!
                 //Bisher >0 --> untere Schranke gegeben
                 //Hier >1 --> obere Schranke wird festgelegt 
                 if(aQuantityOfSelectedReasons.length>1){ //Mindestens 1 Klaergrund wurde ausgewaehlt
                     this.tooManyErrorReasonsSelectedError();
-                } else{ //kein Klaergrund wurde ausgewaehlt
-                    this.setSelectedClearingAttributes(oCurrentClearingReasons);
+                } else{ //ein Klaergrund wurde ausgewaehlt
+                    //this.setSelectedClearingAttributes(aQuantityOfSelectedReasons);
+                    this.setClearingResonInNve(aQuantityOfSelectedReasons); //Einzelner Reason
+                    //this.setClearingResonsInNve(aQuantityOfSelectedReasons); //!Mehrere Klaergruende, nicht entfernen! 
                 }
             },
 
-            getSelectedClearingReasonQuantity:function(aCurrentClearingReasons){ //Gibt Array mit Anzahl der Selectierten Klaergruende zurueck
-                var aAcumulatedErrorReasons=[];
-                var aSelectedClearingReasons=[];
-                for(var i in aCurrentClearingReasons){
-                    if(aCurrentClearingReasons[i].value===true){
-                        var aNewClearingReasonArray=[aCurrentClearingReasons[i]];
-                        aAcumulatedErrorReasons=aSelectedClearingReasons.concat(aNewClearingReasonArray);
-                    }
-                }
-                return aAcumulatedErrorReasons;
-            },
-            
-            
-            setSelectedClearingAttributes:function(oCurrentClearingReasons){ //Setzen der Klaergruende in die zu klaerende NVE
-                var aSelectedAttributeWithValue=[];
-
-                for (var i in oCurrentClearingReasons) { //Jedes Atrtibut wird durchlaufen
-                    if(oCurrentClearingReasons[i].value===true){
-
-                        var sPropertyName=oCurrentClearingReasons[i].Description;
-                        var oAttributeWithValue={};
-                        Object.defineProperty(oAttributeWithValue, sPropertyName, {
-                            value: oCurrentClearingReasons[i].value,
-                            writable: false,
-                        });
-                        var aNewAttributeObject=[oAttributeWithValue];
-
-                        aSelectedAttributeWithValue=aSelectedAttributeWithValue.concat(aNewAttributeObject);
-                    }
-                }
-
-                this.setClearingResonInNve(aSelectedAttributeWithValue); //Einzelner Reason
-                this.setClearingResonsInNve(aSelectedAttributeWithValue); //Mehrere Reasons
-            },
-
-            setClearingResonInNve:function(aSelectedAttributeWithValue){
+            setClearingResonInNve:function(aQuantityOfSelectedReasons){
                 var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel");
                 var oClearingNve=oClearingNveModel.getProperty("/clearingNve");
 
-                oClearingNve.clearingReason={}; //Neues Attribut fuer die Nve erstellen
-                var oClearingReason=aSelectedAttributeWithValue[0]; //da nur ein Klaergrund mitgegeben werden kann
-                oClearingNve.clearingReason=oClearingReason; //Attribut mit Infos fuellen
+                var oClearingReason=aQuantityOfSelectedReasons[0]; //da nur ein Klaergrund mitgegeben werden kann
+                oClearingNve.clearingReasyonDescription= oClearingReason.Description; //Beschreibung des Klaergrundes setzen
+                //oClearingNve.clearingReason=oClearingReason; //Nicht empfohlen, da Tree neues 'Unterobjekt' interpretiert
 
                 //Undefined ist notwendig um die verschiedenen Dialoge auseinander zu halten.
                 this.findClearingNve(undefined);
             },
 
-            setClearingResonsInNve:function(aSelectedAttributeWithValue){
+            setClearingResonsInNve:function(aQuantityOfSelectedReasons){//!Mehrere Klaergruende, nicht entfernen! 
                 var oClearingNveModel=this.getOwnerComponent().getModel("nveClearingDialogModel");
                 var oClearingNve=oClearingNveModel.getProperty("/clearingNve");
 
                 oClearingNve.aClearingReasons={}; //Neues Attribut fuer die Nve erstellen
-                oClearingNve.aClearingReasons=aSelectedAttributeWithValue; //Attribut mit Infos fuellen
+                oClearingNve.aClearingReasons=aQuantityOfSelectedReasons; //Attribut mit Infos fuellen
 
                 //Nur einkommentieren, wenn die setClearingReasonInNve-Methode nicht verwendet wird.
                 //Diese Methode wird nur nicht verwendet, wenn mehrere Klaergruende fuer eine Nve verwendet werden koennen
