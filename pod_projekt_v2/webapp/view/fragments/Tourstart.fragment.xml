@@ -16,8 +16,16 @@
 				<form:content>
 					<Label text="{i18n>licensePlate}"/>
 					<Input id="kennzeichenInput" value="{TourStartFragmentModel>/tour/licensePlate}" editable="false"/>
-					<Label text="{i18n>Mileage}"/>
-					<Input id="kilometerInput" value="{TourStartFragmentModel>/mileage}" type="Number" showClearIcon="true"/>
+					<Label text="{i18n>Mileage}" labelFor="kilometerInput" required="true"/>
+					<Input id="kilometerInput" valueLiveUpdate="true" change="onMileageInputChange" showClearIcon="true" valueState="{= ${TourStartFragmentModel>/mileage} === '' ? 'Error' : 'None'}" valueStateText="{i18n>atLeast1Char}"
+					value="{
+						path: 'TourStartFragmentModel>/mileage',
+						type: 'sap.ui.model.type.String',
+						constraints: {
+							minLength: 2,
+							search: '^[0-9]*$'
+						},
+						formatOptions: {showMeasure: true}}"/>
 				</form:content>
 			</form:SimpleForm>
 		</content>

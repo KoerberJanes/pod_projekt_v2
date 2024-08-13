@@ -15,8 +15,8 @@
         <content>
             <form:SimpleForm id="ManualNveInputForm" layout="ResponsiveGridLayout" title="">
                 <form:content>
-                    <Label id="barcodeLabel" text="{i18n>barcode}"/>
-                    <Input id="barcodeInput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>manualInputBarcodePlaceholder}" submit="onCloseInputDialog" showClearIcon="true"/>
+                    <Label id="barcodeLabel" text="{i18n>barcode}" required="true"/>
+                    <Input id="barcodeInput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>manualInputBarcodePlaceholder}" submit="onCloseInputDialog" showClearIcon="true" valueState="None"/>
                 </form:content>
             </form:SimpleForm>
         </content>

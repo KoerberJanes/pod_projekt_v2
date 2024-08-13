@@ -34,8 +34,17 @@
                     <Label id="recipientFoundControl" text="{i18n>recipientFound}"/>
                     <Switch id="recipientFoundSwitch" type="AcceptReject" state="{settings>/recipientFound}"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
 
-                    <Label id="recipientName" text="{i18n>recipientName}" visible="{= ${settings>/recipientFound} }"/>
-                    <Input id="recipientNameInp" value="{CustomerModel>/customerName}" visible="{= ${settings>/recipientFound} }"/>
+                    <Label id="recipientName" labelFor="recipientNameInp" text="{i18n>recipientName}" visible="{= ${settings>/recipientFound} }" required="true"/>
+                    <Input id="recipientNameInp" valueLiveUpdate="true" visible="{= ${settings>/recipientFound}}" change="onCustomerNameInputChange" showClearIcon="true" valueState="{= ${CustomerModel>/customerName} === '' ? 'Error' : 'None'}" valueStateText="{i18n>atLeast2Chars}"
+                        value="{
+                            path: 'CustomerModel>/customerName',
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+                                minLength: 2,
+                                maxLength: 15,
+                                search: '^[a-zA-Z0-9.]+$'
+                                },
+                                formatOptions: {showMeasure: false}}"/>
 
                     <Label text="{i18n>showDeliveryItems}"/>
                     <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{settings>/deliveryItemsVisible}"/>

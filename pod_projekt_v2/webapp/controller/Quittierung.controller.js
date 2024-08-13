@@ -12,13 +12,17 @@ sap.ui.define([
 
         return Controller.extend("podprojekt.controller.Quittierung", {
             onInit: function () {
-
-                //! WICHTIG: Es muss noch das Model gesetzt werden für das Selektierte Model (PhotoTypeSelectedModel)
-                //! Muss gemacht werden, weil das Moden inital leer ist und erst beim wechsel des Selektierten Items alles autonom abläuft
+ 
             },
 
             onAfterRendering: function() {
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
+            },
+
+            onCustomerNameInputChange:function(){
+                var sInputValue=this.getView().byId("recipientNameInp").getValue();
+                var oTourStartFragmentModel=this.getOwnerComponent().getModel("CustomerModel");
+                oTourStartFragmentModel.setProperty("/customerName", sInputValue);
             },
 
             onRecipientNotFound:function(){ //Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
@@ -78,9 +82,18 @@ sap.ui.define([
                 //assert(sRecipientName.length > 0, "No user input has been provided");
 
                 if(sRecipientName !== ""){ //Wenn Kunden-Name angegeben
-                   this.checkIfNvesAreProcessed();
+                    this.checkIfStringMatchesRegex(sRecipientName);
+                    //this.checkIfNvesAreProcessed(); //!Hier mal schauen ob das wieder rein kann, wenn der Validator funktioniert
                 } else{
                     this.showEmptyNameError();
+                }
+            },
+
+            checkIfStringMatchesRegex:function(sRecipientName){
+                if(sRecipientName.length >= 2){
+                    this.checkIfNvesAreProcessed();
+                } else{
+                    this.showFaultyInputError();
                 }
             },
 
@@ -268,25 +281,33 @@ sap.ui.define([
             
             showProgressStatusError:function(){ //Fehler weil nicht alle Checkboxen bearbeitet wurden
                 MessageBox.error(this._oBundle.getText("notPermitedToSignTour"),{
-                    onClose: function() {
+                    onClose: () => {
                         //Bisher funktionslos
-                    }.bind(this)
+                    }
                 });
             },
 
             showNotEnoughSpaceError:function(){
                 MessageBox.error(this._oBundle.getText("notEnoughSpace"),{
-                    onClose: function() {
+                    onClose: () => {
                         //Bisher funktionslos
-                    }.bind(this)
+                    }
                 });
             },
                 
             showEmptyNameError:function(){ //Fehler weil kein Kundenname eingetragen
                 MessageBox.error(this._oBundle.getText("nameMissing"),{
-                    onClose: function() {
+                    onClose: () => {
                         //Bisher funktionslos
-                    }.bind(this)
+                    }
+                });
+            },
+
+            showFaultyInputError:function(){
+                MessageBox.error(this._oBundle.getText("nameNotMatchingRegex"),{
+                    onClose: () => {
+                        //Bisher funktionslos
+                    }
                 });
             },
             

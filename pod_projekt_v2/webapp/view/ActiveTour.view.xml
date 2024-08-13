@@ -41,7 +41,7 @@
                                                 '00' + ${StopModel>sequence} + '-' + ${StopModel>addressName1}}"/>
                                 </contentLeft>
                                 <contentRight>
-                                    <Label text="{= ${StopModel>orders/0/loadingUnits}.length}"/>
+                                    <Text text="{= ${StopModel>orders/0/loadingUnits}.length}"/>
                                 </contentRight>
                             </Bar>
                             <HBox >
@@ -55,6 +55,19 @@
                             </HBox>
                             
                         </CustomListItem>
+                        <!--Anstatt einem CustomListItem geht auch das StandardListItem. Ist aber groesser
+                        <StandardListItem 
+                            title="{= 
+                                ${StopModel>sequence} >= 100 ? ${StopModel>sequence} + '-' + ${StopModel>addressName1}  :
+                                ${StopModel>sequence} >= 10 ? '0' + ${StopModel>sequence} + '-' + ${StopModel>addressName1} :
+                                '00' + ${StopModel>sequence} + '-' + ${StopModel>addressName1}}" 
+                            wrapping="true" 
+                            info="{i18n>openNves} {= ${StopModel>orders/0/loadingUnits}.length}"
+                            description="{StopModel>street} {StopModel>streetNumber} {StopModel>country} {StopModel>zipCode} {StopModel>city}"
+
+                            infoState="{= ${StopModel>orders/0/loadingUnits}.length > 0 ? 'Error' : 'Success'}"
+                            type="Navigation"
+                            press="onSetStoppInformation"/>-->
                     </List>
                 </form:content>
             </form:SimpleForm>
