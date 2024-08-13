@@ -65,7 +65,7 @@
                         </items>
                         <headerToolbar>
                             <OverflowToolbar>
-                                <Title text="Products" level="H2" />
+                                <Title text="{i18n>complain}" level="H2" />
                             </OverflowToolbar>
                         </headerToolbar>
                     </List>
