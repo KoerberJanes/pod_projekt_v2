@@ -38,8 +38,7 @@ sap.ui.define([
                     "aTotalClearedNves": [],
                     "aTempLoadedNVEs": [],
                     "aTotalLoadedNVEs": [],
-                    "aUnprocessedNumberedDispatchUnits": [],
-                    "aConstNumberedDispatchUnits": []
+                    "aUnprocessedNumberedDispatchUnits": []
                 };
 
                 oTourInformation.aDeliveryNotes=[];

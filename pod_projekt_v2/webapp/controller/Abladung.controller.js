@@ -17,20 +17,10 @@ sap.ui.define([
 
         return Controller.extend("podprojekt.controller.Abladung", {
             onInit: function () {
-                this._oRouter = this.getOwnerComponent().getRouter();
-                this._oRouter.getRoute("Abladung").attachPatternMatched(this.setReceivedLoadingUnitsModel, this);
             },
 
             onAfterRendering: function() {
                 this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-            },
-
-            setReceivedLoadingUnitsModel:function(){ //Setzen der Erhaltenen NVEs in ein Model für die Anzeige
-                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
-                var aLoadingUnits=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
-                var aStableLoadingUnits=deepClone(aLoadingUnits); //Schummeln um Array by Value zu Klonnen: deepClone ist der sichere Weg
-
-                oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aConstNumberedDispatchUnits", aStableLoadingUnits);
             },
 
             onClearingButtonPress:function(oEvent){
@@ -39,10 +29,6 @@ sap.ui.define([
 
             getSelectedModelItem:function(oEvent){ //Das gedrueckte Element im Model erfassen
                 var oTreeModelParent=oEvent.getSource().getBindingContext("StopInformationModel").getObject();
-
-                if(oTreeModelParent===undefined){
-                    MessageBox.error("Ein Fehler ist aufgetreten! Bitte wernden Sie sich an Ihren Administrator!");
-                }
 
                 this.setClearingNveModel(oTreeModelParent);
             },
@@ -87,26 +73,26 @@ sap.ui.define([
                 }
             },
 
-            driverNveReceiptDescisionBox:function(){
+            driverNveReceiptDescisionBox:function(){ //Es sind nicht gespeicherte aber bearbeitete NVEs vorhanden
                 MessageBox.show(
                     "Save changes bevor going back?", {
                         icon: MessageBox.Icon.INFORMATION,
                         title: "Unsaved changes!",
                         actions: [MessageBox.Action.YES, MessageBox.Action.NO],
                         emphasizedAction: MessageBox.Action.YES,
-                        onClose: function (oAction) { 
-                            if(oAction==="YES"){
+                        onClose: (oAction) => { 
+                            if(oAction==="YES"){ //Speichern
                                 this.onSaveAllTempStoredNVEs();
                                 this.navBackToQuittierung();
-                            } else{
+                            } else{ //Abbrechen
                                 this.AbortCurrentLoadedAndClearedNves();
                             }
-                        }.bind(this)
+                        }
                     }
                 );
             },
 
-            driverNveReceiptBackDescisionBox:function(){
+            driverNveReceiptBackDescisionBox:function(){ //Alle LS-Positionen Quittieren gedrueckt nachdem alle NVEs bearbeitet wurden
                 MessageBox.show(
                     "Do you want to go back to Abladung?", {
                         icon: MessageBox.Icon.INFORMATION,
@@ -115,9 +101,10 @@ sap.ui.define([
                         emphasizedAction: MessageBox.Action.YES,
                         onClose: function (oAction) { 
                             if(oAction==="YES"){
+                                this.onSaveAllTempStoredNVEs(); //Speichern der temporaeren NVEs
                                 this.navBackToQuittierung();
                             } else{
-                                
+                                //NOP: Dialog schliesst sich selbst
                             }
                         }.bind(this)
                     }

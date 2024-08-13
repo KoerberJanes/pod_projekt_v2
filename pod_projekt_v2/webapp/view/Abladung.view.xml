@@ -36,7 +36,7 @@
                             <ToolbarSpacer/>
                             <ToolbarSpacer/>
                             <Text id="txtNVEAnzahl" text="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length}  / 
-                                {= ${StopInformationModel>/tour/aDeliveryNotes/0/aConstNumberedDispatchUnits}.length}"></Text>
+                                {= ${StopInformationModel>/tour/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"></Text>
                             <!--{= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length}   /
                                 {= ${TotalClearedNvesModel>/results}.length + ${CurrentSittingClearedNvesModel>/results}.length + ${TotalLoadedNvesModel>/results}.length + ${CurrentSittingLoadedNvesModel>/results}.length + ${StopInformationModel>/tour/loadingUnits}.length}-->
                         </content>
