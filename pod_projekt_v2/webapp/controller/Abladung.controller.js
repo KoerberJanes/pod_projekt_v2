@@ -18,30 +18,16 @@ sap.ui.define([
         return Controller.extend("podprojekt.controller.Abladung", {
             onInit: function () {
                 this._oRouter = this.getOwnerComponent().getRouter();
-                this._oRouter.getRoute("Abladung").attachPatternMatched(this.setTreeStructureForModel, this);
+                this._oRouter.getRoute("Abladung").attachPatternMatched(this.setReceivedLoadingUnitsModel, this);
             },
 
             onAfterRendering: function() {
                 this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-                //this.setTreeStructureForModel();
             },
 
-            setTreeStructureForModel:function(){ //Struktur und Attribute für den Tree erstellen
+            setReceivedLoadingUnitsModel:function(){ //Setzen der Erhaltenen NVEs in ein Model für die Anzeige
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var aLoadingUnits=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
-
-                for(var i in aLoadingUnits){
-                    var oCurerntLoadingUnit=aLoadingUnits[i]; //Aktuelles Objekt merken
-                    oCurerntLoadingUnit.DetailedInformations={}; //Erstellen der neuen Struktur für Objekt
-                    oCurerntLoadingUnit.DetailedInformations.label1="";
-                    oCurerntLoadingUnit.DetailedInformations.label1=oCurerntLoadingUnit.amount + "x " + oCurerntLoadingUnit.articleCaption;//Attribut für die View erstellen
-                }
-                oStopInformationModel.refresh();
-                this.setReceivedLoadingUnitsModel(aLoadingUnits);
-            },
-
-            setReceivedLoadingUnitsModel:function(aLoadingUnits){ //Setzen der Erhaltenen NVEs in ein Model für die Anzeige
-                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var aStableLoadingUnits=deepClone(aLoadingUnits); //Schummeln um Array by Value zu Klonnen: deepClone ist der sichere Weg
 
                 oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aConstNumberedDispatchUnits", aStableLoadingUnits);

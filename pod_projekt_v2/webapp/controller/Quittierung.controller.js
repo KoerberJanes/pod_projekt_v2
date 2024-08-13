@@ -35,7 +35,8 @@ sap.ui.define([
             },
 
             onDeliveryNotePressed:function(oEvent){
-               this.onNavToAbladung();
+                var oPressedDeliveryNote=oEvent.getSource().getBindingContext("StopInformationModel").getObject(); //Fuer den Fall, dass es mal mehrere DeliveryNotes geben sollte
+                this.onNavToAbladung();
             },
 
             addCameraPlayerToCameraDialog:function(){ //Erstellen des VideoPlayers für den CameraStream und diesen in den Dialog setzen
@@ -45,14 +46,14 @@ sap.ui.define([
                 this.enableVideoStream();
             },
 
-            enableVideoStream:function(){// Video starten
+            enableVideoStream:function(){// Video Streams starten
                 navigator.mediaDevices.getUserMedia({  video:true  })
                 .then((stream) => {
                     player.srcObject = stream;
                 });
             },
 
-            disableVideoStreams:function(){//Video beenden
+            disableVideoStreams:function(){//Video Streams beenden
                 var oVideoStream = document.getElementById("player");
                 if (oVideoStream) {
                     var oMediaStream = oVideoStream.srcObject;
@@ -77,7 +78,7 @@ sap.ui.define([
                 //!Test
                 //assert(sRecipientName.length > 0, "No user input has been provided");
 
-                if(sRecipientName !== ""){
+                if(sRecipientName !== ""){ //Wenn Kunden-Name angegeben
                    this.checkIfNvesAreProcessed();
                 } else{
                     this.showEmptyNameError();
@@ -99,7 +100,7 @@ sap.ui.define([
                 
             },
 
-            setSigningDateAndTime:function(){
+            setSigningDateAndTime:function(){ //Erstellen des Datums und der Uhrzeit fuer die Unterschrift-Seite
                 var oCustomerModel=this.getOwnerComponent().getModel("CustomerModel");
                 var sDateAndTime= sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.YYYY HH:mm:ss" }).format(new Date()); //Datum inklusive Uhrzeit
                 oCustomerModel.setProperty("/dateAndTime", sDateAndTime);
@@ -115,7 +116,7 @@ sap.ui.define([
 
             checkIfPhotoNeedsToBeCleared:function(){ //Prüfen ob bereits ein Foto angezeigt wird
                 var oPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel");
-                var oSavedPhoto=oPhotoModel.getProperty("/photo");
+                var oSavedPhoto=oPhotoModel.getProperty("/photo"); //Zuletzt aufgenommenes Foto
 
                 if(Object.keys(oSavedPhoto).length !== 0){ //Wenn Objekt Attribute enthält, vermeindliches Foto loeschen
                     this.clearPhotoModel();
@@ -161,8 +162,7 @@ sap.ui.define([
 
             onPhotoTypesSelectChange:function(){
                 var oSelectedPhotoType=this.getView().byId("photoTypeSelect").getSelectedItem();
-                var sSelectedPhotoTypeText=oSelectedPhotoType.getText();
-                var oSelectedType=this.getSelectedPhotoTypeObject(sSelectedPhotoTypeText);
+                var oSelectedType=oSelectedPhotoType.getBindingContext("PhotoTypeModel").getObject();
                 this.setPhotoTypeSelectedModel(oSelectedType);
             },
 
@@ -170,15 +170,6 @@ sap.ui.define([
                 var oPhotoTypeSelectedModel=this.getOwnerComponent().getModel("PhotoTypeSelectedModel");
                 
                 oPhotoTypeSelectedModel.setProperty("/type", oSelectedType);
-            },
-
-            getSelectedPhotoTypeObject:function(sSelectedTypeText){
-                var oPhotoTypeModel=this.getOwnerComponent().getModel("PhotoTypeModel"); //Model mit Select-Optionen
-                var aSelectPhotoTypes=oPhotoTypeModel.getProperty("/photoTypes"); //Array des Models
-                var getIndex= (element) => element.photoTyp === sSelectedTypeText; //
-                var iIndexOfSelectedType= aSelectPhotoTypes.findIndex(getIndex); //Index des ausgewählten Model-Objektes erfahren 
-
-                return aSelectPhotoTypes[iIndexOfSelectedType]; //Model-Objekt zurückgeben, denn Model-Objekt != Select-Objekt
             },
 
             checkPhotoLimit:function(){ //Wirft eine Fehlermeldung, wenn Menge an Fotos überschritten wird
