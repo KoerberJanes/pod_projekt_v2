@@ -54,9 +54,9 @@ sap.ui.define([
 
             notSignedError:function(){
                 MessageBox.error(this._oBundle.getText("noSignatureDetected"), {
-                    onClose:function(){
+                    onClose: () => {
                         //NOP
-                    }.bind(this)
+                    }
                 });
             },
 

@@ -355,33 +355,33 @@ sap.ui.define([
 
             noNveFoundError:function(){
                 MessageBox.error(this._oBundle.getText("noNveFound"), {
-                    onClose:function(){
+                    onClose:() =>{
                         //NOP:
-                    }.bind(this)
+                    }
                 });
             },
 
             showNotAllNvesProcessedError:function(){
                 MessageBox.error(this._oBundle.getText("notAllNvesProcessed"), {
-                    onClose:function(){
+                    onClose: () => {
                         //NOP:
-                    }.bind(this)
+                    }
                 });
             },
 
             tooManyErrorReasonsSelectedError:function(){
                 MessageBox.error(this._oBundle.getText("tooManyClearingResonsSelected"), {
-                    onClose:function(){
+                    onClose: () => {
                         //NOP:
-                    }.bind(this)
+                    }
                 });
             },
 
             noClearingReasonSelectedError:function(){
                 MessageBox.error(this._oBundle.getText("noClearingResonSelected"), {
-                    onClose:function(){
+                    onClose: () => {
                         //NOP:
-                    }.bind(this)
+                    }
                 });
             },
 
@@ -556,17 +556,17 @@ sap.ui.define([
 
             showNotEnoughSpaceError:function(){
                 MessageBox.error(this._oBundle.getText("notEnoughPhotoSpace"),{
-                    onClose: function() {
+                    onClose: () => {
                         //Bisher funktionslos
-                    }.bind(this)
+                    }
                 });
             },
 
             selectError:function(){
                 MessageBox.error(this._oBundle.getText("noSelectedItem"), {
-                    onClose:function(){
+                    onClose: () => {
                         //NOP:
-                    }.bind(this)
+                    }
                 });
             },
 

@@ -206,9 +206,9 @@ sap.ui.define(
 
       noToursError:function(){ //Keine Touren wurden aus dem Backend bekommen
         MessageBox.error(this._oBundle.getText("noToursLoaded"), {
-            onClose:function(){
+            onClose: () => {
                 //NOP:
-            }.bind(this)
+            }
         });
     },
 
