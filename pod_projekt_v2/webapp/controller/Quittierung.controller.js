@@ -19,11 +19,38 @@ sap.ui.define([
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
             },
 
-            onCustomerNameInputChange:function(){
-                var sInputValue=this.getView().byId("recipientNameInp").getValue();
-                var oTourStartFragmentModel=this.getOwnerComponent().getModel("CustomerModel");
-                oTourStartFragmentModel.setProperty("/customerName", sInputValue);
+            onCustomerNameInputChange:function(oEvent){
+                var oInput = oEvent.getSource();
+                this.handleRequiredField(oInput);
+                this.checkInputConstraints(oInput);
             },
+
+            handleRequiredField: function (oInput) {
+
+                var sValueState = "None";
+          
+                if (!oInput.getValue()) {
+                  sValueState="Error"
+                  oInput.setValueState(sValueState);
+                }
+              },
+        
+              checkInputConstraints: function (oInput) {
+                var oBinding = oInput.getBinding("value");
+                var sValueState = "None";
+        
+                try {
+                  oBinding.getType().validateValue(oInput.getValue());
+                } catch (oException) {
+                  sValueState = "Error";
+                }
+                oInput.setValueState(sValueState);
+              },
+
+              setValueStateForInput:function(sState){
+                var oInput=this.getView().byId("recipientNameInp");
+                oInput.setValueState(sState);
+              },
 
             onRecipientNotFound:function(){ //Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
                 
@@ -82,9 +109,11 @@ sap.ui.define([
                 //assert(sRecipientName.length > 0, "No user input has been provided");
 
                 if(sRecipientName !== ""){ //Wenn Kunden-Name angegeben
+                    this.setValueStateForInput("None");
                     this.checkIfStringMatchesRegex(sRecipientName);
                     //this.checkIfNvesAreProcessed(); //!Hier mal schauen ob das wieder rein kann, wenn der Validator funktioniert
                 } else{
+                    this.setValueStateForInput("Error");
                     this.showEmptyNameError();
                 }
             },

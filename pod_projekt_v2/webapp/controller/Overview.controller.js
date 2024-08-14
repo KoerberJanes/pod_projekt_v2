@@ -3,17 +3,20 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
+    "sap/m/MessagePopover",
+	  "sap/ui/core/message/Message",
+    "sap/ui/core/MessageType",
+    "sap/ui/core/library",
     "sap/base/assert"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, MessageToast, MessageBox, assert) {
+  function (Controller, MessageToast, MessageBox, MessagePopover, Message, MessageType, library, assert) {
     "use strict";
 
     return Controller.extend("podprojekt.controller.Overview", {
       onInit: function () {
-
       },
 
       onAfterRendering: function() {
@@ -22,10 +25,37 @@ sap.ui.define(
         //this.setCustomAttributes();
       },
 
-      onMileageInputChange:function(){
-        var sInputValue=this.getView().byId("kilometerInput").getValue();
-        var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
-        oTourStartFragmentModel.setProperty("/mileage", sInputValue);
+      onMileageInputChange:function(oEvent){
+        var oInput = oEvent.getSource();
+        this.handleRequiredField(oInput);
+        this.checkInputConstraints(oInput);
+      },
+
+      handleRequiredField: function (oInput) {
+
+        var sValueState = "None";
+  
+        if (!oInput.getValue()) {
+          sValueState="Error"
+          oInput.setValueState(sValueState);
+        }
+      },
+
+      checkInputConstraints: function (oInput) {
+        var oBinding = oInput.getBinding("value");
+        var sValueState = "None";
+
+        try {
+          oBinding.getType().validateValue(oInput.getValue());
+        } catch (oException) {
+          sValueState = "Error";
+        }
+        oInput.setValueState(sValueState);
+      },
+
+      setValueStateForInput:function(sState){
+        var oInput=this.getView().byId("kilometerInput");
+        oInput.setValueState(sState);
       },
 
       getUrlParameters() {
@@ -137,8 +167,8 @@ sap.ui.define(
         this.oTourstartDialog ??= this.loadFragment({
           name: "podprojekt.view.fragments.Tourstart",
         });
-
-        this.oTourstartDialog.then((oDialog) => oDialog.open());
+        
+        this.oTourstartDialog.then((oDialog) => {oDialog.open() });
       },
 
       onTourStartDialogButtonCallback: function (oEvent) { //Callback vom TourStartFrtagment um Buttons zu unterscheiden
@@ -159,8 +189,8 @@ sap.ui.define(
         var sTourStartFragmentInput=oTourStartFragmentModel.getProperty("/mileage"); //User-Eingabe
 
         if(sTourStartFragmentInput !== ""){
-          //this.checkIfEnteredValueInRange(); //!Hier mal schauen ob das wieder rein kann, wenn der Validator funktioniert
-          this.checkIfStringMatchesRegex(sTourStartFragmentInput);
+          this.checkIfEnteredValueInRange(); //!Hier mal schauen ob das wieder rein kann, wenn der Validator funktioniert
+          //this.checkIfStringMatchesRegex(sTourStartFragmentInput);
         } else{
           this.showNoUserInputMessage();
         }
@@ -187,8 +217,10 @@ sap.ui.define(
 
         if(iTourStartFragmentInput >= (iRespectiveTourMileage-iRespectiveTourMileageTolerance) && 
             iTourStartFragmentInput <= (iRespectiveTourMileage+iRespectiveTourMileageTolerance)){ //Eingabe in Tolleranz
-          this.setStopInformationModelData();
+            this.setValueStateForInput("None");
+            this.setStopInformationModelData();
         } else{ //Eingabe nicht in Tolleranz
+          this.setValueStateForInput("Error");
           this.tourTolleranceNotAccepted();
         }
         this.resetTourStartFragmentUserInput(); //So oder so muss der User-Input entfernt werden

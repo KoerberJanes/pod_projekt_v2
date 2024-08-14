@@ -35,7 +35,7 @@
                     <Switch id="recipientFoundSwitch" type="AcceptReject" state="{settings>/recipientFound}"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
 
                     <Label id="recipientName" labelFor="recipientNameInp" text="{i18n>recipientName}" visible="{= ${settings>/recipientFound} }" required="true"/>
-                    <Input id="recipientNameInp" valueLiveUpdate="true" visible="{= ${settings>/recipientFound}}" change="onCustomerNameInputChange" showClearIcon="true" valueState="{= ${CustomerModel>/customerName} === '' ? 'Error' : 'None'}" valueStateText="{i18n>atLeast2Chars}"
+                    <Input id="recipientNameInp" valueLiveUpdate="true" visible="{= ${settings>/recipientFound}}" change="onCustomerNameInputChange" showClearIcon="true"
                         value="{
                             path: 'CustomerModel>/customerName',
                             type: 'sap.ui.model.type.String',

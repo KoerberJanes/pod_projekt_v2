@@ -100,7 +100,7 @@
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "tour": {},
-          "mileage":380000
+          "mileage":"380000"
         }
       }, 
       "RecipientNameModel":{
@@ -169,6 +169,12 @@
             "photoTyp": "Test",
             "photo": []
           }]
+        }
+      },
+      "ErrorMessageModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "messages": []
         }
       },
       "LoadingDeviceModel": {
