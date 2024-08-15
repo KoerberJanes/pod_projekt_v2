@@ -4,7 +4,7 @@
     xmlns="sap.m"
     xmlns:form="sap.ui.layout.form" 
     xmlns:upload="sap.m.upload" displayBlock="true">
-    <Page id="confirmationPage" >
+    <Page id="confirmationPage">
         <customHeader>
             <Bar>
                 <contentLeft>
@@ -35,14 +35,14 @@
                     <Switch id="recipientFoundSwitch" type="AcceptReject" state="{settings>/recipientFound}"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
 
                     <Label id="recipientName" labelFor="recipientNameInp" text="{i18n>recipientName}" visible="{= ${settings>/recipientFound} }" required="true"/>
-                    <Input id="recipientNameInp" valueLiveUpdate="true" visible="{= ${settings>/recipientFound}}" change="onCustomerNameInputChange" showClearIcon="true"
+                    <Input id="recipientNameInp" valueLiveUpdate="true" visible="{= ${settings>/recipientFound}}" liveChange="onCustomerNameInputLiveChange" change="onCustomerNameInputChange" showClearIcon="true"
                         value="{
                             path: 'CustomerModel>/customerName',
                             type: 'sap.ui.model.type.String',
                             constraints: {
                                 minLength: 2,
                                 maxLength: 15,
-                                search: '^[a-zA-Z0-9.]+$'
+                                search: '^[a-zA-Z]{2,15}$'
                                 },
                                 formatOptions: {showMeasure: false}}"/>
 
@@ -50,19 +50,26 @@
                     <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{settings>/deliveryItemsVisible}"/>
                     <Label ></Label>
                     <List  id="deliveryNoteList" includeItemInSelection="true" items="{StopInformationModel>/tour/aDeliveryNotes}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
+                       <headerToolbar>
+                            <Toolbar>
+                                <Title text="{i18n>deliveryItems}"/>
+                            </Toolbar>
+                        </headerToolbar>
                         <items>
                             <StandardListItem
                                 title="{StopInformationModel>shipmentNumber}"
+                                icon="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'sap-icon://high-priority' : 'sap-icon://approvals'}"
                                 info="{= ${StopInformationModel>tour/0/loadingUnits/0/isReturning} === true ? ${i18n>returning} : ${i18n>unloading}}"
+                                infoState="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'Success'}"
                                 type="Navigation"
                                 press="onDeliveryNotePressed"/>
                         </items>
-                        <headerToolbar>
-                            <OverflowToolbar>
-                                <Title text="{i18n>deliveryItems}"/>
-                            </OverflowToolbar>
-                        </headerToolbar>
                     </List>
+                    <MessageStrip id="messageStripDeliveryItemList" 
+                        visible="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? true : false}" 
+                        text="Es wurden noch nicht alle NVEs bearbeitet!" 
+                        type="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'None'}" 
+                        showCloseButton="false" />
 
                     <Label id="complaints" text="{i18n>complaints}"/>
                     <Switch id="complaintsSwitch" type="AcceptReject" state="{settings>/complaintsSwitch}"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->

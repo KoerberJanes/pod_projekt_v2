@@ -16,13 +16,21 @@
             <form:SimpleForm id="ManualNveInputForm" layout="ResponsiveGridLayout" title="">
                 <form:content>
                     <Label id="barcodeLabel" text="{i18n>barcode}" required="true"/>
-                    <Input id="barcodeInput" value="{manualNveInputModel>/manualInput}" placeholder="{i18n>manualInputBarcodePlaceholder}" submit="onCloseInputDialog" showClearIcon="true" valueState="None"/>
+                    <Input id="barcodeInput" liveChange="onManualInputInputLiveChange" valueLiveUpdate="true" placeholder="{i18n>manualInputBarcodePlaceholder}" change="onManualInputChange" submit="onCloseInputDialog" showClearIcon="true"
+                        value="{
+                            path: 'manualNveInputModel>/manualInput',
+                            type: 'sap.ui.model.type.String',
+                            constraints: {
+                                minLength: 2,
+                                search: '^[0-9]{2,}$'
+                            }
+                        }"   />
                 </form:content>
             </form:SimpleForm>
         </content>
         
         <beginButton>
-            <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press="findLoadingNve"/>
+            <Button id="inputDialogOkBtn" text="{i18n>ok}" type="Emphasized" press="checkIfInputConstraintsComply"/>
         </beginButton>
         <endButton>
             <Button id="inputDialogCancelBtn" text="{i18n>abort}" type="Emphasized" press="onNveClearingDialogCallbackReject"/>

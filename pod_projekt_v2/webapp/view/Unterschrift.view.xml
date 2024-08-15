@@ -48,11 +48,15 @@
                     <Text text="{CustomerModel>/dateAndTime}"/>
                     <Label id="idGeoCoordinatesLabel" text="{i18n>geoCoordinates}"/>
                     <Text text="B:{StopInformationModel>/tour/startGeoB}, L:{StopInformationModel>/tour/startGeoL}"/>
+                    <Label id="idSignFieldLabel" text="{i18n>signature}" labelFor="digitalSignatureId" required="true"/>
+                    <Text/>
                 </form:content>
             </form:SimpleForm>
-            <Label width="10%"></Label>
-            <customControl:DigitalSignature id="digitalSignatureId" width="75%" height="30%"></customControl:DigitalSignature>
-            <Button width="10%" icon="sap-icon://decline" press="onClearSignField"/>
+            <!--Leider ist mir keine bessere Idee gekommen, dass das Signature-Feld mittig angeziegt wird-->
+            <Button width="5%" icon="sap-icon://decline" press="onClearSignField"/>
+            <VBox alignItems="Center" >
+                <customControl:DigitalSignature id="digitalSignatureId" />
+            </VBox>
         </content>
 
         <footer>

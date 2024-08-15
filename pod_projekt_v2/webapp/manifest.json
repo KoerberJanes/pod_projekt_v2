@@ -171,12 +171,6 @@
           }]
         }
       },
-      "ErrorMessageModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "messages": []
-        }
-      },
       "LoadingDeviceModel": {
         "type": "sap.ui.model.json.JSONModel",
         "uri": "localService/mockdata/LoadingUnits.json"

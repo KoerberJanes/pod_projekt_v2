@@ -19,6 +19,58 @@ sap.ui.define([
                 this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
             },
 
+            onManualInputChange:function(oEvent){
+                var oInput = oEvent.getSource();
+                var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel")
+                oManualNveInputModel.setProperty("/manualInput", oInput.getValue());
+                //this.handleRequiredField(oInput);
+                //this.checkInputConstraints(oInput);
+            },
+
+            onManualInputInputLiveChange:function(oEvent){
+                var oInput = oEvent.getSource();
+                this.handleRequiredField(oInput);
+                this.checkInputConstraints(oInput);
+            },
+
+            checkInputConstraints: function (oInput) {
+                var oBinding = oInput.getBinding("value");
+                var sValueState = "None";
+        
+                try {
+                  oBinding.getType().validateValue(oInput.getValue());
+                } catch (oException) {
+                  sValueState = "Error";
+                }
+                oInput.setValueState(sValueState);
+              },
+
+            handleRequiredField: function (oInput) {
+                var sValueState = "None";
+          
+                if (!oInput.getValue()) {
+                  sValueState="Error"
+                  oInput.setValueState(sValueState);
+                }
+            },
+
+            resetUserBarcodeInput:function(){
+                var oInput=this.getView().byId("barcodeInput");
+                oInput.setValue(""); 
+
+                var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel")
+                oManualNveInputModel.setProperty("/manualInput", "");
+            },
+
+            scrollToInputAfterError:function(){
+                var oInputField=this.getView().byId("barcodeInput");
+            
+                oInputField.setValueState("Error");
+                setTimeout(() => {
+                    oInputField.focus();
+                }, 50);
+            },
+
             onClearingButtonPress:function(oEvent){
                 this.getSelectedModelItem(oEvent);
             },
@@ -255,6 +307,18 @@ sap.ui.define([
                 this.differenciateNveProcessingType(oClearingNve, oEvent); //Schnittstelle von Klaer- und Verlade-Nves
             },
 
+            checkIfInputConstraintsComply:function(oEvent){
+                var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel");
+                var sManualNveUserInput=oManualNveInputModel.getProperty("/manualInput"); //UserInput aus Feld auslesen
+                var regex = /^[0-9]{5}$/; //es sind nur Ziffern erlaubt mit genau 5 Zeichen laenge
+        
+                if (regex.test(sManualNveUserInput)) {
+                  this.findLoadingNve(oEvent);
+                } else {
+                  this.showInputConstraintViolationError();
+                }
+              },
+
             findLoadingNve:function(oEvent){
                 //Verlade-Objekt finden
                 var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel");
@@ -354,9 +418,10 @@ sap.ui.define([
             },
 
             noNveFoundError:function(){
+                this.resetUserBarcodeInput();
                 MessageBox.error(this._oBundle.getText("noNveFound"), {
                     onClose:() =>{
-                        //NOP:
+                        this.scrollToInputAfterError();
                     }
                 });
             },
@@ -568,6 +633,15 @@ sap.ui.define([
                         //NOP:
                     }
                 });
+            },
+
+            showInputConstraintViolationError:function(){
+                this.resetUserBarcodeInput();
+                MessageBox.error(this._oBundle.getText("nameNotMatchingRegex"),{
+                    onClose: () => {
+                        this.scrollToInputAfterError();
+                    }
+                 });
             },
 
             nveClearingDialogOpen:function(){ //Oeffnen des Klaer-Dialoges

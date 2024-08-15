@@ -14,15 +14,21 @@ sap.ui.define([
             onInit: function () {
  
             },
-
+            
             onAfterRendering: function() {
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
             },
 
-            onCustomerNameInputChange:function(oEvent){
+            onCustomerNameInputLiveChange:function(oEvent){
                 var oInput = oEvent.getSource();
                 this.handleRequiredField(oInput);
                 this.checkInputConstraints(oInput);
+            },
+
+            onCustomerNameInputChange:function(oEvent){
+                var oInput = oEvent.getSource();
+                var oCustomerModel=this.getView().getModel("CustomerModel");
+                oCustomerModel.setProperty("/customerName", oInput.getValue());
             },
 
             handleRequiredField: function (oInput) {
@@ -101,25 +107,34 @@ sap.ui.define([
                 this.oAddFotoDialog.then((oDialog) => oDialog.open());
             },
 
-            checkSignConditions:function(){ //Pruefen ob zur bedingungen erfuellt sind zur Unterschrift View zu wechseln
-                var oRecipientNameModel=this.getOwnerComponent().getModel("CustomerModel")
-                var sRecipientName=oRecipientNameModel.getProperty("/customerName");
-
-                //!Test
-                //assert(sRecipientName.length > 0, "No user input has been provided");
-
-                if(sRecipientName !== ""){ //Wenn Kunden-Name angegeben
-                    this.setValueStateForInput("None");
-                    this.checkIfStringMatchesRegex(sRecipientName);
-                    //this.checkIfNvesAreProcessed(); //!Hier mal schauen ob das wieder rein kann, wenn der Validator funktioniert
-                } else{
-                    this.setValueStateForInput("Error");
-                    this.showEmptyNameError();
-                }
+            scrollToInputAfterError:function(){
+                var oInputField=this.getView().byId("recipientNameInp");
+                
+                oInputField.setValueState("Error");
+                setTimeout(() => {
+                    oInputField.focus();
+                }, 50);
             },
 
-            checkIfStringMatchesRegex:function(sRecipientName){
-                if(sRecipientName.length >= 2){
+            scrollToDeliveryNotesAfterError:function(){
+                var oDeliveryNotesTable=this.getView().byId("deliveryNoteList");
+                var oDeliveryNote=oDeliveryNotesTable.getItems()[0];
+
+                setTimeout(() => {
+                    oDeliveryNote.focus();
+                }, 50);
+            },
+
+            checkSignConditions:function(){
+                this.checkIfInputConstraintsComply();
+            },
+
+            checkIfInputConstraintsComply:function(){
+                var oCustomerModel=this.getView().getModel("CustomerModel");
+                var sCustomerModelInput=oCustomerModel.getProperty("/customerName");
+                var regex= /^[a-zA-Z]{2,15}$/;
+
+                if(regex.test(sCustomerModelInput)){
                     this.checkIfNvesAreProcessed();
                 } else{
                     this.showFaultyInputError();
@@ -312,6 +327,7 @@ sap.ui.define([
                 MessageBox.error(this._oBundle.getText("notPermitedToSignTour"),{
                     onClose: () => {
                         //Bisher funktionslos
+                        this.scrollToDeliveryNotesAfterError();
                     }
                 });
             },
@@ -323,19 +339,11 @@ sap.ui.define([
                     }
                 });
             },
-                
-            showEmptyNameError:function(){ //Fehler weil kein Kundenname eingetragen
-                MessageBox.error(this._oBundle.getText("nameMissing"),{
-                    onClose: () => {
-                        //Bisher funktionslos
-                    }
-                });
-            },
 
             showFaultyInputError:function(){
                 MessageBox.error(this._oBundle.getText("nameNotMatchingRegex"),{
                     onClose: () => {
-                        //Bisher funktionslos
+                        this.scrollToInputAfterError();
                     }
                 });
             },
