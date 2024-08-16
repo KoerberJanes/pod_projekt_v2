@@ -31,7 +31,7 @@
                             </OverflowToolbar>
                         </headerToolbar>
                         
-                        <CustomListItem press="onSetStoppInformation" type="Active">
+                        <CustomListItem press="checkIfStoppAlreadyDealtWith" type="Active">
                             <Bar class="sapUiTinyMarginBottom">
                                 <contentLeft>
                                     <Title level="H5"
