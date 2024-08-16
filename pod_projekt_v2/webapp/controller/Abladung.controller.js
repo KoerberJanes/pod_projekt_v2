@@ -3,12 +3,18 @@ sap.ui.define([
     "sap/m/MessageToast",
     "sap/m/MessageBox",
 	"podprojekt/utils/Helper",
-    "sap/base/assert"
+    "sap/base/assert",
+	"podprojekt/utils/StatusSounds"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller,MessageToast, MessageBox, Helper, assert) {
+    function (Controller,
+	MessageToast,
+	MessageBox,
+	Helper,
+	assert,
+	StatusSounds) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Abladung", {
@@ -19,21 +25,20 @@ sap.ui.define([
                 this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
             },
 
-            onManualInputChange:function(oEvent){
+            onManualInputChange:function(oEvent){ //Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
+                //! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
                 var oInput = oEvent.getSource();
                 var oManualNveInputModel=this.getOwnerComponent().getModel("manualNveInputModel")
                 oManualNveInputModel.setProperty("/manualInput", oInput.getValue());
-                //this.handleRequiredField(oInput);
-                //this.checkInputConstraints(oInput);
             },
 
-            onManualInputInputLiveChange:function(oEvent){
+            onManualInputInputLiveChange:function(oEvent){ //Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
                 var oInput = oEvent.getSource();
                 this.handleRequiredField(oInput);
                 this.checkInputConstraints(oInput);
             },
 
-            checkInputConstraints: function (oInput) {
+            checkInputConstraints: function (oInput) { //Wenn Wert nicht der Regex entspricht, Rot markieren
                 var oBinding = oInput.getBinding("value");
                 var sValueState = "None";
         
@@ -45,7 +50,7 @@ sap.ui.define([
                 oInput.setValueState(sValueState);
               },
 
-            handleRequiredField: function (oInput) {
+            handleRequiredField: function (oInput) { //Wenn kein Wert im Inputfeld vorliegt, Rot markieren
                 var sValueState = "None";
           
                 if (!oInput.getValue()) {
@@ -54,7 +59,7 @@ sap.ui.define([
                 }
             },
 
-            resetUserBarcodeInput:function(){
+            resetUserBarcodeInput:function(){ //Sowohl Model als auch Input leeren
                 var oInput=this.getView().byId("barcodeInput");
                 oInput.setValue(""); 
 
@@ -89,6 +94,7 @@ sap.ui.define([
             },
 
             checkForRemainingNves:function(){ //Prüfen ob noch Nves zu quittieren sind
+                StatusSounds.playBeepSuccess();
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var aRemainingNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
                 
@@ -210,6 +216,7 @@ sap.ui.define([
             },
 
             onSaveAllTempStoredNVEs:function(){
+                StatusSounds.playBeepSuccess();
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 
                 var aTempLoadedDeliveryNoteNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs"); //Temo verladen
@@ -350,6 +357,7 @@ sap.ui.define([
             },
 
             saveTempClearing:function(oClearingNve){
+                StatusSounds.playBeepSuccess();
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var aClearingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs");
                 var aUpdatedClearingNvesTemp=aClearingNvesTemp.concat([oClearingNve]);//Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
@@ -360,7 +368,7 @@ sap.ui.define([
             },
 
             saveTempLoading:function(oLoadingNve){
-
+                StatusSounds.playBeepSuccess();
                 var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
                 var aLoadingNvesTemp=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs");
                 var aUpdatedLoadingNvesTemp=aLoadingNvesTemp.concat([oLoadingNve]);//Erstellen eines Arrays mit alten NVEs und quittierter NVE darin
@@ -427,6 +435,7 @@ sap.ui.define([
             },
 
             showNotAllNvesProcessedError:function(){
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("notAllNvesProcessed"), {
                     onClose: () => {
                         //NOP:
@@ -435,6 +444,7 @@ sap.ui.define([
             },
 
             tooManyErrorReasonsSelectedError:function(){
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("tooManyClearingResonsSelected"), {
                     onClose: () => {
                         //NOP:
@@ -443,6 +453,7 @@ sap.ui.define([
             },
 
             noClearingReasonSelectedError:function(){
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("noClearingResonSelected"), {
                     onClose: () => {
                         //NOP:
@@ -620,6 +631,7 @@ sap.ui.define([
             },
 
             showNotEnoughSpaceError:function(){
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("notEnoughPhotoSpace"),{
                     onClose: () => {
                         //Bisher funktionslos
@@ -628,6 +640,7 @@ sap.ui.define([
             },
 
             selectError:function(){
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("noSelectedItem"), {
                     onClose: () => {
                         //NOP:
@@ -636,6 +649,7 @@ sap.ui.define([
             },
 
             showInputConstraintViolationError:function(){
+                StatusSounds.playBeepError();
                 this.resetUserBarcodeInput();
                 MessageBox.error(this._oBundle.getText("nameNotMatchingRegex"),{
                     onClose: () => {

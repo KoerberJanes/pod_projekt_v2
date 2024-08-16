@@ -1,12 +1,13 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/m/MessageBox",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+    "podprojekt/utils/StatusSounds"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, MessageBox, MessageToast) {
+    function (Controller, MessageBox, MessageToast, StatusSounds) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Unterschrift", {
@@ -53,6 +54,7 @@ sap.ui.define([
             },
 
             notSignedError:function(){
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("noSignatureDetected"), {
                     onClose: () => {
                         //NOP
@@ -89,6 +91,7 @@ sap.ui.define([
 
                 success: (oData) => {
                     this.busyDialogClose();
+                    StatusSounds.playBeepSuccess();
                     var aRecievedTours=oData.getProperty("/results");
 
                     if(aRecievedTours.length===0){
@@ -100,6 +103,7 @@ sap.ui.define([
                 },
                 error: (oError) => {
                     this.busyDialogClose();
+                    StatusSounds.playBeepError();
                     //Bisher keine Funktion
                 }
                 */
@@ -116,6 +120,7 @@ sap.ui.define([
             },
 
             showBackendConfirmMessage:function(){
+                StatusSounds.playBeepSuccess();
                 MessageToast.show(this._oBundle.getText("stopSuccessfullyReceipt"), {
                     duration: 2500,
                     width:"15em"

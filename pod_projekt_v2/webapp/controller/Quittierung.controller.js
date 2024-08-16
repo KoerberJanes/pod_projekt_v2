@@ -2,12 +2,13 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/m/MessageBox",
 	"sap/m/MessageToast",
-    "sap/base/assert"
+    "sap/base/assert",
+    "podprojekt/utils/StatusSounds"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, MessageBox, MessageToast, assert) {
+    function (Controller, MessageBox, MessageToast, assert, StatusSounds) {
         "use strict";
 
         return Controller.extend("podprojekt.controller.Quittierung", {
@@ -19,19 +20,20 @@ sap.ui.define([
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
             },
 
-            onCustomerNameInputLiveChange:function(oEvent){
-                var oInput = oEvent.getSource();
-                this.handleRequiredField(oInput);
-                this.checkInputConstraints(oInput);
-            },
-
-            onCustomerNameInputChange:function(oEvent){
+            onCustomerNameInputChange:function(oEvent){ //Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
+                //! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
                 var oInput = oEvent.getSource();
                 var oCustomerModel=this.getView().getModel("CustomerModel");
                 oCustomerModel.setProperty("/customerName", oInput.getValue());
             },
 
-            handleRequiredField: function (oInput) {
+            onCustomerNameInputLiveChange:function(oEvent){ //Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
+                var oInput = oEvent.getSource();
+                this.handleRequiredField(oInput);
+                this.checkInputConstraints(oInput);
+            },
+
+            handleRequiredField: function (oInput) { //Wenn kein Wert im Inputfeld vorliegt, Rot markieren
 
                 var sValueState = "None";
           
@@ -41,7 +43,7 @@ sap.ui.define([
                 }
               },
         
-              checkInputConstraints: function (oInput) {
+              checkInputConstraints: function (oInput) { //Wenn Wert nicht der Regex entspricht, Rot markieren
                 var oBinding = oInput.getBinding("value");
                 var sValueState = "None";
         
@@ -129,14 +131,14 @@ sap.ui.define([
                 this.checkIfInputConstraintsComply();
             },
 
-            checkIfInputConstraintsComply:function(){
+            checkIfInputConstraintsComply:function(){ //Werteeingabe gegen regex pruefen
                 var oCustomerModel=this.getView().getModel("CustomerModel");
                 var sCustomerModelInput=oCustomerModel.getProperty("/customerName");
-                var regex= /^[a-zA-Z\-]{2,15}$/;
+                var regex= /^[a-zA-Z\-]{2,15}$/;//nur Ziffern mit mindestlaenge 2, maxlaenge 15 und Sonderzeichen '-'
 
-                if(regex.test(sCustomerModelInput)){
+                if(regex.test(sCustomerModelInput)){ //Eingabe-Parameter passen
                     this.checkIfNvesAreProcessed();
-                } else{
+                } else{ //Eingabe-Parameter passen nicht
                     this.showFaultyInputError();
                 }
             },
@@ -324,6 +326,7 @@ sap.ui.define([
             },
             
             showProgressStatusError:function(){ //Fehler weil nicht alle Checkboxen bearbeitet wurden
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("notPermitedToSignTour"),{
                     onClose: () => {
                         //Bisher funktionslos
@@ -333,6 +336,7 @@ sap.ui.define([
             },
 
             showNotEnoughSpaceError:function(){
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("notEnoughSpace"),{
                     onClose: () => {
                         //Bisher funktionslos
@@ -341,6 +345,7 @@ sap.ui.define([
             },
 
             showFaultyInputError:function(){
+                StatusSounds.playBeepError();
                 MessageBox.error(this._oBundle.getText("nameNotMatchingRegex"),{
                     onClose: () => {
                         this.scrollToInputAfterError();
@@ -364,6 +369,7 @@ sap.ui.define([
             },
 
             onNavToUnterschrift:function(){ //Navigation zur Unterschrift View
+                StatusSounds.playBeepSuccess();
                 var oRouter = this.getOwnerComponent().getRouter();
 
                 oRouter.navTo("Unterschrift");

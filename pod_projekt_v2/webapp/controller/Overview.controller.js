@@ -3,12 +3,13 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
-    "sap/base/assert"
+    "sap/base/assert",
+    "podprojekt/utils/StatusSounds"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, MessageToast, MessageBox, assert) {
+  function (Controller, MessageToast, MessageBox, assert, StatusSounds) {
     "use strict";
 
     return Controller.extend("podprojekt.controller.Overview", {
@@ -55,6 +56,7 @@ sap.ui.define(
 
           success: (oData) => {
               this.busyDialogClose();
+              StatusSounds.playBeepSuccess();
               var aRecievedTours=oData.getProperty("/results");
 
               if(aRecievedTours.length===0){
@@ -146,7 +148,7 @@ sap.ui.define(
         }
       },
 
-      resetMileageUserInput:function(){
+      resetMileageUserInput:function(){ //Sowohl Model als auch Input leeren
         var oInput=this.getView().byId("kilometerInput");
         oInput.setValue(""); 
 
@@ -188,7 +190,7 @@ sap.ui.define(
         oInput.setValueState(sValueState);
       },
 
-      checkIfInputConstraintsComply:function(){ //Eingabe wurde gemacht und nun wird der Wert geprueft
+      checkIfInputConstraintsComply:function(){ //Werteeingabe gegen regex pruefen
         var oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
         var sTourStartFragmentInput = oTourStartFragmentModel.getProperty("/mileage"); // User-Eingabe
         var regex = /^[0-9]{2,}$/; //es sind nur Ziffern erlaubt mit einer Mindestlaenge von 2
@@ -229,6 +231,7 @@ sap.ui.define(
       },
 
       noToursReceivedError:function(){ //Keine Touren wurden aus dem Backend bekommen
+        StatusSounds.playBeepError();
         MessageBox.error(this._oBundle.getText("noToursLoaded"), {
             onClose: () => {
                 //NOP:
@@ -257,7 +260,7 @@ sap.ui.define(
       },
 
       tourTolleranceNotAcceptedError:function(){ //Kilometer vom User nicht akzeptiert, da nicht in Tolleranz
-        
+        StatusSounds.playBeepError();
         MessageBox.error(this._oBundle.getText("tolleranceNotAccepted"),{
           onClose: () => {
               this.scrollToInputAfterError();
@@ -266,6 +269,7 @@ sap.ui.define(
       },
 
       showInputConstraintViolationError:function(){
+        StatusSounds.playBeepError();
         MessageBox.error(this._oBundle.getText("nameNotMatchingRegex"),{
           onClose: () => {
             this.scrollToInputAfterError();
@@ -287,6 +291,7 @@ sap.ui.define(
       },
 
       onNavToActiveTour: function () { //Navigation zu den Stops der derzeitgen Tour
+        StatusSounds.playBeepSuccess();
         var oRouter = this.getOwnerComponent().getRouter();
         
         oRouter.navTo("ActiveTour");
