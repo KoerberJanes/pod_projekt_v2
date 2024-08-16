@@ -132,7 +132,7 @@ sap.ui.define([
             checkIfInputConstraintsComply:function(){
                 var oCustomerModel=this.getView().getModel("CustomerModel");
                 var sCustomerModelInput=oCustomerModel.getProperty("/customerName");
-                var regex= /^[a-zA-Z]{2,15}$/;
+                var regex= /^[a-zA-Z\-]{2,15}$/;
 
                 if(regex.test(sCustomerModelInput)){
                     this.checkIfNvesAreProcessed();

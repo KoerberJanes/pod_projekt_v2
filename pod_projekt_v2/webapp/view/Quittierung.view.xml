@@ -42,7 +42,7 @@
                             constraints: {
                                 minLength: 2,
                                 maxLength: 15,
-                                search: '^[a-zA-Z]{2,15}$'
+                                search: '^[a-zA-Z\\-]{2,15}$'
                                 },
                                 formatOptions: {showMeasure: false}}"/>
 

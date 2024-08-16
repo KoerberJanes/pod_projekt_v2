@@ -154,7 +154,8 @@ sap.ui.define(
         oTourStartFragmentModel.setProperty("/mileage", "");
       },
 
-      onMileageInputChange:function(oEvent){ //Wird als Update fuer das Model verwendet
+      onMileageInputChange:function(oEvent){ //Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
+        //! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
         var oInput = oEvent.getSource();
         var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
         oTourStartFragmentModel.setProperty("/mileage", oInput.getValue());
@@ -166,7 +167,7 @@ sap.ui.define(
         this.checkInputConstraints(oInput);
       },
 
-      handleRequiredField: function (oInput) {
+      handleRequiredField: function (oInput) { //Wenn kein Wert im Inputfeld vorliegt, Rot markieren
         var sValueState = "None";
   
         if (!oInput.getValue()) {
@@ -175,7 +176,7 @@ sap.ui.define(
         }
       },
 
-      checkInputConstraints: function (oInput) {
+      checkInputConstraints: function (oInput) { //Wenn Wert nicht der Regex entspricht, Rot markieren
         var oBinding = oInput.getBinding("value");
         var sValueState = "None";
 
@@ -187,14 +188,14 @@ sap.ui.define(
         oInput.setValueState(sValueState);
       },
 
-      checkIfInputConstraintsComply:function(){
+      checkIfInputConstraintsComply:function(){ //Eingabe wurde gemacht und nun wird der Wert geprueft
         var oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
         var sTourStartFragmentInput = oTourStartFragmentModel.getProperty("/mileage"); // User-Eingabe
         var regex = /^[0-9]{2,}$/; //es sind nur Ziffern erlaubt mit einer Mindestlaenge von 2
 
-        if (regex.test(sTourStartFragmentInput)) {
+        if (regex.test(sTourStartFragmentInput)) { //Eingabe-Parameter passen
           this.checkIfEnteredValueInRange();
-        } else {
+        } else { //Eingabe-Parameter passen nicht
           this.showInputConstraintViolationError();
         }
       },
