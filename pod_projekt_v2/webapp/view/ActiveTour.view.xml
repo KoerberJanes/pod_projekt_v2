@@ -41,7 +41,7 @@
                                                 '00' + ${StopModel>sequence} + '-' + ${StopModel>addressName1}}"/>
                                 </contentLeft>
                                 <contentRight>
-                                    <Text text="{= ${StopModel>orders/0/loadingUnits}.length}"/>
+                                    <Text text="{= ${StopModel>orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
                                 </contentRight>
                             </Bar>
                             <HBox >

@@ -145,9 +145,9 @@ sap.ui.define([
                 var bStatusNotFinished = (element) => element.stopStatus === "90"; //Ein Stopp mit Status '90' (unbearbeitet?) vorhanden?
 
                 if(aStopsOfCurrentTour.some(bStatusNotFinished)){ //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
-                    this.changeDisplayedNvesOfStop();
+                    this.changeDisplayedNvesOfStop(); //Hier wird ein Test gemacht
                 } else{
-                    this.setTourStatusProcessed();
+                    this.setTourStatusProcessed(); //Hier wird auch ein Test gemacht
                 }
             },
             changeDisplayedNvesOfStop:function(){
@@ -156,7 +156,9 @@ sap.ui.define([
 
                 oStopInformationModel.setProperty("/tour/loadingUnits", aRemainingNves);
 
-                this.refreshTourStops();
+                this.resetUserInput();
+                this.resetUserPhotos();
+                this.onNavToActiveTour(); //--> HashManager übernimmt aktualisierung von Models
             },
 
             setTourStatusProcessed:function(){ //!Statuscodes müssen abgesprochen werden
@@ -164,29 +166,7 @@ sap.ui.define([
                 var oCurrentTour= oTourStartFragmentModel.getProperty("/tour");
 
                 oCurrentTour.routeStatus="10";
-                this.refreshTours();
-            },
-
-            refreshTours:function(){ //Dient nur zum Aktualisieren der View. Die Daten wurden davor schon verarbeitet. Expression Binding, aktualisiert jedoch nur 1x
-                var oTourModel=this.getOwnerComponent().getModel("TourModel"); //Model fuer Touren
-                var aTours= oTourModel.getProperty("/results"); //Alle Touren dieses Fahrers
-                var aUpdatedTours=[].concat(aTours);
-
-                oTourModel.setProperty("/results", aUpdatedTours);
-
-                this.onNavToOverview();
-            },
-
-            refreshTourStops:function(){ //Dient nur zum Aktualisieren der View. Die Daten wurden davor schon verarbeitet. Expression Binding, aktualisiert jedoch nur 1x
-                var oStopModel=this.getOwnerComponent().getModel("StopModel"); //Model fuer Stopps
-                var aStopsOfCurrentTour=oStopModel.getProperty("/results"); //Alle Stopps dieser Tour
-                var aUpdatedStopsOfCurrentTour=[].concat(aStopsOfCurrentTour);
-
-                oStopModel.setProperty("/results", aUpdatedStopsOfCurrentTour);
-
-                this.resetUserInput();
-                this.resetUserPhotos();
-                this.onNavToActiveTour();
+                this.onNavToOverview(); //--> HashManager übernimmt aktualisierung von Models
             },
 
             resetUserInput:function(){

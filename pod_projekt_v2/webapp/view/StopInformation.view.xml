@@ -50,7 +50,7 @@
                 <contentMiddle>
                 </contentMiddle>
                 <contentRight>
-                    <Button id="QuittierungBtn" text="{i18n>confirmationTitle}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onCreateDeliveryNote"/>
+                    <Button id="QuittierungBtn" text="{i18n>confirmationTitle}" icon="sap-icon://navigation-right-arrow" iconFirst="false" press="onNavToQuittierung"/> <!--onCreateDeliveryNote-->
                 </contentRight>
             </Bar>
         </footer>

@@ -4,16 +4,18 @@ sap.ui.define(
     "sap/m/MessageToast",
     "sap/m/MessageBox",
     "sap/base/assert",
-    "podprojekt/utils/StatusSounds"
+    "podprojekt/utils/StatusSounds",
+    "podprojekt/utils/HashManager"
   ],
   /**
    * @param {typeof sap.ui.core.mvc.Controller} Controller
    */
-  function (Controller, MessageToast, MessageBox, assert, StatusSounds) {
+  function (Controller, MessageToast, MessageBox, assert, StatusSounds, HashManager) {
     "use strict";
 
     return Controller.extend("podprojekt.controller.Overview", {
       onInit: function () {
+        HashManager.init(this.getView());
       },
 
       onAfterRendering: function() {
@@ -227,6 +229,41 @@ sap.ui.define(
         var aRespectiveTourStops=oTourStartFragmentModel.getProperty("/tour/stops"); //Array an Stops der ausgewaehlten Tour
 
         oStopInformationModel.setProperty("/results", aRespectiveTourStops); //Setzen der Stops
+        //this.onNavToActiveTour();
+        this.createDeliveryNotes();
+      },
+
+      createDeliveryNotes:function(){
+        var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
+        var aRespectiveTourStops=oTourStartFragmentModel.getProperty("/tour/stops"); //Array an Stops der ausgewaehlten Tour
+
+        for(var i in aRespectiveTourStops){ //Jeder Stopp bekommt DeliveryNote mit allen NVEs und Infos
+          var oCurrentStop=aRespectiveTourStops[i];
+          var oNewDeliveryNote={
+            "shipmentNumber": oCurrentStop.orders[0].shipmentNumber,
+            "shipmentCondition": oCurrentStop.orders[0].shipmentCondition,
+            "shipmentConditionCaption": oCurrentStop.orders[0].shipmentConditionCaption,
+            "aTempClearedNVEs": [],
+            "aTotalClearedNves": [],
+            "aTempLoadedNVEs": [],
+            "aTotalLoadedNVEs": [],
+            "aUnprocessedNumberedDispatchUnits": oCurrentStop.orders[0].loadingUnits
+          };
+
+          oCurrentStop.orders[0].aDeliveryNotes=[];
+          oCurrentStop.orders[0].aDeliveryNotes=oCurrentStop.orders[0].aDeliveryNotes.concat([oNewDeliveryNote]);
+        }
+        this.linkNvesToDeliveryNote(aRespectiveTourStops);
+      },
+
+      linkNvesToDeliveryNote:function(aRespectiveTourStops){ //NVEs bekommen zusaetzliches Attribut um DeliveryNote zuordnen zu koennen
+
+        for(var i in aRespectiveTourStops){ //Jeder Stopp
+          var aUnprocessedNves=aRespectiveTourStops[i].orders[0].aDeliveryNotes[0].aUnprocessedNumberedDispatchUnits;
+          for( var j in aUnprocessedNves){ //Alle NVEs eines Stopps
+            aUnprocessedNves[j].deliveryNoteShipmentNumber= aRespectiveTourStops[i].orders[0].aDeliveryNotes[0].shipmentNumber;
+          }
+        }
         this.onNavToActiveTour();
       },
 

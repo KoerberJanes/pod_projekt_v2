@@ -41,7 +41,7 @@
                                         ${TourModel>routeStatus} === '50' ? 'sap-icon://shipping-status' :
                                             ${TourModel>routeStatus} === '70' ? 'sap-icon://BusinessSuiteInAppSymbols/icon-box-truck-empty' : 'sap-icon://complete'}"
                             type="Navigation"
-                            press="setPressedTour">
+                            press="setPressedTour"> <!--setPressedTour-->
                         </StandardListItem>
                     </List>
                 </form:content>
