@@ -67,7 +67,7 @@
 
                             infoState="{= ${StopModel>orders/0/loadingUnits}.length > 0 ? 'Error' : 'Success'}"
                             type="Navigation"
-                            press="onSetStoppInformation"/>-->
+                            press="checkIfStoppAlreadyDealtWith"/>-->
                     </List>
                 </form:content>
             </form:SimpleForm>
