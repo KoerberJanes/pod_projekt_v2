@@ -29,7 +29,10 @@ sap.ui.define([
                 "tour": () => this._refreshPage(oView, "StopModel", "/results"),
                 "stop": () => this._refreshPage(oView, "StopInformationModel", "/tour"),
                 "map": () => this._refreshMapPage(oView),
-                "confirmation": () => this._refreshPage(oView, "StopInformationModel", "/tour"),
+                "confirmation": () => {
+                    this._refreshPage(oView, "StopInformationModel", "/tour");
+                    this._refreshPage(oView, "StopModel", "/results");
+                },
                 "unloading": () => this._refreshPage(oView, "StopInformationModel", "/tour"),
                 "signature": () => this._refreshPage(oView, "StopInformationModel", "/tour")
             };
