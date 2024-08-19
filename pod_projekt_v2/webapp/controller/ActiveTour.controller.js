@@ -18,11 +18,12 @@ sap.ui.define([
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
             },
 
-            checkIfStoppAlreadyDealtWith:function(oEvent){
+            checkIfStoppAlreadyDealtWith:function(oEvent){ //!Statuscodes müssen abgesprochen werden
                 var oPressedModelObject=oEvent.getSource().getBindingContext("StopModel").getObject();
                 var iNumberOfUnprocessedNves=oPressedModelObject.orders[0].loadingUnits.length;
+                var sStopStatus=oPressedModelObject.stopStatus; //in Kombination mit der Methode: 'setCurrentStopAsFinished'
 
-                if(iNumberOfUnprocessedNves===0){ //Stopp bereits verarbeitet
+                if(iNumberOfUnprocessedNves===0 && sStopStatus === "70"){ //Keine unbearbeiteten NVEs und Stopp hat status erledigt
                     this.stopAlreadyDealtWithError();
                 } else{ //Stop zum verarbeiten vorbereiten
                     this.onSetStoppInformation(oPressedModelObject);
