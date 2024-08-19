@@ -34,7 +34,10 @@ sap.ui.define([
                     this._refreshPage(oView, "StopModel", "/results");
                 },
                 "unloading": () => this._refreshPage(oView, "StopInformationModel", "/tour"),
-                "signature": () => this._refreshPage(oView, "StopInformationModel", "/tour")
+                "signature": () => {
+                    this._refreshPage(oView, "StopInformationModel", "/tour");
+                    this._refreshPage(oView, "StopModel", "/results");
+                }
             };
 
             var refreshFunction = refreshFunctions[sNewHash] || (() => this._refreshNotFoundPage(oView));
