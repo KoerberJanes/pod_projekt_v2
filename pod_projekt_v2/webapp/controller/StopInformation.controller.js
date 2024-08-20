@@ -17,17 +17,17 @@ sap.ui.define([
             },
 
             onPressBtnAvisNr: function(oEvent){ //Natives anrufen der Telefonnummer
-                var sPhoneAvis=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/phoneAvis");
+                let sPhoneAvis=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/phoneAvis");
                 sap.m.URLHelper.triggerTel(sPhoneAvis);
             },
 
             onNavToMap:function(){ //Navigation zur GeoMap View
-                var oRouter = this.getOwnerComponent().getRouter();
+                let oRouter = this.getOwnerComponent().getRouter();
                 oRouter.navTo("MapView");
             },
 
             onNavToQuittierung:function(){ //Navigation zur Quittierung View
-                var oRouter = this.getOwnerComponent().getRouter();
+                let oRouter = this.getOwnerComponent().getRouter();
                 oRouter.navTo("Quittierung");
             },
         });

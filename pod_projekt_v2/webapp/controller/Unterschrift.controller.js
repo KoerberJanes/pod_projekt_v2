@@ -37,52 +37,59 @@ sap.ui.define([
             },
 
             onClearSignField:function(){
-                var sDigitalSignatureId = this.byId("digitalSignatureId");
-			    sDigitalSignatureId.clearArea();
+                this.getView().byId("digitalSignatureId").clearArea();
             },
 
             onCheckIfStopSigned:function(){
-                var sDigitalSignatureId = this.byId("digitalSignatureId");
-                var sSignedFieldBase64=sDigitalSignatureId.getSignatureAsString();
-                //var sSignedFieldPng=sDigitalSignatureId.getSignatureAsPng();
+                let sDigitalSignatureId = this.byId("digitalSignatureId");
+                let sSignedFieldBase64=sDigitalSignatureId.getSignatureAsString();
+                //let sSignedFieldPng=sDigitalSignatureId.getSignatureAsPng();
 
                 if(sSignedFieldBase64!==""){ //Feld ist leer und wurde nicht Unterschrieben!
                     this.simulateBackendCall();
                 } else{
-                    this.notSignedError();
+                    this._showErrorMessageBox("noSignatureDetected", () => {});
                 }
             },
 
-            notSignedError:function(){
+            _showErrorMessageBox: function(sMessageKey, fnOnClose) {
                 StatusSounds.playBeepError();
-                MessageBox.error(this._oBundle.getText("noSignatureDetected"), {
-                    onClose: () => {
-                        //NOP
-                    }
+                MessageBox.error(this._oBundle.getText(sMessageKey), {
+                    onClose: fnOnClose || function() {}  // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
                 });
             },
 
-            busyDialogOpen:function(){
-                this.oBusyDialog ??= this.loadFragment({
-                name: "podprojekt.view.fragments.BusyDialog",
-                });
-        
-                this.oBusyDialog.then((oDialog) => oDialog.open());
+            busyDialogOpen: async function(){
+                if (!this.oBusyDialog) {
+                    try {
+                        // Lade das Fragment, wenn es noch nicht geladen wurde
+                        this.oBusyDialog = await this.loadFragment({
+                            name: "podprojekt.view.fragments.BusyDialog"
+                        });
+                    } catch (error) {
+                        // Fehlerbehandlung bei Problemen beim Laden des Fragments
+                        console.error("Fehler beim Laden des BusyDialogs:", error);
+                        MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
+                        return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
+                    }
+                  }
             },
 
             busyDialogClose:function(){
-                setTimeout(() => { this.byId("BusyDialog").close() },500);
+                setTimeout(() => { 
+                    if(this.byId("BusyDialog")) this.byId("BusyDialog").close() 
+                },500);
             },
 
             simulateBackendCall:function(){
                 //this.busyDialogOpen();
 
-                var sPath="/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
-                var oODataModel= this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
-                //var oFilter1 = new Filter(); //Filter Attribut 1
-                //var oFilter2 = new Filter(); //Filter Attribut 2
-                //var oFilter3 = new Filter(); //Filter Attribut 3
-                //var aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+                let sPath="/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+                let oODataModel= this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
+                //let oFilter1 = new Filter(); //Filter Attribut 1
+                //let oFilter2 = new Filter(); //Filter Attribut 2
+                //let oFilter3 = new Filter(); //Filter Attribut 3
+                //let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
 
 
                 /*
@@ -92,7 +99,7 @@ sap.ui.define([
                 success: (oData) => {
                     this.busyDialogClose();
                     StatusSounds.playBeepSuccess();
-                    var aRecievedTours=oData.getProperty("/results");
+                    let aRecievedTours=oData.getProperty("/results");
 
                     if(aRecievedTours.length===0){
                         this.noToursError(); //Fahrer hat keine Touren
@@ -115,8 +122,8 @@ sap.ui.define([
             },
 
             onRefreshDateAndTime:function(){
-                var oCustomerModel=this.getOwnerComponent().getModel("CustomerModel");
-                var sDateAndTime= sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.YYYY HH:mm:ss" }).format(new Date()); //Datum inklusive Uhrzeit
+                let oCustomerModel=this.getOwnerComponent().getModel("CustomerModel");
+                let sDateAndTime= sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.YYYY HH:mm:ss" }).format(new Date()); //Datum inklusive Uhrzeit
                 oCustomerModel.setProperty("/dateAndTime", sDateAndTime);
             },
 
@@ -129,31 +136,30 @@ sap.ui.define([
             },
 
             setCurrentStopAsFinished:function(){ //!Statuscodes müssen abgesprochen werden
-                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel"); //Infos über derzeitigen Stopp
-                var oCurrentStop=oStopInformationModel.getProperty("/tour"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
-                var oTourStartModel=this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
-                var aStopsOfCurrentTour=oTourStartModel.getProperty("/tour/stops");//'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
-                var oFoundTour=aStopsOfCurrentTour.find(element => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
+                let oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel"); //Infos über derzeitigen Stopp
+                let oCurrentStop=oStopInformationModel.getProperty("/tour"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
+                let oTourStartModel=this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
+                let aStopsOfCurrentTour=oTourStartModel.getProperty("/tour/stops");//'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
+                let oFoundTour=aStopsOfCurrentTour.find(element => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
                 
-                oFoundTour.stopStatus="70"; // --> Annahme: 70 ist erledigt
-                this.checkIfAllStopsAreCompleted();
+                if(oFoundTour){
+                    oFoundTour.stopStatus="70"; // --> Annahme: 70 ist erledigt
+                    this.checkIfAllStopsAreCompleted();
+                }
             },
 
             checkIfAllStopsAreCompleted:function(){ //!Statuscodes müssen abgesprochen werden
-                var oTourStartModel=this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
-                var aStopsOfCurrentTour=oTourStartModel.getProperty("/tour/stops");
+                let aStopsOfCurrentTour=this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Tour mit allen Stopps und Infos vorhanden
 
-                var bStatusNotFinished = (element) => element.stopStatus === "90"; //Ein Stopp mit Status '90' (unbearbeitet?) vorhanden?
-
-                if(aStopsOfCurrentTour.some(bStatusNotFinished)){ //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
+                if(aStopsOfCurrentTour.some(element => element.stopStatus === "90")){ //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
                     this.changeDisplayedNvesOfStop(); //Hier wird ein Test gemacht
                 } else{
                     this.setTourStatusProcessed(); //Hier wird auch ein Test gemacht
                 }
             },
             changeDisplayedNvesOfStop:function(){
-                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
-                var aRemainingNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+                let oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                let aRemainingNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
                 oStopInformationModel.setProperty("/tour/loadingUnits", aRemainingNves);
 
@@ -163,36 +169,35 @@ sap.ui.define([
             },
 
             setTourStatusProcessed:function(){ //!Statuscodes müssen abgesprochen werden
-                var oTourStartFragmentModel=this.getOwnerComponent().getModel("TourStartFragmentModel");
-                var oCurrentTour= oTourStartFragmentModel.getProperty("/tour");
+                let oCurrentTour=this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
 
                 oCurrentTour.routeStatus="10";
                 this.onNavToOverview(); //--> HashManager übernimmt aktualisierung von Models
             },
 
             resetUserInput:function(){
-                var oCustomerModel=this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
+                let oCustomerModel=this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
                 //TODO: LoadingDevices. Entweder Objekte nach erhalt vom Backend aendern oder expressionBinding verwenden
-                //var oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
+                //let oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
                 
                 oCustomerModel.setProperty("/customerName", "");
             },
 
             resetUserPhotos:function(){
-                var oPhotoListModel=this.getOwnerComponent().getModel("PhotoModel");
-                //var aPhotoListItems=oPhotoListModel.getProperty("/photos");
+                let oPhotoListModel=this.getOwnerComponent().getModel("PhotoModel");
+                //let aPhotoListItems=oPhotoListModel.getProperty("/photos");
 
                 oPhotoListModel.setProperty("/photos", []);
             },
 
             onNavToActiveTour:function(){
-                var oRouter = this.getOwnerComponent().getRouter();
+                let oRouter = this.getOwnerComponent().getRouter();
 
                 oRouter.navTo("ActiveTour");
             },
 
             onNavToOverview:function(){
-                var oRouter = this.getOwnerComponent().getRouter();
+                let oRouter = this.getOwnerComponent().getRouter();
 
                 oRouter.navTo("Overview");
             }

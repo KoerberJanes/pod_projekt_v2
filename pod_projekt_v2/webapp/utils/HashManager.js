@@ -26,7 +26,10 @@ sap.ui.define([
 
             const refreshFunctions = {
                 "overview": () => this._refreshPage(oView, "TourModel", "/results"),
-                "tour": () => this._refreshPage(oView, "StopModel", "/results"),
+                "tour": () => {
+                    this._refreshPage(oView, "StopModel", "/results"),
+                    this._refreshPage(oView, "StopInformationModel", "/tour");
+                },
                 "stop": () => this._refreshPage(oView, "StopInformationModel", "/tour"),
                 "map": () => this._refreshMapPage(oView),
                 "confirmation": () => {

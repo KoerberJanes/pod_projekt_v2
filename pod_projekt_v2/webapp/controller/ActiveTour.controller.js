@@ -9,6 +9,8 @@ sap.ui.define([
     function (Controller, MessageBox, StatusSounds) {
         "use strict";
 
+        const STOP_STATUS_PROCESSED = "70"; // Konstanten für Statuscodes
+
         return Controller.extend("podprojekt.controller.ActiveTour", {
             onInit: function () {
 
@@ -19,12 +21,12 @@ sap.ui.define([
             },
 
             checkIfStoppAlreadyDealtWith:function(oEvent){ //!Statuscodes müssen abgesprochen werden
-                var oPressedModelObject=oEvent.getSource().getBindingContext("StopModel").getObject();
-                var iNumberOfUnprocessedNves=oPressedModelObject.orders[0].loadingUnits.length;
-                var sStopStatus=oPressedModelObject.stopStatus; //in Kombination mit der Methode: 'setCurrentStopAsFinished'
+                let oPressedModelObject=oEvent.getSource().getBindingContext("StopModel").getObject();
+                let iNumberOfUnprocessedNves=oPressedModelObject.orders[0].loadingUnits.length;
+                let sStopStatus=oPressedModelObject.stopStatus; //in Kombination mit der Methode: 'setCurrentStopAsFinished'
 
-                if(iNumberOfUnprocessedNves===0 && sStopStatus === "70"){ //Keine unbearbeiteten NVEs und Stopp hat status erledigt
-                    this.stopAlreadyDealtWithError();
+                if(iNumberOfUnprocessedNves===0 && sStopStatus === STOP_STATUS_PROCESSED){ //Keine unbearbeiteten NVEs und Stopp hat status erledigt
+                    this._showErrorMessageBox("stopAlreadyProcessed", () => {});
                 } else{ //Stop zum verarbeiten vorbereiten
                     this.onSetStoppInformation(oPressedModelObject);
                 }
@@ -32,38 +34,34 @@ sap.ui.define([
             },
 
             onSetStoppInformation:function(oPressedModelObject){ //Herausfinden welcher Stop in der Liste ausgewaehlt wurde
-                var oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
-                //var oPressedModelObject=oEvent.getSource().getBindingContext("StopModel").getObject();
-                var oPressedModelObjectDetails=oPressedModelObject.orders[0]; //Detailreichere Informationen über das Modelobjekt
+                let oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
+                let oPressedModelObjectDetails=oPressedModelObject.orders[0]; //Detailreichere Informationen über das Modelobjekt
                 
                 oStopInformationModel.setProperty("/tour", oPressedModelObjectDetails);
                 this.createLoadingUnitsDetailedDescription(oPressedModelObjectDetails);
             },
 
             createLoadingUnitsDetailedDescription:function(oPressedModelObjectDetails){//Erstellen der Unterstruktur von Nves (Details)
-                var aLoadingUnits=oPressedModelObjectDetails.loadingUnits;
-
-                for(var i in aLoadingUnits){
-                    var oCurrentDefaultLoadingUnit=aLoadingUnits[i]; //Speichern der Aktuellen Nve
-                    oCurrentDefaultLoadingUnit.detailedInformation=[{
-                        "accurateDescription": oCurrentDefaultLoadingUnit.amount + "x " + oCurrentDefaultLoadingUnit.articleCaption
-                    }]
-                    oCurrentDefaultLoadingUnit.accurateDescription= oCurrentDefaultLoadingUnit.label1 +" "+ oCurrentDefaultLoadingUnit.lodingDeviceTypeCaption;; //erstellen der richtigen Bezeichnung
-                }
+                let aLoadingUnits=oPressedModelObjectDetails.loadingUnits;
+                
+                aLoadingUnits.forEach(oCurrentDefaultLoadingUnit =>{
+                    oCurrentDefaultLoadingUnit.detailedInformation = [{
+                        "accurateDescription": `${oCurrentDefaultLoadingUnit.amount}x ${oCurrentDefaultLoadingUnit.articleCaption}`
+                    }];
+                    oCurrentDefaultLoadingUnit.accurateDescription = `${oCurrentDefaultLoadingUnit.label1} ${oCurrentDefaultLoadingUnit.lodingDeviceTypeCaption}`; // Erstellen der richtigen Bezeichnung
+                });
                 this.onNavToStopInformation();
             },
 
-            stopAlreadyDealtWithError:function(){
+            _showErrorMessageBox:function(sMessageKey, fnOnClose){
                 StatusSounds.playBeepError();
-                MessageBox.error(this._oBundle.getText("stopAlreadyProcessed"),{
-                    onClose: () => {
-                        //NOP
-                    }
+                MessageBox.error(this._oBundle.getText(sMessageKey), {
+                    onClose: fnOnClose || function() {}  // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
                 });
             },
 
             onNavToStopInformation:function(){ //Navigation zur StopInformation View
-                var oRouter = this.getOwnerComponent().getRouter();
+                let oRouter = this.getOwnerComponent().getRouter();
 
                 oRouter.navTo("StopInformation");
             },

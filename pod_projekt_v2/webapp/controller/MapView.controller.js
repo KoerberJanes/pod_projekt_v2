@@ -8,14 +8,18 @@ sap.ui.define([
     function (Controller, MessageToast) {
         "use strict";
 
+        // Konstanten für Hardcodierte Werte
+        const MAP_ALTITUDE_TARGET = 15;// von 0 (weit weg) bis 20 oder so (sehr nah)
+        const GPS_TIMEOUT = 5000;
+        const GPS_MAX_AGE = 0;
+        const ACCURACY_THRESHOLD = 100;
+
         return Controller.extend("podprojekt.controller.MapView", {
             onInit: function () {
                 //Beim erstmaligen aufrufen der Seite muss die Methode angehängt werden, damit die Position des
                 //Markers immer auf den aktuellen Stop Zeigt
                 this._oRouter = this.getOwnerComponent().getRouter();
                 this._oRouter.getRoute("MapView").attachPatternMatched(this.setSpotsIntoGeoMap, this);
-                //Alternativ zu diesem Code könnte der Marker auf der Map auch im 'StopInformation' Controller erstellt werden,
-                //dann wäre hier ein refresh nicht mehr nötig aber der Code etwas unübersichtlicher
             },
 
             onAfterRendering: function() {
@@ -23,50 +27,49 @@ sap.ui.define([
             },
 
             setSpotsIntoGeoMap:function(){ //Hinzufügen eines einzelnen Stops für die GeoMap
-                var oCurrentStop=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
-                var sTargetGeoL=oCurrentStop.targetGeoL;
-                var sTargetGeoB=oCurrentStop.targetGeoB;
+                let oCurrentStop=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
+                let { targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB } = oCurrentStop;
 
                 this.createDestinationSpot(oCurrentStop, sTargetGeoL, sTargetGeoB);
                 this.getCurrentPosition(false);
             },
 
             createDestinationSpot:function(oCurrentStop, sTargetGeoL, sTargetGeoB){ //Erstellen eines Stops
-                var oGeoMapStopModel=this.getOwnerComponent().getModel("SpotModel");
+                let oGeoMapStopModel=this.getOwnerComponent().getModel("SpotModel");
 
                 //Zuruecksetzen notwendig, weil sonst immer wieder der gleiche Stopp drin ist
                 //Anpassung notwendig, wenn ganze Tour abgebildet sein soll
                 oGeoMapStopModel.setProperty("/spot", []); 
 
-                var aGeoMapSpots=oGeoMapStopModel.getProperty("/spot");
+                let aGeoMapSpots=oGeoMapStopModel.getProperty("/spot");
 
-                var oStop={
+                let oStop={
                     "bTarget": true,
-                    "pos": sTargetGeoL+";"+sTargetGeoB,
+                    "pos": `${sTargetGeoL};${sTargetGeoB}`,
                     "tooltip": oCurrentStop.city,
                     "type": "Success",
                     "description": oCurrentStop.addressName1
                 };
 
-                var aUpdatedSpots=aGeoMapSpots.concat([oStop]); //Array wird mit neuem Stopp erstellt, dass angezeigt wird
+                let aUpdatedSpots = [...aGeoMapSpots, oStop];//Array wird mit neuem Stopp erstellt, dass angezeigt wird
                 oGeoMapStopModel.setProperty("/spot", aUpdatedSpots); //damit ist kein Model.refresh() mehr notwendig
 
                 this.toCurrentPosition(sTargetGeoL, sTargetGeoB); 
             },
 
             createOwnLocationSpot:function(sCurrentGeoL, sCurrentGeoB, bZoomToSpot){
-                var oGeoMapStopModel=this.getOwnerComponent().getModel("SpotModel");
-                var aGeoMapSpots=oGeoMapStopModel.getProperty("/spot");
+                let oGeoMapStopModel=this.getOwnerComponent().getModel("SpotModel");
+                let aGeoMapSpots=oGeoMapStopModel.getProperty("/spot");
 
-                var oStop={
+                let oStop={
                     "bTarget": false,
-                    "pos": sCurrentGeoL+";"+sCurrentGeoB,
+                    "pos": `${sCurrentGeoL};${sCurrentGeoB}`,
                     "tooltip": "current location",
                     "type": "Success",
                     "description": "Own Location"
                 };
 
-                var aUpdatedSpots=aGeoMapSpots.concat([oStop]); //Array wird mit neuem Stopp erstellt, dass angezeigt wird
+                let aUpdatedSpots = [...aGeoMapSpots, oStop]; //Array wird mit neuem Stopp erstellt, dass angezeigt wird
                 oGeoMapStopModel.setProperty("/spot", aUpdatedSpots); //damit ist kein Model.refresh() mehr notwendig
                 if(bZoomToSpot){
                     this.toCurrentPosition(sCurrentGeoL, sCurrentGeoB);
@@ -74,18 +77,17 @@ sap.ui.define([
             },
 
             setInitialPosition:function(sTargetGeoL, sTargetGeoB){
-                var oGeoMap=this.getView().byId("GeoMap");
-                var sAltitude="12";
-                oGeoMap.setInitialPosition(sTargetGeoL+";"+sTargetGeoB+";"+sAltitude);
+                let oGeoMap=this.getView().byId("GeoMap");
+                oGeoMap.setInitialPosition(`${sTargetGeoL};${sTargetGeoB};${MAP_ALTITUDE_TARGET}`);
             },
 
             onClickGeoMapSpot:function(oEvent){
-                var oPressedSpot=oEvent.getSource().getBindingContext("SpotModel").getObject();
+                let oPressedSpot=oEvent.getSource().getBindingContext("SpotModel").getObject();
                 oEvent.getSource().openDetailWindow(oPressedSpot.description ,"0", "0");
             },
 
             getCurrentPosition:function(bZoomToSpot){ //Zurücksetzen der Map Position auf aktuellen Ort?
-                //Leider abgesehen von der boolschen-Var keine andere Möglichkeit eingefallen
+                //Leider abgesehen von der boolschen-let keine andere Möglichkeit eingefallen
                 this.onBusyDialogOpen();
 
                 navigator.geolocation.getCurrentPosition(
@@ -100,65 +102,62 @@ sap.ui.define([
                     {
                         //Attributes for better GPS-Data
                         enableHighAccuracy: true,
-                        timeout: 5000,
-                        maximumAge: 0
+                        timeout: GPS_TIMEOUT ,
+                        maximumAge: GPS_MAX_AGE
                     }
                 );
             },
 
             removeOldOwnPosition:function(){
-                var oGeoMapStopModel=this.getOwnerComponent().getModel("SpotModel");
-                var aGeoMapSpots=oGeoMapStopModel.getProperty("/spot");
-                var aUpdatedPots=[];
+                let oGeoMapStopModel=this.getOwnerComponent().getModel("SpotModel");
+                let aGeoMapSpots=oGeoMapStopModel.getProperty("/spot");
 
-                for(var i in aGeoMapSpots){
-                    var oCurrentGeoMapSpot=aGeoMapSpots[i];
-                    if(oCurrentGeoMapSpot.bTarget === true){
-                        aUpdatedPots=aUpdatedPots.concat([oCurrentGeoMapSpot]);
-                    }
-                }
-
-                oGeoMapStopModel.setProperty("/spot", aUpdatedPots);
+                let aUpdatedSpots = aGeoMapSpots.filter(oCurrentGeoMapSpot => oCurrentGeoMapSpot.bTarget);
+                oGeoMapStopModel.setProperty("/spot", aUpdatedSpots);
 
                 this.getCurrentPosition(true);
             },
 
             checkIfOwnLoactionIsAccurate:function(oPosition, bZoomToSpot){
-                var sAccuracy=oPosition.coords.accuracy;
+                let sAccuracy=oPosition.coords.accuracy;
                 //TODO: Hier wurde die Prüfung auskommentiert weil sie sehr sehr ungenau ist
 
-                //if(sAccuracy>100){ //Pruefen ob die Daten überhaupt genau genug sind!
+                //if(sAccuracy>ACCURACY_THRESHOLD){ //Pruefen ob die Daten überhaupt genau genug sind!
                     //MessageToast.show("Trying to fetch more accurate data! Accuracy is not good enough!");
                 //} else{
-                    var sCurrentGeoL=oPosition.coords.longitude;
-                    var sCurrentGeoB=oPosition.coords.latitude;
+                    let { longitude: sCurrentGeoL, latitude: sCurrentGeoB } = oPosition.coords;
                     this.createOwnLocationSpot(sCurrentGeoL, sCurrentGeoB, bZoomToSpot);
                 //}
             },
 
             toCurrentPosition:function(sCurrentGeoL, sCurrentGeoB){
-                var sAltitude=15; // von 0 (weit weg) bis 20 oder so (sehr nah)
-                var oGeoMap=this.getView().byId("GeoMap");
-                oGeoMap.zoomToGeoPosition(parseFloat(sCurrentGeoL), parseFloat(sCurrentGeoB), sAltitude);
+                let oGeoMap=this.getView().byId("GeoMap");
+                oGeoMap.zoomToGeoPosition(parseFloat(sCurrentGeoL), parseFloat(sCurrentGeoB), MAP_ALTITUDE_TARGET);
 
             },
 
             onToTargetPosition:function(){ //Zur Position des derzeit ausgewählten Stops
-                var oCurrentStop=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
-                var sTargetGeoL=oCurrentStop.targetGeoL;
-                var sTargetGeoB=oCurrentStop.targetGeoB;
-                var sAltitude="15"; // von 0 (weit weg) bis 20 oder so (sehr nah)
-                var oGeoMap=this.getView().byId("GeoMap");
+                let oCurrentStop=this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
+                let { targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB } = oCurrentStop;
+                let oGeoMap=this.getView().byId("GeoMap");
 
-                oGeoMap.zoomToGeoPosition(parseFloat(sTargetGeoL), parseFloat(sTargetGeoB), parseFloat(sAltitude)); //Werte muessen als float angegeben werden
+                oGeoMap.zoomToGeoPosition(parseFloat(sTargetGeoL), parseFloat(sTargetGeoB), MAP_ALTITUDE_TARGET); //Werte muessen als float angegeben werden
             },
 
-            onBusyDialogOpen:function(){
-                this.oBusyDialog ??= this.loadFragment({
-                  name: "podprojekt.view.fragments.BusyDialog",
-                });
-        
-                this.oBusyDialog.then((oDialog) => oDialog.open());
+            onBusyDialogOpen: async function(){
+                if (!this.oBusyDialog) {
+                    try {
+                        // Lade das Fragment, wenn es noch nicht geladen wurde
+                        this.oBusyDialog = await this.loadFragment({
+                            name: "podprojekt.view.fragments.BusyDialog"
+                        });
+                    } catch (error) {
+                        // Fehlerbehandlung bei Problemen beim Laden des Fragments
+                        console.error("Fehler beim Laden des BusyDialogs:", error);
+                        MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
+                        return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
+                    }
+                  }
               },
         
               onBusyDialogClose:function(){
