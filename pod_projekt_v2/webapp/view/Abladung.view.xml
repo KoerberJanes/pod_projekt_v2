@@ -61,7 +61,7 @@
                 <contentMiddle>
                 </contentMiddle>
                 <contentRight>
-                    <Button text="{i18n>abort}" press="checkForUnsavedNves"/>
+                    <Button text="{i18n>back}" press="checkForUnsavedNves"/>
                 </contentRight>
             </Bar>
         </footer>

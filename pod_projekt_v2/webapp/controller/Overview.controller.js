@@ -276,14 +276,14 @@ sap.ui.define(
         });
       },
 
-      setFocusIntoMileageInput:function(){//Habe leider keine bessere Moeglichkeit gesehen den Fokus wieder zu setzen
-        var oInputField= this.getView().byId("kilometerInput");
-
-        //oInputField.setValueState("Error");
-        setTimeout(() =>{
-          oInputField.focus();
-        }, 50);
-        
+      onDialogAfterOpen: function(oEvent) {
+        // Der Dialog ist geöffnet, setze den Fokus
+        var oInput = this.getView().byId("kilometerInput");
+        if (oInput && oInput.getDomRef()) {
+          requestAnimationFrame(() => {
+              oInput.focus();
+          });
+        }
       },
 
       scrollToInputAfterError:function(){
@@ -291,9 +291,11 @@ sap.ui.define(
         var oInputField=this.getView().byId("kilometerInput");
         
         oInputField.setValueState("Error");
-        setTimeout(() => {
-            oInputField.focus();
-        }, 50);
+        requestAnimationFrame(() => { // Stelle sicher, dass das DOM bereit ist, bevor du den Fokus setzt
+          if (oInputField && oInputField.getDomRef()) {
+              oInputField.focus();
+          }
+      });
       },
 
       tourTolleranceNotAcceptedError:function(){ //Kilometer vom User nicht akzeptiert, da nicht in Tolleranz

@@ -109,6 +109,7 @@ sap.ui.define([
                 */
 
                this.busyDialogClose();
+               this.onClearSignField();
                this.showBackendConfirmMessage();
                this.setCurrentStopAsFinished();
             },

@@ -13,11 +13,24 @@ sap.ui.define([
 
         return Controller.extend("podprojekt.controller.Quittierung", {
             onInit: function () {
- 
+                var oRouter = this.getOwnerComponent().getRouter(); // Router registrieren, um Routing-Ereignisse zu verarbeiten
+                oRouter.getRoute("Quittierung").attachPatternMatched(this._onObjectMatched, this);
             },
             
             onAfterRendering: function() {
                 this._oBundle = this.getView().getModel("i18n").getResourceBundle();
+            },
+
+            _onObjectMatched: function() { //Fokus-Methoden aufruf nach dem Routing
+                this._setFocus();
+            },
+
+            _setFocus: function() { //Tatsächliches setzen des Fokus
+                // Verzögertes Setzen des Fokus, um sicherzustellen, dass das Element vollständig gerendert ist
+                requestAnimationFrame(() => {
+                    var oInput = this.byId("recipientNameInp");
+                    if (oInput) { oInput.focus(); }
+                });
             },
 
             onCustomerNameInputChange:function(oEvent){ //Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
@@ -53,11 +66,6 @@ sap.ui.define([
                   sValueState = "Error";
                 }
                 oInput.setValueState(sValueState);
-              },
-
-              setValueStateForInput:function(sState){
-                var oInput=this.getView().byId("recipientNameInp");
-                oInput.setValueState(sState);
               },
 
             onRecipientNotFound:function(){ //Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
@@ -99,6 +107,7 @@ sap.ui.define([
                         oMediaStream.getTracks().forEach(track => track.stop());
                     }
                 }
+                this.clearPhotoModel();
             },
 
             onOpenPhotoDialog:function(){ //Dialog für das aufnehmen eines Fotos oeffnen
@@ -168,7 +177,6 @@ sap.ui.define([
 
             onAddFotoDialogClose:function(){ //Schließen Dialog
                 this.disableVideoStreams();
-                this.clearPhotoModel();
                 this.byId("FotoMachenDialog").close();
             },
 

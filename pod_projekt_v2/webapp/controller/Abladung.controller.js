@@ -25,6 +25,16 @@ sap.ui.define([
                 this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
             },
 
+            onDialogAfterOpen: function(oEvent) {
+                // Der Dialog ist geöffnet, setze den Fokus
+                var oInput = this.getView().byId("barcodeInput");
+                if (oInput && oInput.getDomRef()) {
+                    requestAnimationFrame(() => {
+                        oInput.focus();
+                    });
+                }
+            },
+
             onManualInputChange:function(oEvent){ //Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
                 //! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
                 var oInput = oEvent.getSource();

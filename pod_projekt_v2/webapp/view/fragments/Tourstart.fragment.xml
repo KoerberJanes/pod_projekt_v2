@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core" 
 	xmlns:form="sap.ui.layout.form">
 
-	<Dialog id="TourstartDialog" initialFocus="kilometerInput" afterOpen="setFocusIntoMileageInput">
+	<Dialog id="TourstartDialog" initialFocus="" afterOpen="onDialogAfterOpen">
 		<customHeader>
 			<Bar>
 				<contentMiddle>

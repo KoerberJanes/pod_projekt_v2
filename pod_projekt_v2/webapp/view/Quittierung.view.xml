@@ -67,9 +67,8 @@
                     </List>
                     <MessageStrip id="messageStripDeliveryItemList" 
                         visible="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? true : false}" 
-                        text="Es wurden noch nicht alle NVEs bearbeitet!" 
-                        type="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'None'}" 
-                        showCloseButton="false" />
+                        text="{i18n>notALlNvesProcessed}" 
+                        type="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'None'}" />
 
                     <Label id="complaints" text="{i18n>complaints}"/>
                     <Switch id="complaintsSwitch" type="AcceptReject" state="{settings>/complaintsSwitch}"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
