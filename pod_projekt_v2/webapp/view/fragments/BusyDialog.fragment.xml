@@ -1,10 +1,5 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
-	<BusyDialog
-        id="BusyDialog"
-		title="{i18n>busyDialogTitle}"
-		text="{i18n>busyDialogLoadingText}"
-		showCancelButton="true"
-		close="onBusyDialogClose" />
+	<BusyDialog id="BusyDialog" title="{i18n>busyDialogTitle}" text="{i18n>busyDialogLoadingText}" showCancelButton="true" close="onBusyDialogClose" />
 </core:FragmentDefinition>

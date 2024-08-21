@@ -1,98 +1,94 @@
-sap.ui.define([
-    "sap/ui/core/mvc/Controller",
-    "sap/m/MessageBox",
-	"sap/m/MessageToast",
-    "podprojekt/utils/StatusSounds"
-],
-    /**
-     * @param {typeof sap.ui.core.mvc.Controller} Controller
-     */
-    function (Controller, MessageBox, MessageToast, StatusSounds) {
-        "use strict";
+sap.ui.define(
+	["sap/ui/core/mvc/Controller", "sap/m/MessageBox", "sap/m/MessageToast", "podprojekt/utils/StatusSounds"],
+	/**
+	 * @param {typeof sap.ui.core.mvc.Controller} Controller
+	 */
+	function (Controller, MessageBox, MessageToast, StatusSounds) {
+		"use strict";
 
-        return Controller.extend("podprojekt.controller.Unterschrift", {
-            onInit: function () {
-                //this.saftyPig();
-            },
+		return Controller.extend("podprojekt.controller.Unterschrift", {
+			onInit: function () {
+				//this.saftyPig();
+			},
 
-            saftyPig:function(){
-                console.log("                         _");
-                console.log(" _._ _..._ .-',     _.._(`))");
-                console.log("'-. `     '  /-._.-'    ',/");
-                console.log("   )         \            '.");
-                console.log("  / _    _    |             \"");
-                console.log(" |  a    a    /              |");
-                console.log(" \   .-.                     ;  ");
-                console.log("  '-('' ).-'       ,'       ;");
-                console.log("     '-;           |      .'");
-                console.log("        \           \    /");
-                console.log("        | 7  .__  _.-\   \"");
-                console.log("        | |  |  ``/  /`  /");
-                console.log("       /,_|  |   /,_/   /");
-                console.log("          /,_/      '`-'");
-            },
+			saftyPig: function () {
+				console.log("                         _");
+				console.log(" _._ _..._ .-',     _.._(`))");
+				console.log("'-. `     '  /-._.-'    ',/");
+				console.log("   )                     '.");
+				console.log('  / _    _    |             "');
+				console.log(" |  a    a    /              |");
+				console.log("    .-.                     ;  ");
+				console.log("  '-('' ).-'       ,'       ;");
+				console.log("     '-;           |      .'");
+				console.log("                       /");
+				console.log('        | 7  .__  _.-   "');
+				console.log("        | |  |  ``/  /`  /");
+				console.log("       /,_|  |   /,_/   /");
+				console.log("          /,_/      '`-'");
+			},
 
-            onAfterRendering: function() {
-                this._oBundle = this.getView().getModel("i18n").getResourceBundle();
-            },
+			onAfterRendering: function () {
+				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
+			},
 
-            onClearSignField:function(){
-                this.getView().byId("digitalSignatureId").clearArea();
-            },
+			onClearSignField: function () {
+				this.getView().byId("digitalSignatureId").clearArea();
+			},
 
-            onCheckIfStopSigned:function(){
-                let sDigitalSignatureId = this.byId("digitalSignatureId");
-                let sSignedFieldBase64=sDigitalSignatureId.getSignatureAsString();
-                //let sSignedFieldPng=sDigitalSignatureId.getSignatureAsPng();
+			onCheckIfStopSigned: function () {
+				let sDigitalSignatureId = this.byId("digitalSignatureId");
+				let sSignedFieldBase64 = sDigitalSignatureId.getSignatureAsString();
+				//let sSignedFieldPng=sDigitalSignatureId.getSignatureAsPng();
 
-                if(sSignedFieldBase64!==""){ //Feld ist leer und wurde nicht Unterschrieben!
-                    this.simulateBackendCall();
-                } else{
-                    this._showErrorMessageBox("noSignatureDetected", () => {});
-                }
-            },
+				if (sSignedFieldBase64 !== "") {
+					//Feld ist leer und wurde nicht Unterschrieben!
+					this.simulateBackendCall();
+				} else {
+					this._showErrorMessageBox("noSignatureDetected", () => {});
+				}
+			},
 
-            _showErrorMessageBox: function(sMessageKey, fnOnClose) {
-                StatusSounds.playBeepError();
-                MessageBox.error(this._oBundle.getText(sMessageKey), {
-                    onClose: fnOnClose || function() {}  // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
-                });
-            },
+			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
+				StatusSounds.playBeepError();
+				MessageBox.error(this._oBundle.getText(sMessageKey), {
+					onClose: fnOnClose || function () {}, // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
+				});
+			},
 
-            busyDialogOpen: async function(){
-                if (!this.oBusyDialog) {
-                    try {
-                        // Lade das Fragment, wenn es noch nicht geladen wurde
-                        this.oBusyDialog = await this.loadFragment({
-                            name: "podprojekt.view.fragments.BusyDialog"
-                        });
-                    } catch (error) {
-                        // Fehlerbehandlung bei Problemen beim Laden des Fragments
-                        console.error("Fehler beim Laden des BusyDialogs:", error);
-                        MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
-                        return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
-                    }
-                  }
-            },
+			busyDialogOpen: async function () {
+				if (!this.oBusyDialog) {
+					try {
+						// Lade das Fragment, wenn es noch nicht geladen wurde
+						this.oBusyDialog = await this.loadFragment({
+							name: "podprojekt.view.fragments.BusyDialog",
+						});
+					} catch (error) {
+						// Fehlerbehandlung bei Problemen beim Laden des Fragments
+						console.error("Fehler beim Laden des BusyDialogs:", error);
+						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
+						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
+					}
+				}
+			},
 
-            busyDialogClose:function(){
-                setTimeout(() => { 
-                    if(this.byId("BusyDialog")) this.byId("BusyDialog").close() 
-                },500);
-            },
+			busyDialogClose: function () {
+				setTimeout(() => {
+					if (this.byId("BusyDialog")) this.byId("BusyDialog").close();
+				}, 500);
+			},
 
-            simulateBackendCall:function(){
-                //this.busyDialogOpen();
+			simulateBackendCall: function () {
+				//this.busyDialogOpen();
 
-                let sPath="/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
-                let oODataModel= this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
-                //let oFilter1 = new Filter(); //Filter Attribut 1
-                //let oFilter2 = new Filter(); //Filter Attribut 2
-                //let oFilter3 = new Filter(); //Filter Attribut 3
-                //let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+				let oODataModel = this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
+				//let oFilter1 = new Filter(); //Filter Attribut 1
+				//let oFilter2 = new Filter(); //Filter Attribut 2
+				//let oFilter3 = new Filter(); //Filter Attribut 3
+				//let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
 
-
-                /*
+				/*
                 oODataModel.read(sPath, {
                 filters: aFilters,
 
@@ -115,91 +111,98 @@ sap.ui.define([
                 }
                 */
 
-               this.busyDialogClose();
-               this.onClearSignField();
-               this.showBackendConfirmMessage();
-               this.setCurrentStopAsFinished();
-            },
+				this.busyDialogClose();
+				this.onClearSignField();
+				this.showBackendConfirmMessage();
+				this.setCurrentStopAsFinished();
+			},
 
-            onRefreshDateAndTime:function(){
-                let oCustomerModel=this.getOwnerComponent().getModel("CustomerModel");
-                let sDateAndTime= sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.YYYY HH:mm:ss" }).format(new Date()); //Datum inklusive Uhrzeit
-                oCustomerModel.setProperty("/dateAndTime", sDateAndTime);
-            },
+			onRefreshDateAndTime: function () {
+				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
+				let sDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
+					pattern: "dd.MM.YYYY HH:mm:ss",
+				}).format(new Date()); //Datum inklusive Uhrzeit
+				oCustomerModel.setProperty("/dateAndTime", sDateAndTime);
+			},
 
-            showBackendConfirmMessage:function(){
-                StatusSounds.playBeepSuccess();
-                MessageToast.show(this._oBundle.getText("stopSuccessfullyReceipt"), {
-                    duration: 2500,
-                    width:"15em"
-                });
-            },
+			showBackendConfirmMessage: function () {
+				StatusSounds.playBeepSuccess();
+				MessageToast.show(this._oBundle.getText("stopSuccessfullyReceipt"), {
+					duration: 2500,
+					width: "15em",
+				});
+			},
 
-            setCurrentStopAsFinished:function(){ //!Statuscodes müssen abgesprochen werden
-                let oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel"); //Infos über derzeitigen Stopp
-                let oCurrentStop=oStopInformationModel.getProperty("/tour"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
-                let oTourStartModel=this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
-                let aStopsOfCurrentTour=oTourStartModel.getProperty("/tour/stops");//'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
-                let oFoundTour=aStopsOfCurrentTour.find(element => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
-                
-                if(oFoundTour){
-                    oFoundTour.stopStatus="70"; // --> Annahme: 70 ist erledigt
-                    this.checkIfAllStopsAreCompleted();
-                }
-            },
+			setCurrentStopAsFinished: function () {
+				//!Statuscodes müssen abgesprochen werden
+				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel"); //Infos über derzeitigen Stopp
+				let oCurrentStop = oStopInformationModel.getProperty("/tour"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
+				let oTourStartModel = this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
+				let aStopsOfCurrentTour = oTourStartModel.getProperty("/tour/stops"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
+				let oFoundTour = aStopsOfCurrentTour.find((element) => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
 
-            checkIfAllStopsAreCompleted:function(){ //!Statuscodes müssen abgesprochen werden
-                let aStopsOfCurrentTour=this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Tour mit allen Stopps und Infos vorhanden
+				if (oFoundTour) {
+					oFoundTour.stopStatus = "70"; // --> Annahme: 70 ist erledigt
+					this.checkIfAllStopsAreCompleted();
+				}
+			},
 
-                if(aStopsOfCurrentTour.some(element => element.stopStatus === "90")){ //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
-                    this.changeDisplayedNvesOfStop(); //Hier wird ein Test gemacht
-                } else{
-                    this.setTourStatusProcessed(); //Hier wird auch ein Test gemacht
-                }
-            },
-            changeDisplayedNvesOfStop:function(){
-                let oStopInformationModel=this.getOwnerComponent().getModel("StopInformationModel");
-                let aRemainingNves=oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+			checkIfAllStopsAreCompleted: function () {
+				//!Statuscodes müssen abgesprochen werden
+				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Tour mit allen Stopps und Infos vorhanden
 
-                oStopInformationModel.setProperty("/tour/loadingUnits", aRemainingNves);
+				if (aStopsOfCurrentTour.some((element) => element.stopStatus === "90")) {
+					//Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
+					this.changeDisplayedNvesOfStop(); //Hier wird ein Test gemacht
+				} else {
+					this.setTourStatusProcessed(); //Hier wird auch ein Test gemacht
+				}
+			},
+			changeDisplayedNvesOfStop: function () {
+				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
+				let aRemainingNves = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
-                this.resetUserInput();
-                this.resetUserPhotos();
-                this.onNavToActiveTour(); //--> HashManager übernimmt aktualisierung von Models
-            },
+				oStopInformationModel.setProperty("/tour/loadingUnits", aRemainingNves);
 
-            setTourStatusProcessed:function(){ //!Statuscodes müssen abgesprochen werden
-                let oCurrentTour=this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
+				this.resetUserInput();
+				this.resetUserPhotos();
+				this.onNavToActiveTour(); //--> HashManager übernimmt aktualisierung von Models
+			},
 
-                oCurrentTour.routeStatus="10";
-                this.onNavToOverview(); //--> HashManager übernimmt aktualisierung von Models
-            },
+			setTourStatusProcessed: function () {
+				//!Statuscodes müssen abgesprochen werden
+				let oCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
 
-            resetUserInput:function(){
-                let oCustomerModel=this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
-                //TODO: LoadingDevices. Entweder Objekte nach erhalt vom Backend aendern oder expressionBinding verwenden
-                //let oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
-                
-                oCustomerModel.setProperty("/customerName", "");
-            },
+				oCurrentTour.routeStatus = "10";
+				this.onNavToOverview(); //--> HashManager übernimmt aktualisierung von Models
+			},
 
-            resetUserPhotos:function(){
-                let oPhotoListModel=this.getOwnerComponent().getModel("PhotoModel");
-                //let aPhotoListItems=oPhotoListModel.getProperty("/photos");
+			resetUserInput: function () {
+				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
+				//TODO: LoadingDevices. Entweder Objekte nach erhalt vom Backend aendern oder expressionBinding verwenden
+				//let oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
 
-                oPhotoListModel.setProperty("/photos", []);
-            },
+				oCustomerModel.setProperty("/customerName", "");
+			},
 
-            onNavToActiveTour:function(){
-                let oRouter = this.getOwnerComponent().getRouter();
+			resetUserPhotos: function () {
+				let oPhotoListModel = this.getOwnerComponent().getModel("PhotoModel");
+				//let aPhotoListItems=oPhotoListModel.getProperty("/photos");
 
-                oRouter.navTo("ActiveTour");
-            },
+				oPhotoListModel.setProperty("/photos", []);
+			},
 
-            onNavToOverview:function(){
-                let oRouter = this.getOwnerComponent().getRouter();
+			onNavToActiveTour: function () {
+				let oRouter = this.getOwnerComponent().getRouter();
 
-                oRouter.navTo("Overview");
-            }
-        });
-    });
+				oRouter.navTo("ActiveTour");
+			},
+
+			onNavToOverview: function () {
+				let oRouter = this.getOwnerComponent().getRouter();
+
+				oRouter.navTo("Overview");
+			},
+		});
+	}
+);

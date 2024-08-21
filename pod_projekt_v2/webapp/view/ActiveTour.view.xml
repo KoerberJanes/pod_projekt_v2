@@ -11,7 +11,7 @@
                     <contentLeft>
                     </contentLeft>
                     <contentMiddle>
-                        <Label id="activeTourTitleId" text="{i18n>activetourPageTitle}"/>
+                        <Title id="activeTourTitleId" text="{i18n>activetourPageTitle}"/>
                     </contentMiddle>
                     <contentRight>
                     </contentRight>

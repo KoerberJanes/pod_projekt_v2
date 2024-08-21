@@ -7,7 +7,7 @@
 		<customHeader>
 			<Bar>
 				<contentMiddle>
-					<Label design="Bold" text="{i18n>tourstartDialogTitle}"/>
+					<Title design="Bold" text="{i18n>tourstartDialogTitle}"/>
 				</contentMiddle>
 			</Bar>
 		</customHeader>

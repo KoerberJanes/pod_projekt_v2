@@ -10,7 +10,7 @@
                 <contentLeft>
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>stopInformationTitle}"/>
+                    <Title text="{i18n>stopInformationTitle}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>

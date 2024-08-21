@@ -9,7 +9,7 @@
                     <contentLeft>
                     </contentLeft>
                     <contentMiddle>
-                        <Label id="overviewTitleId" text="{i18n>overviewTitle}"/>
+                        <Title id="overviewTitleId" text="{i18n>overviewTitle}"/>
                     </contentMiddle>
                     <contentRight>
                     </contentRight>

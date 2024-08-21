@@ -9,7 +9,7 @@
                 <contentLeft>
                 </contentLeft>
                 <contentMiddle>
-                    <Label text="{i18n>signingPageTitle}"/>
+                    <Title text="{i18n>signingPageTitle}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>

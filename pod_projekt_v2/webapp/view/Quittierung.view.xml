@@ -10,7 +10,7 @@
                 <contentLeft>
                 </contentLeft>
                 <contentMiddle>
-                    <Label id="confirmationTitleId" text="{i18n>confirmationTitle}"/>
+                    <Title id="confirmationTitleId" text="{i18n>confirmationTitle}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>

@@ -8,7 +8,7 @@
                 <contentLeft>
                 </contentLeft>
                 <contentMiddle>
-                    <Label id="unloadingTitleId" text="{i18n>unloadingTitle}"/>
+                    <Title id="unloadingTitleId" text="{i18n>unloadingTitle}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>
