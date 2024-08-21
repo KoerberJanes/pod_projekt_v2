@@ -284,10 +284,11 @@ sap.ui.define([
                 let oSelectedType=oPhotoTypeSelectedModel.getProperty("/type"); //Selektierter Foto-Typ 
                 let bEnoughSpace=this.checkPhotoLimit(oSelectedType.photoTyp); //Platz für weitere Fotos?
 
-                if(bEnoughSpace){//TODO: Irgendwie wandern die fotos trotzdem in das Model obwohl der else zweig betreten wird
+                if(bEnoughSpace){
                     let aUpdatedPhotos = [...oSelectedType.photo, oTakenPhoto]; // Erstellen eines Arrays mit alten Fotos und neuem Foto darin
                     oPhotoTypeSelectedModel.setProperty("/type/photo", aUpdatedPhotos); // Setzen der neuen Fotos in das Model
-                    this.refreshFragmentTitle(oPhotoTypeSelectedModel);
+                    oPhotoTypeSelectedModel.refresh(true); // Erzwinge binding refresh fuer dialog Titel
+                    this.setNewPhotoInPhotoList(oTakenPhoto); //Uebernehmen in der Allgemeinen Liste
                 } else{
                     this._showErrorMessageBox("notEnoughSpace", () => {});
                 }
@@ -301,18 +302,9 @@ sap.ui.define([
                 });
             },
 
-            refreshFragmentTitle:function(oPhotoTypeSelectedModel){ //Aktualisieren des Fregment-Titels nachdem ein Foto gespeichert wurde
-                let aPhotosForType=oPhotoTypeSelectedModel.getProperty("/type/photo"); //Array an geschossenen Fotos
-                let sTextForType=oPhotoTypeSelectedModel.getProperty("/type/photoTyp"); //Bezeichnung des Foto-Typs
-                let oTitle=this.getView().byId("FotoMachenDialogeTitle"); //Title Objekt aus der View
-                
-                oTitle.setText(sTextForType + " (" +aPhotosForType.length + ")" ); 
-            },
-
             saveNewImage:function(oImage){ //Speichern von zu letzt geschossenem Foto
                 let oPhotoModel=this.getOwnerComponent().getModel("LatestPhotoModel");
                 oPhotoModel.setProperty("/photo", oImage);
-                this.setNewPhotoInPhotoList(oImage);
                 oPhotoModel.refresh();
             },
 
