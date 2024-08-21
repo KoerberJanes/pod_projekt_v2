@@ -36,8 +36,7 @@
                     <upload:UploadSet id="photoClearingList" visible="{= ${settings>/photoListClearingVisible}}" fileTypes="png, image/*" instantUpload="false"
                         items="{path:'PhotoModelUnloading>/results', 
                             sorter: {path:'photoType', descending: false, 
-                                group: true},
-                                    groupHeaderFactory:'.formatter.getPhotoTypeHeader'}"> 
+                                group: true}}"> 
                         <upload:toolbar>
                             <OverflowToolbar >
                                 <ToolbarSpacer/>

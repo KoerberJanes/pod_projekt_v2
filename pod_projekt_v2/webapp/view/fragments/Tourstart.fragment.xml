@@ -7,7 +7,7 @@
 		<customHeader>
 			<Bar>
 				<contentMiddle>
-					<Title design="Bold" text="{i18n>tourstartDialogTitle}"/>
+					<Title text="{i18n>tourstartDialogTitle}"/>
 				</contentMiddle>
 			</Bar>
 		</customHeader>
@@ -16,7 +16,7 @@
 				<form:content>
 					<Label text="{i18n>licensePlate}"/>
 					<Input id="kennzeichenInput" value="{TourStartFragmentModel>/tour/licensePlate}" editable="false"/>
-					<Label text="{i18n>Mileage}" labelFor="kilometerInput" required="true"/>
+					<Label text="{i18n>mileage}" labelFor="kilometerInput" required="true"/>
 					<Input id="kilometerInput" required="true" liveChange="onMileageInputLiveChange" valueLiveUpdate="true" change="onMileageInputChange" showClearIcon="true" 
 						value="{
 							path: 'TourStartFragmentModel>/mileage',

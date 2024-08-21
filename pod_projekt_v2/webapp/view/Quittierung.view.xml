@@ -96,8 +96,7 @@
                     <upload:UploadSet id="photoItemsList" visible="{settings>/photoListVisible}" fileTypes="png, image/*" instantUpload="false"
                         items="{path:'PhotoModel>/photos', 
                             sorter: {path:'photoType', descending: false, 
-                                group: true},
-                                    groupHeaderFactory:'.formatter.getPhotoTypeHeader'}"> 
+                                group: true}}"> 
                         <upload:toolbar>
                             <OverflowToolbar >
                                 <ToolbarSpacer/>
