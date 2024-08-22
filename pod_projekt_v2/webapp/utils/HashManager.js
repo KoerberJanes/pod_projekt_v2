@@ -25,18 +25,18 @@ sap.ui.define([
             var sNewHash = oEvent.getParameter("newHash"); // unique pattern
 
             const refreshFunctions = {
-                "overview": async() => this._refreshPage(oView, "TourModel", "/results"),
+                "overview": async() => await this._refreshPage(oView, "TourModel", "/results"),
                 "tour": async () => {
                     await this._refreshPage(oView, "StopModel", "/results");
                     await this._refreshPage(oView, "StopInformationModel", "/tour");
                 },
-                "stop": async() => this._refreshPage(oView, "StopInformationModel", "/tour"),
-                "map": async() => this._refreshMapPage(oView),
+                "stop": async() => await this._refreshPage(oView, "StopInformationModel", "/tour"),
+                "map": async() => await this._refreshMapPage(oView),
                 "confirmation": async () => {
                     await this._refreshPage(oView, "StopInformationModel", "/tour");
                     await this._refreshPage(oView, "StopModel", "/results");
                 },
-                "unloading": async() => this._refreshPage(oView, "StopInformationModel", "/tour"),
+                "unloading": async() => await this._refreshPage(oView, "StopInformationModel", "/tour"),
                 "signature": async () => {
                     await this._refreshPage(oView, "StopInformationModel", "/tour");
                     await this._refreshPage(oView, "StopModel", "/results");
