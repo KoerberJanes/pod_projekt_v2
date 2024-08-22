@@ -50,21 +50,30 @@ sap.ui.define([
         _refreshPage: function(oView, sModelName, sPropertyPath) {
             return new Promise((resolve) => {
                 var oModel = oView.getModel(sModelName);
-                if (oModel) {
-                    var oData = oModel.getProperty(sPropertyPath);
-                    oModel.setProperty(sPropertyPath, oData);
-                    oModel.refresh(true, {
-                        success: () => {
-                            resolve(); //Abschließen der Methode 
-                        },
-                        error: () => {
-                            // Handle any errors if needed
-                            resolve();//Abschließen der Methode in jedem Fall
-                        }
-                    });
-                } else {
-                    resolve(); //Abschließen der Methode in jedem Fall
+
+                if (!oModel) {
+                    //console.error("Modell nicht gefunden:", sModelName);
+                    resolve(); // Modell nicht gefunden, trotzdem auflösen
+                    return;
                 }
+
+                if (!(oModel instanceof sap.ui.model.json.JSONModel)) {
+                    //console.error("Das Modell ist kein JSONModel");
+                    resolve(); // Modell ist nicht vom Typ JSONModel, trotzdem auflösen
+                    return;
+                }
+
+                //console.log("Aktualisiere Modell:", sModelName, "für Pfad:", sPropertyPath);
+
+                // Hole die Daten für den angegebenen Property-Pfad
+                var oData = oModel.getProperty(sPropertyPath);
+                // Setze die Daten erneut im Modell
+                oModel.setProperty(sPropertyPath, oData);
+
+                // Da JSONModel keine refresh-Methode hat, gibt es keine Callbacks für Erfolg oder Fehler
+                //console.info("Model wurde erfolgreich aktualisiert:", sModelName, "für Pfad:", sPropertyPath);
+
+                resolve();
             });
         },
 
