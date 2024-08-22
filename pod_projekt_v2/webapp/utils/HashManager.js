@@ -21,40 +21,51 @@ sap.ui.define([
             }
         },
 
-        onHashChanged: function(oEvent, oView) { //Fragt nach dem 'pattern' in der manifest.json ab
-            var sNewHash = oEvent.getParameter("newHash"); //unique pattern
+        onHashChanged: async function(oEvent, oView) { // Fragt nach dem 'pattern' in der manifest.json ab
+            var sNewHash = oEvent.getParameter("newHash"); // unique pattern
 
             const refreshFunctions = {
-                "overview": () => this._refreshPage(oView, "TourModel", "/results"),
-                "tour": () => {
-                    this._refreshPage(oView, "StopModel", "/results"),
-                    this._refreshPage(oView, "StopInformationModel", "/tour");
+                "overview": async() => this._refreshPage(oView, "TourModel", "/results"),
+                "tour": async () => {
+                    await this._refreshPage(oView, "StopModel", "/results");
+                    await this._refreshPage(oView, "StopInformationModel", "/tour");
                 },
-                "stop": () => this._refreshPage(oView, "StopInformationModel", "/tour"),
-                "map": () => this._refreshMapPage(oView),
-                "confirmation": () => {
-                    this._refreshPage(oView, "StopInformationModel", "/tour");
-                    this._refreshPage(oView, "StopModel", "/results");
+                "stop": async() => this._refreshPage(oView, "StopInformationModel", "/tour"),
+                "map": async() => this._refreshMapPage(oView),
+                "confirmation": async () => {
+                    await this._refreshPage(oView, "StopInformationModel", "/tour");
+                    await this._refreshPage(oView, "StopModel", "/results");
                 },
-                "unloading": () => this._refreshPage(oView, "StopInformationModel", "/tour"),
-                "signature": () => {
-                    this._refreshPage(oView, "StopInformationModel", "/tour");
-                    this._refreshPage(oView, "StopModel", "/results");
+                "unloading": async() => this._refreshPage(oView, "StopInformationModel", "/tour"),
+                "signature": async () => {
+                    await this._refreshPage(oView, "StopInformationModel", "/tour");
+                    await this._refreshPage(oView, "StopModel", "/results");
                 }
             };
 
             var refreshFunction = refreshFunctions[sNewHash] || (() => this._refreshNotFoundPage(oView));
-            refreshFunction();
+            await refreshFunction();
         },
 
         _refreshPage: function(oView, sModelName, sPropertyPath) {
-            var oModel = oView.getModel(sModelName);
-            if (oModel) {
-                var oData = oModel.getProperty(sPropertyPath);
-                oModel.setProperty(sPropertyPath, oData);
-                oModel.refresh(true);
-                //console.log(`${sModelName} Seite wurde aktualisiert.`); //Zur Pruefung in der Konsole
-            }
+            return new Promise((resolve) => {
+                var oModel = oView.getModel(sModelName);
+                if (oModel) {
+                    var oData = oModel.getProperty(sPropertyPath);
+                    oModel.setProperty(sPropertyPath, oData);
+                    oModel.refresh(true, {
+                        success: () => {
+                            resolve(); //Abschließen der Methode 
+                        },
+                        error: () => {
+                            // Handle any errors if needed
+                            resolve();//Abschließen der Methode in jedem Fall
+                        }
+                    });
+                } else {
+                    resolve(); //Abschließen der Methode in jedem Fall
+                }
+            });
         },
 
         _refreshMapPage: function(oView) {
