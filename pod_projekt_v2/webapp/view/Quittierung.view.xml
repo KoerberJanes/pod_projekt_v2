@@ -8,6 +8,7 @@
         <customHeader>
             <Bar>
                 <contentLeft>
+                    <Button id="navBackToStopInformationPageId" press="onNavToStopInformation" icon="sap-icon://nav-back"/>
                 </contentLeft>
                 <contentMiddle>
                     <Title id="confirmationTitleId" text="{i18n>confirmationTitle}"/>

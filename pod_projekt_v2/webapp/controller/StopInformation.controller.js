@@ -28,6 +28,12 @@ sap.ui.define(
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("Quittierung");
 			},
+
+			onNavToActiveTour: function () {
+				//Navigation zur Quittierung View
+				let oRouter = this.getOwnerComponent().getRouter();
+				oRouter.navTo("ActiveTour");
+			},
 		});
 	}
 );

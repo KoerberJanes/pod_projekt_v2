@@ -386,6 +386,13 @@ sap.ui.define(
 
 				oRouter.navTo("Overview");
 			},
+
+			onNavToStopInformation: function () {
+				//Navigation zurueck zur Uebersicht
+				let oRouter = this.getOwnerComponent().getRouter();
+
+				oRouter.navTo("StopInformation");
+			},
 		});
 	}
 );

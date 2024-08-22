@@ -67,6 +67,13 @@ sap.ui.define(
 
 				oRouter.navTo("StopInformation");
 			},
+
+			onNavToOverview: function () {
+				//Navigation zur Overview
+				let oRouter = this.getOwnerComponent().getRouter();
+
+				oRouter.navTo("Overview");
+			},
 		});
 	}
 );

@@ -345,6 +345,14 @@ sap.ui.define(
 
 				oRouter.navTo("ActiveTour");
 			},
+
+			onNavToLogin: function () {
+				//Navigation zur Login Seite
+				StatusSounds.playBeepSuccess();
+				let oRouter = this.getOwnerComponent().getRouter();
+
+				oRouter.navTo("RouteMain");
+			},
 		});
 	}
 );

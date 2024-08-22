@@ -8,6 +8,7 @@
         <customHeader>
             <Bar>
                 <contentLeft>
+                    <Button id="navBackToActiveTourPageId" press="onNavToActiveTour" icon="sap-icon://nav-back"/>
                 </contentLeft>
                 <contentMiddle>
                     <Title text="{i18n>stopInformationTitle}"/>

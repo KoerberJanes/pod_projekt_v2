@@ -203,6 +203,12 @@ sap.ui.define(
 
 				oRouter.navTo("Overview");
 			},
+
+			onNavToQuittierung: function () {
+				let oRouter = this.getOwnerComponent().getRouter();
+
+				oRouter.navTo("Quittierung");
+			},
 		});
 	}
 );

@@ -158,6 +158,12 @@ sap.ui.define(
 					this.byId("BusyDialog").close();
 				}, 250);
 			},
+
+			onNavToStopInformation: function () {
+				let oRouter = this.getOwnerComponent().getRouter();
+
+				oRouter.navTo("StopInformation");
+			},
 		});
 	}
 );

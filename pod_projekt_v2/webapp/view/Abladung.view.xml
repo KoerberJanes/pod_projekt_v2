@@ -6,6 +6,7 @@
         <customHeader>
             <Bar id="undloadingPageBar">                    
                 <contentLeft>
+                    <Button id="navBackToQuittierungPageId" press="checkForUnsavedNves" icon="sap-icon://nav-back"/>
                 </contentLeft>
                 <contentMiddle>
                     <Title id="unloadingTitleId" text="{i18n>unloadingTitle}"/>

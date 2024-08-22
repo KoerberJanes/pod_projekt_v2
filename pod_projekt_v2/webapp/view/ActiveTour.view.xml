@@ -9,6 +9,7 @@
                 <Bar id="activeTourPageBar">
                     
                     <contentLeft>
+                        <Button id="navBackToOverviewPageId" press="onNavToOverview" icon="sap-icon://nav-back"/>
                     </contentLeft>
                     <contentMiddle>
                         <Title id="activeTourTitleId" text="{i18n>activetourPageTitle}"/>
