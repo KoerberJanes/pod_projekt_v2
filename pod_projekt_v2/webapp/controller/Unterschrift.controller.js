@@ -38,11 +38,10 @@ sap.ui.define(
 
 			onCheckIfStopSigned: function () {
 				let sDigitalSignatureId = this.byId("digitalSignatureId");
-				let sSignedFieldBase64 = sDigitalSignatureId.getSignatureAsString();
-				//let sSignedFieldPng=sDigitalSignatureId.getSignatureAsPng();
+				let sSignatureAsSvg = sDigitalSignatureId.getSignatureAsString();
 
-				if (sSignedFieldBase64 !== "") {
-					//Feld ist leer und wurde nicht Unterschrieben!
+				if (sSignatureAsSvg) {
+					// Feld enthält etwas und wurde unterschrieben!
 					this.simulateBackendCall();
 				} else {
 					this._showErrorMessageBox("noSignatureDetected", () => {});

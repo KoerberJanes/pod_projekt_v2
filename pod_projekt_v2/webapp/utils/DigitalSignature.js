@@ -1,6 +1,8 @@
-sap.ui.define(
-    ["sap/ui/core/Control"],
-    function (Control) {
+sap.ui.define([
+    "sap/ui/core/Control", 
+    "sap/ui/core/ResizeHandler"
+    ],
+    function (Control, ResizeHandler) {
         return Control.extend("podprojekt.utils.DigitalSignature", {
             metadata: {
                 properties: {
@@ -30,9 +32,15 @@ sap.ui.define(
             onAfterRendering: function () {
                 if (sap.ui.core.Control.prototype.onAfterRendering) {
                     sap.ui.core.Control.prototype.onAfterRendering.apply(this, arguments);
+                    this.canvas = document.getElementById(this.getId());
+                    this.context = this.canvas ? this.canvas.getContext("2d") : null;
+                    if (!this.canvas || !this.context) {
+                        console.error("Canvas or context could not be initialized.");
+                        return;
+                    }
                     this._initializeCanvas();
                     this._attachEventHandlers();
-                    //sap.ui.core.ResizeHandler.register(this, this._initializeCanvas.bind(this));
+                    ResizeHandler.register(this, this._initializeCanvas.bind(this));
                 }
             },
 
@@ -45,81 +53,84 @@ sap.ui.define(
             },
 
             getSignatureAsString: function () {
-                return this._getCanvasAsImage("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
+                return this.getSignatureAsPng().replace(/^data:image\/(png|jpg);base64,/, "");
+            },
+
+            getSignatureAsSvg: function () {
+                var data = this._getCanvasAsImage("image/svg+xml");
+                return data.replace(/^data:image\/svg\+xml;base64,/, "");
             },
 
             _getCanvasAsImage: function (sMimetype) {
-                var canvas = document.getElementById(this.getId());
-                return canvas.getContext("2d").signDoneTrue ? canvas.toDataURL(sMimetype) : "";
+                return this.context.signDoneTrue ? this.canvas.toDataURL(sMimetype) : "";
             },
 
             _initializeCanvas: function () {
-                var canvas = document.getElementById(this.getId());
-                var context = canvas.getContext("2d");
-                canvas.width = canvas.clientWidth;
-                canvas.height = canvas.clientHeight;
-                context.fillStyle = this.getFillColor();
-                context.strokeStyle = this.getSignatureColor();
-                context.lineWidth = this.getLineWidth();
-                context.lineCap = this.getLineCap();
-                context.fillRect(0, 0, canvas.width, canvas.height);
-                context.signDoneTrue = this.getSignDoneTrue();
+                this.canvas.width = this.canvas.clientWidth;
+                this.canvas.height = this.canvas.clientHeight;
+                this.context.fillStyle = this.getFillColor();
+                this.context.strokeStyle = this.getSignatureColor();
+                this.context.lineWidth = this.getLineWidth();
+                this.context.lineCap = this.getLineCap();
+                this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                this.context.signDoneTrue = this.getSignDoneTrue();
+            },
+
+            _getPositionFromEvent: function (event) {
+                var rect = this.canvas.getBoundingClientRect();
+                return {
+                    x: event.clientX - rect.left,
+                    y: event.clientY - rect.top
+                };
             },
 
             _attachEventHandlers: function () {
-                var canvas = document.getElementById(this.getId());
-                var context = canvas.getContext("2d");
                 var isDrawing = false;
-                var lastPos = null;
-
-                var getMousePos = function (event) {
-                    var rect = canvas.getBoundingClientRect();
-                    return {
-                        x: event.clientX - rect.left,
-                        y: event.clientY - rect.top
-                    };
-                };
+                var self = this;
 
                 var draw = function (position) {
                     if (!isDrawing) return;
-                    context.lineTo(position.x, position.y);
-                    context.stroke();
-                    context.beginPath();
-                    context.moveTo(position.x, position.y);
+                    self.context.lineTo(position.x, position.y);
+                    self.context.stroke();
+                    self.context.beginPath();
+                    self.context.moveTo(position.x, position.y);
                 };
 
                 var startDrawing = function (event) {
                     isDrawing = true;
-                    var mousePos = getMousePos(event);
-                    context.beginPath();
-                    context.moveTo(mousePos.x, mousePos.y);
-                    draw(mousePos);
+                    var position = self._getPositionFromEvent(event);
+                    self.context.beginPath();
+                    self.context.moveTo(position.x, position.y);
+                    draw(position);
                 };
 
                 var stopDrawing = function () {
                     isDrawing = false;
-                    context.beginPath();
-                    if (context.signDoneTrue === false) {
-                        context.signDoneTrue = true;
+                    self.context.beginPath();
+                    if (!self.context.signDoneTrue) {
+                        self.context.signDoneTrue = true;
                     }
                 };
 
-                canvas.addEventListener("mousedown", startDrawing);
-                canvas.addEventListener("mousemove", function (event) { draw(getMousePos(event)); });
-                canvas.addEventListener("mouseup", stopDrawing);
-                canvas.addEventListener("mouseout", stopDrawing);
+                // Mouse events
+                self.canvas.addEventListener("mousedown", startDrawing);
+                self.canvas.addEventListener("mousemove", function (event) { draw(self._getPositionFromEvent(event)); });
+                self.canvas.addEventListener("mouseup", stopDrawing);
+                self.canvas.addEventListener("mouseout", stopDrawing);
 
-                canvas.addEventListener("touchstart", function (event) {
-                    event.preventDefault();
-                    startDrawing(event.touches[0]);
-                });
-                canvas.addEventListener("touchmove", function (event) {
-                    event.preventDefault();
-                    draw(getMousePos(event.touches[0]));
-                });
-                canvas.addEventListener("touchend", function (event) {
-                    event.preventDefault();
-                    stopDrawing();
+                // Touch events
+                ["touchstart", "touchmove", "touchend"].forEach(function (eventName) {
+                    self.canvas.addEventListener(eventName, function (event) {
+                        event.preventDefault();
+                        var touch = event.touches[0];
+                        if (eventName === "touchstart") {
+                            startDrawing(touch);
+                        } else if (eventName === "touchmove") {
+                            draw(self._getPositionFromEvent(touch));
+                        } else if (eventName === "touchend") {
+                            stopDrawing();
+                        }
+                    });
                 });
             }
         });
