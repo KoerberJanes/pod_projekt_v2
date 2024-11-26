@@ -15,6 +15,10 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
+			updateBindings:function(sModelName){
+				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
+			},
+
 			checkIfStoppAlreadyDealtWith: function (oEvent) {
 				//!Statuscodes müssen abgesprochen werden
 				let oPressedModelObject = oEvent.getSource().getBindingContext("StopModel").getObject();
@@ -37,6 +41,7 @@ sap.ui.define(
 
 				oStopInformationModel.setProperty("/tour", oPressedModelObjectDetails);
 				this.createLoadingUnitsDetailedDescription(oPressedModelObjectDetails);
+				this.updateBindings("StopInformationModel");
 			},
 
 			createLoadingUnitsDetailedDescription: function (oPressedModelObjectDetails) {

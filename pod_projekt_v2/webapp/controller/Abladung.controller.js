@@ -12,8 +12,13 @@ sap.ui.define(
 		return Controller.extend("podprojekt.controller.Abladung", {
 			onInit: function () {},
 
+
 			onAfterRendering: function () {
 				this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+			},
+
+			updateBindings:function(sModelName){
+				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
 			onDialogAfterOpen: function (oEvent) {
@@ -145,6 +150,7 @@ sap.ui.define(
 							//Speichern
 							this.showSavingSuccessfullMessage();
 							this._saveAllTempStoredNVEs();
+							this.updateBindings("StopModel");
 							this.navBackToQuittierung();
 						} else {
 							//Abbrechen
@@ -219,6 +225,7 @@ sap.ui.define(
 				} else {
 					this.showSavingSuccessfullMessage();
 					this._saveAllTempStoredNVEs();
+					this.updateBindings("StopModel");
 				}
 			},
 

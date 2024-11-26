@@ -32,6 +32,10 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
+			updateBindings:function(sModelName){
+				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
+			},
+
 			onClearSignField: function () {
 				this.getView().byId("digitalSignatureId").clearArea();
 			},
@@ -173,6 +177,10 @@ sap.ui.define(
 				let oCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
 
 				oCurrentTour.routeStatus = "10";
+				//TODO: Update Models
+				this.updateBindings("StopInformationModel");
+				this.updateBindings("StopModel");
+				this.updateBindings("TourModel")
 				this.onNavToOverview(); //--> HashManager übernimmt aktualisierung von Models
 			},
 

@@ -1,16 +1,16 @@
 sap.ui.define(
-	["sap/ui/core/mvc/Controller", "sap/m/MessageToast", "sap/m/MessageBox", "podprojekt/utils/StatusSounds", "podprojekt/utils/HashManager"],
+	["sap/ui/core/mvc/Controller", "sap/m/MessageToast", "sap/m/MessageBox", "podprojekt/utils/StatusSounds",],
 	/**
 	 * @param {typeof sap.ui.core.mvc.Controller} Controller
 	 */
-	function (Controller, MessageToast, MessageBox, StatusSounds, HashManager) {
+	function (Controller, MessageToast, MessageBox, StatusSounds) {
 		"use strict";
 
 		const REGEX_TOUR_MILEAGE = /^[0-9]{2,}$/; //es sind nur Ziffern erlaubt mit einer Mindestlaenge von 2
 
 		return Controller.extend("podprojekt.controller.Overview", {
 			onInit: function () {
-				HashManager.init(this.getView());
+				
 			},
 
 			onAfterRendering: function () {
@@ -239,12 +239,61 @@ sap.ui.define(
 
 			setStopInformationModelData: function () {
 				//Tolleranz eingehalten und Stops der Tour in entsprechendes Model setzen
-				let oStopInformationModel = this.getOwnerComponent().getModel("StopModel"); //Stop Model
+				let oStopModel = this.getOwnerComponent().getModel("StopModel"); //Stop Model
 				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
 				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); //Array an Stops der ausgewaehlten Tour
 
-				oStopInformationModel.setProperty("/results", aRespectiveTourStops); //Setzen der Stops
-				this.createDeliveryNotes();
+				oStopModel.setProperty("/results", aRespectiveTourStops); //Setzen der Stops
+				// Prüfung der DeliveryNotes und NVEs
+				if (this.isDeliveryNoteAndNVEsOverlap(aRespectiveTourStops)) {
+					this.onNavToActiveTour();
+				} else {
+					this.createDeliveryNotes();
+				}
+			},
+
+			isDeliveryNoteAndNVEsOverlap: function (aRespectiveTourStops) {
+				
+				let isValid = true; // Statusparameter, der die Gültigkeit speichert
+
+				aRespectiveTourStops.forEach((stop) => {
+					if (!isValid) return; // Wenn bereits ungültig, keine weiteren Prüfungen
+			
+					const orders = stop.orders;
+					if (!orders || orders.length === 0) {
+						isValid = false;
+						return;
+					}
+			
+					const firstOrder = orders[0];
+					const deliveryNotes = firstOrder.aDeliveryNotes;
+					const newNVEs = firstOrder.loadingUnits;
+			
+					if (!Array.isArray(deliveryNotes) || deliveryNotes.length === 0) {
+						isValid = false;
+						return;
+					}
+			
+					if (!Array.isArray(newNVEs) || newNVEs.length === 0) {
+						isValid = false;
+						return;
+					}
+			
+					if (!newNVEs.every((nve) =>
+						deliveryNotes.some((note) =>
+							note.aTempClearedNVEs.includes(nve) ||
+							note.aTempLoadedNVEs.includes(nve) ||
+							note.aTotalClearedNves.includes(nve) ||
+							note.aTotalLoadedNVEs.includes(nve) ||
+							note.aUnprocessedNumberedDispatchUnits.includes(nve)
+						)
+					)) {
+						isValid = false;
+						return;
+					}
+				});
+			
+				return isValid; // Nur ein einziges `return` am Ende der Methode
 			},
 
 			createDeliveryNotes: function () {
