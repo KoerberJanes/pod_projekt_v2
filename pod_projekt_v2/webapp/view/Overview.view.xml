@@ -1,7 +1,9 @@
 <mvc:View controllerName="podprojekt.controller.Overview"
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns="sap.m" 
+    xmlns:core="sap.ui.core"
     xmlns:form="sap.ui.layout.form"
+    xmlns:fb="sap.ui.comp.filterbar"
     displayBlock="true">
     <Page id="overviewPageId" title="{i18n>overviewTitle}">
         <customHeader>
@@ -17,9 +19,22 @@
                 </Bar>
             </customHeader>
         <content>
+            <!-- FilterBar -->
+            <fb:FilterBar id="filterBar" liveMode="true" search="onFilterSearch">
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem name="RouteStatus" label="{i18n>routeStatusLabel}" groupName="FilterGroup1" visibleInFilterBar="true">
+                        <fb:control>
+                            <MultiComboBox name="RouteStatus" selectionChange=".onSelectionChange" items="{filtersModel>/routeStatuses}">
+                                <core:Item key="{filtersModel>key}" text="{filtersModel>status}" />
+                            </MultiComboBox>
+                        </fb:control>
+                     </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+            
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
-                    <List id="tourSelectionList" items="{TourModel>/results}" noDataText="{i18n>noDataAvailable}" 
+                    <List id="tourSelectionList" items="{TourModel>/results}" noDataText="{i18n>noDataAvailable}" busy="{TourModel>/busy}"
                         growing="true" growingThreshold="10" busyIndicatorDelay="500">
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">

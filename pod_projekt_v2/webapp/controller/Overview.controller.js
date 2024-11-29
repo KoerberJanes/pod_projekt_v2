@@ -74,7 +74,7 @@ sap.ui.define(
 					this.onBusyDialogClose();
 					let oTourModel = this.getOwnerComponent().getModel("TourModel"); //Demo Model bereits vorab gefüllt
 					let aTourModelItems = oTourModel.getProperty("/results"); //Inhalt für Abfrage benoetigt. Wird später durch das oData Model ersetzt
-
+					
 					if (aTourModelItems.length === 0) {
 						//Keine Tour vorhanden
 						this._showErrorMessageBox("noToursLoaded", () => {});
@@ -97,8 +97,98 @@ sap.ui.define(
 
 			filterFinishedStops: function (aRecievedTours) {
 				//Beendete oder Abgeschlossene Touren werden gefiltert
+				//return aRecievedTours.filter((tour) => tour.routeStatus !== "90" && tour.routeStatus !== "70");
 
-				return aRecievedTours.filter((tour) => tour.routeStatus !== "90" && tour.routeStatus !== "70");
+				//Demo für den Filter
+				return aRecievedTours;
+			},
+
+			onFilterSearch: function(oEvent) {
+				var oFilterBar = this.byId("filterBar");
+				var oList = this.byId("tourSelectionList"); // Deine Liste
+				var oBinding = oList.getBinding("items"); // Die Bindung der "items"-Aggregation der Liste
+			
+				var aGroupItems = oFilterBar.getFilterGroupItems();
+			
+				// Durch alle FilterGroupItems iterieren und das Steuerelement für RouteStatus finden
+				var aSelectedRouteStatus = [];
+				aGroupItems.forEach(function(oGroupItem) {
+					if (oGroupItem.getName() === "RouteStatus") { // Prüfen, ob die Gruppe "RouteStatus" heißt (für den Fall, dass es mehrere geben kann)
+						var oControl = oGroupItem.getControl(); // Das Steuerelement (MultiComboBox) für RouteStatus holen
+						aSelectedRouteStatus = oControl.getSelectedKeys(); // Gibt ein Array von ausgewählten Schlüsseln zurück
+					}
+				});
+			
+				
+				if (aSelectedRouteStatus.length > 0) { // Sicherstellen, dass es ausgewählte Werte gibt
+					var aFilters = [];
+			
+					
+					aSelectedRouteStatus.forEach(function(statusKey) {// Für jedes Element in aSelectedRouteStatus einen Filter erstellen
+						var oRouteStatusFilter = new sap.ui.model.Filter(// Filter für "routeStatus" erstellen, der mit einem der ausgewählten Status übereinstimmt
+							"routeStatus", // Das Feld im TourModel, nach dem gefiltert wird
+							sap.ui.model.FilterOperator.EQ, // Der "Equal"-Operator für jedes einzelne Element
+							statusKey // Der einzelne Wert
+						);
+						aFilters.push(oRouteStatusFilter); // Filter zur Filter-Liste hinzufügen
+					});
+					//console.log("Alle Filter:", aFilters);
+
+					var oFinalFilter = new sap.ui.model.Filter(aFilters, false); // Kombiniert alle Filter mit "OR"-Verknüpfung
+					oBinding.filter(oFinalFilter); // Die Tourenliste wird jetzt nach dem Status gefiltert
+				} else{ // Sofern kein Filter ausgewählt wurde, alle Datensätze anzeigen
+					oBinding.filter([]); // Leere Filter anwenden, um alle Datensätze anzuzeigen
+				}
+				this.getOwnerComponent().getModel("TourModel").updateBindings(true);
+			},
+
+			_applyFilters: function(aTours, oFilterData) {
+				// Beispielhafte Filterlogik anwenden (kann nach Bedarf erweitert werden)
+				var aFilteredTours = aTours.filter(function(tour) {
+					// Beispiel: Filter auf 'routeStatuses' anwenden
+					var status = tour.routeStatus; // Angenommen, die Touren haben ein "routeStatus"-Feld
+			
+					// Überprüfen, ob der Tour-Status im Filter enthalten ist
+					return oFilterData.routeStatuses.some(function(filterStatus) {
+						return filterStatus.key === status;
+					});
+				});
+			
+				// Die gefilterte Liste der Touren wieder ins Model setzen
+				this.getOwnerComponent().getModel("TourModel").setProperty("/results", aFilteredTours);
+			},
+
+			onSelectionChange: function(oEvent) {
+				var aSelectedItems = oEvent.getSource().getSelectedItems(); // Alle ausgewählten Items in der MultiComboBox
+				var aSelectedKeys = aSelectedItems.map(function(item) {
+					return item.getKey(); // Alle ausgewählten "key"-Werte holen
+				});
+
+				// Zugriff auf das Model
+				var oFilterData = this.getOwnerComponent().getModel("filtersModel").getData();
+
+				// Filter auf das Model anwenden
+				oFilterData.selectedRouteStatuses = aSelectedKeys; // Eine neue Eigenschaft für die selektierten Filter hinzufügen
+
+				// Filterdaten im Model aktualisieren
+				this.getOwnerComponent().getModel("filtersModel").setData(oFilterData);
+
+				// Optional: Touren mit dem neuen Filter anwenden
+				// this._applyFilters(aTours, oFilterData);
+			},
+
+			onResetFilters: function() {
+				// Zugriff auf das Model
+				var oFilterData = this.getOwnerComponent().getModel("filtersModel").getData();
+
+				// Zurücksetzen des Filterstatus auf leeren Wert oder Standardwert
+				oFilterData.selectedRouteStatuses = [];
+			
+				// Filterdaten im Model zurücksetzen
+				this.getOwnerComponent().getModel("filtersModel").setData(oFilterData);
+			
+				// Optional: Alle Touren wieder anzeigen, ohne Filter
+				// this._applyFilters(aTours, oFilterData);
 			},
 
 			setPressedTour: function (oEvent) {
