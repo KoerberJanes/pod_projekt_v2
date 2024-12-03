@@ -538,7 +538,7 @@ sap.ui.define(
 				this.byId("TourStatisticsDialog").close();
 			},
 
-			onDataLabelChanged: function(oEvent) {
+			onDataLabelChanged: function(oEvent) { //Methode nur notwendig, wenn Einstellungen vorhanden
 				// Den VizFrame holen
 				var oVizFrame = this.byId("idVizFrame");
 				

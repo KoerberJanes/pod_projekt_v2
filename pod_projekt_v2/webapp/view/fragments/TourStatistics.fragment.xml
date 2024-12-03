@@ -18,7 +18,7 @@
 		</customHeader>
 
         <content><!--WICHTIG: Die normale Form ist nicht mit dem viz Kompatibel: Dezember 2024-->
-			<Panel id='settingsPanel' class="panelStyle" expandable="true" expanded="false" headerText="{i18n>settings}" width="auto">
+			<!--<Panel id='settingsPanel' class="panelStyle" expandable="true" expanded="false" headerText="{i18n>settings}" width="auto">
                 <content>
                     <Switch id='dataLabelSwitch' class='settingsSwitch' state="{/dataLabel/defaultState}" change='onDataLabelChanged'>
                         <layoutData>
@@ -26,13 +26,20 @@
                         </layoutData>
                     </Switch>
                 </content>
-            </Panel>
+            </Panel> -->
 
             <!--<form:SimpleForm id="TourStatisticsForm" layout="ResponsiveGridLayout" title="">
 				<form:content>-->
             <layout:FixFlex id='chartFixFlex' minFlexSize="250">
                 <layout:flexContent>
-					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData">
+					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData" 
+                    vizProperties="{
+                        'plotArea': {
+                            'dataLabel': {
+                                'visible': true
+                            }
+                        }
+                    }" >
                         <viz:dataset>
                             <viz.data:FlattenedDataset data="{TourModel>/resultsForDiagram}">
                                 <viz.data:dimensions>
