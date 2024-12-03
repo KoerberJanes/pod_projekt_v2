@@ -1,0 +1,73 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:layout="sap.ui.layout"
+>
+
+    <Dialog id="TourStatisticsDialog" initialFocus="" afterOpen="" >
+        <customHeader>
+			<Bar>
+				<contentMiddle>
+					<Title text="PieChartDiagram-Test"/>
+				</contentMiddle>
+			</Bar>
+		</customHeader>
+
+        <content><!--WICHTIG: Die normale Form ist nicht mit dem viz Kompatibel: Dezember 2024-->
+			<Panel id='settingsPanel' class="panelStyle" expandable="true" expanded="false" headerText="{i18n>settings}" width="auto">
+                <content>
+                    <Switch id='dataLabelSwitch' class='settingsSwitch' state="{/dataLabel/defaultState}" change='onDataLabelChanged'>
+                        <layoutData>
+                            <FlexItemData growFactor="1" />
+                        </layoutData>
+                    </Switch>
+                </content>
+            </Panel>
+
+            <!--<form:SimpleForm id="TourStatisticsForm" layout="ResponsiveGridLayout" title="">
+				<form:content>-->
+            <layout:FixFlex id='chartFixFlex' minFlexSize="250">
+                <layout:flexContent>
+					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData">
+                        <viz:dataset>
+                            <viz.data:FlattenedDataset data="{TourModel>/resultsForDiagram}">
+                                <viz.data:dimensions>
+                                    <viz.data:DimensionDefinition name="Status" value="{TourModel>routeStatusLabel}" />
+                                        <!--Expression-Binding wird nicht unterstützt: Dezember 2024-->
+                                </viz.data:dimensions>
+                                <viz.data:measures>
+                                    <viz.data:MeasureDefinition name="Anzahl" value="{TourModel>Anzahl}" />
+                                </viz.data:measures>
+                            </viz.data:FlattenedDataset>
+                        </viz:dataset>
+
+                        <viz:feeds>
+                            <viz.feeds:FeedItem uid="size" type="Measure" values="Anzahl" />
+                            <viz.feeds:FeedItem uid="color" type="Dimension" values="Status" />
+                        </viz:feeds>
+                    
+                        <viz:dependents>
+                            <viz:Popover id="idPopOver"></viz:Popover>
+                        </viz:dependents>
+                    </viz:VizFrame>
+                </layout:flexContent>
+            </layout:FixFlex>
+				<!--</form:content>
+			</form:SimpleForm>-->
+		</content>
+
+
+        <beginButton>
+            <Button id="TourStatisticsButtonConfirm" text="{i18n>ok}" type="Emphasized" press="TourStatisticsDialogClose"/><!--TourStatisticsDialogConfirm-->
+        </beginButton>
+        <endButton>
+            <!--<Button id="TourStatisticsButtonAbort" text="{i18n>abort}" type="Emphasized" press="TourStatisticsDialogReject"/>-->
+        </endButton>	
+
+    </Dialog>
+
+</c:FragmentDefinition>

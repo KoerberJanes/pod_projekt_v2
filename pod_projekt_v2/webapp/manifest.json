@@ -259,10 +259,10 @@
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "routeStatuses": [
-            { "key": "10", "status": "Approved" },
-            { "key": "50", "status": "Loaded" },
-            { "key": "70", "status": "Finished" },
-            { "key": "90", "status": "Completed" }
+            { "key": "10", "status": "Freigegeben" },
+            { "key": "50", "status": "Beladen" },
+            { "key": "70", "status": "Beendet" },
+            { "key": "90", "status": "Abgeschlossen" }
           ]
         }
       }

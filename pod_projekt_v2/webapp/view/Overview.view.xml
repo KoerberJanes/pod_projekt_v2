@@ -20,9 +20,9 @@
             </customHeader>
         <content>
             <!-- FilterBar -->
-            <fb:FilterBar id="filterBar" liveMode="true" search="onFilterSearch">
+            <fb:FilterBar id="filterBar" liveMode="true" search="onFilterSearch" filterBarExpanded="false">
                 <fb:filterGroupItems>
-                    <fb:FilterGroupItem name="RouteStatus" label="{i18n>routeStatusLabel}" groupName="FilterGroup1" visibleInFilterBar="true">
+                    <fb:FilterGroupItem name="RouteStatus" label="{i18n>routeStatusLabel}" groupName="StatusFilter" visibleInFilterBar="true" >
                         <fb:control>
                             <MultiComboBox name="RouteStatus" selectionChange=".onSelectionChange" items="{filtersModel>/routeStatuses}">
                                 <core:Item key="{filtersModel>key}" text="{filtersModel>status}" />
@@ -40,6 +40,7 @@
                             <OverflowToolbar id="OvtbTourselect">
                                 <Label id="assignedToursLabel" text="{i18n>assignedTours}"/>
                                 <ToolbarSpacer/>
+                                <Button id="diagramBtn" press="TourStatisticsDialogOpen" icon="sap-icon://filter-analytics" type="Emphasized"/>
                                 <Button id="refreshBtn" press="onRefreshTours" icon="sap-icon://refresh" type="Emphasized"/>
                             </OverflowToolbar>
                         </headerToolbar>

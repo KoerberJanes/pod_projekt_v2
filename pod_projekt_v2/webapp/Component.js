@@ -1376,6 +1376,126 @@ sap.ui.define([
 						}],
 						"loadingUnits": ""
 					}]
+				},
+				{
+					"mandator": "17160",
+					"routeId": "14",
+					"externalId": "0100291307",
+					"routeCaption": "10X3 - Dummy Tour - 11.11.2023",
+					"grossWeight": 357.6,
+					"grossWeightUnit": "KG",
+					"volume": "",
+					"volumeUnit": "M3",
+					"freightCost": "",
+					"freightCostCurrency": "",
+					"startDate": 1460113760000,
+					"startLocation": "Heusenstamm",
+					"distance": 387.661,
+					"distanceUnit": "KM",
+					"licensePlate": "WN-WT 491",
+					"mileage": 380000,
+					"mileageTolerance": 600,
+					"tollDistance": 371.0,
+					"tollDistanceUnit": "KM",
+					"routeType": "",
+					"routeTypeCaption": "",
+					"returnRoute": false,
+					"routeStatus": "70",
+					"deliveryAgreement": "",
+					"deliveryAgreementBarcode": "",
+					"stops": [
+						{
+							"mandator": "17160",
+							"sequence": 2,
+							"stopId": "33",
+							"stopIdExt": "12345",
+							"targetGeoL": 8.69679,
+							"targetGeoB": 50.57198,
+							"addressName1": "Erich Carlé GmbH & Co. KG",
+							"street": "Karl-Gloeckner-Str.",
+							"streetNumber": "9",
+							"zipCode": "35394",
+							"city": "GIEßEN",
+							"country": "DE",
+							"deliveryDate": 1460181600000,
+							"phoneAvis": "0641 / 79550",
+							"mobileAvis": "",
+							"stopStatus": "90",
+							"orders": [
+								{
+									"mandator": "17160",
+									"orderId": "8",
+									"externalId": "0000000450",
+									"orderStatus": "50",
+									"shipmentNumber": "3000021813",
+									"deliveryDateFrom": 1460181600000,
+									"deliveryDateTo": 1460224800000,
+									"shipmentCondition": "",
+									"loadingUnits": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"mandator": "17160",
+					"routeId": "15",
+					"externalId": "0100291407",
+					"routeCaption": "10X4 - Dummy Tour - 12.11.2023",
+					"grossWeight": 357.6,
+					"grossWeightUnit": "KG",
+					"volume": "",
+					"volumeUnit": "M3",
+					"freightCost": "",
+					"freightCostCurrency": "",
+					"startDate": 1460113760000,
+					"startLocation": "Heusenstamm",
+					"distance": 387.661,
+					"distanceUnit": "KM",
+					"licensePlate": "WN-WT 492",
+					"mileage": 380000,
+					"mileageTolerance": 600,
+					"tollDistance": 371.0,
+					"tollDistanceUnit": "KM",
+					"routeType": "",
+					"routeTypeCaption": "",
+					"returnRoute": false,
+					"routeStatus": "90",
+					"deliveryAgreement": "",
+					"deliveryAgreementBarcode": "",
+					"stops": [
+						{
+							"mandator": "17160",
+							"sequence": 2,
+							"stopId": "34",
+							"stopIdExt": "23456",
+							"targetGeoL": 9.74306,
+							"targetGeoB": 52.45111,
+							"addressName1": "WILHELM ALTHANS GMBH U. CO.KG",
+							"street": "WALSRODER STR.",
+							"streetNumber": "170",
+							"zipCode": "30853",
+							"city": "LANGENHAGEN",
+							"country": "DE",
+							"deliveryDate": 1460181600000,
+							"phoneAvis": "0511/732055",
+							"mobileAvis": "",
+							"stopStatus": "90",
+							"orders": [
+								{
+									"mandator": "17160",
+									"orderId": "9",
+									"externalId": "0000000451",
+									"orderStatus": "50",
+									"shipmentNumber": "3000021817",
+									"deliveryDateFrom": 1460228400000,
+									"deliveryDateTo": 1460232000000,
+									"shipmentCondition": "UH",
+									"loadingUnits": []
+								}
+							]
+						}
+					]
 				}]
 			}), "TourModel");
 

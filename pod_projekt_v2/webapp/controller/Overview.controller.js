@@ -470,6 +470,113 @@ sap.ui.define(
 				});
 				this.simulateBackendCallForTours();
 			},
+			
+			TourStatisticsDialogConfirm:function(){
+				
+			},
+
+			TourStatisticsDialogReject:function(){
+
+			},
+
+			TourStatisticsDialogOpen:function(){
+
+				this.oTourStatisticsDialog ??= this.loadFragment({
+					name: "podprojekt.view.fragments.TourStatistics",
+				});
+
+				this.oTourStatisticsDialog.then((oDialog) => {
+					this.MapTourStatisticsForDiagram();
+					oDialog.open();
+				});
+			},
+
+			MapTourStatisticsForDiagram:function(){
+				const oModel = this.getView().getModel("TourModel");
+				const aResults = oModel.getProperty("/results");
+
+				// Status zählen
+				const oStatusCount = {};
+				aResults.forEach(oResult => {
+					const sStatus = oResult.routeStatus;
+					oStatusCount[sStatus] = (oStatusCount[sStatus] || 0) + 1;
+				});
+
+				// Map für Diagrammdaten
+				const aMappedResults = Object.entries(oStatusCount).map(([sStatus, iCount]) => {
+					let sStatusLabel;
+					switch (sStatus) {
+						case "10":
+							sStatusLabel = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("invoiceStatusApproved");
+							break;
+						case "50":
+							sStatusLabel = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("invoiceStatusLoaded");
+							break;
+						case "70":
+							sStatusLabel = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("invoiceStatusFinished");
+							break;
+						case "90":
+							sStatusLabel = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("invoiceStatusCompleted");
+							break;
+						default:
+							sStatusLabel = "Unbekannt";
+					}
+					return {
+						routeStatusLabel: sStatusLabel,
+						Anzahl: iCount
+					};
+				});
+
+				//Debugging
+				//console.log("Mapped Results for Diagram:", aMappedResults);
+
+				oModel.setProperty("/resultsForDiagram", aMappedResults);
+				oModel.updateBindings();
+			},
+
+			TourStatisticsDialogClose:function(){
+				this.byId("TourStatisticsDialog").close();
+			},
+
+			onDataLabelChanged: function(oEvent) {
+				// Den VizFrame holen
+				var oVizFrame = this.byId("idVizFrame");
+				
+				// Den neuen Zustand des Switches aus dem Event extrahieren
+				var bState = oEvent.getParameter('state');
+			
+				// Wenn oVizFrame existiert, VizProperties setzen
+				if (oVizFrame) {
+					oVizFrame.setVizProperties({
+						plotArea: {
+							dataLabel: {
+								visible: bState // Datenlabel sichtbar oder nicht, je nach Zustand des Switches
+							}
+						}
+					});
+				}
+			},
+
+			onVizFrameSelectData: function (oEvent) {
+
+				/*const selectedData = oEvent.getParameter("data")[0];  // Das erste (und einzige) Element der Auswahl
+
+				if (!selectedData) {
+					return;
+				}
+			
+				const selectedStatus = selectedData.data.Status;
+				const selectedCount = selectedData.data.Anzahl;
+			
+				const oModel = this.getView().getModel("TourModel");
+				const aResults = oModel.getProperty("/resultsForDiagram");
+				const totalCount = aResults.reduce((sum, item) => sum + item.Anzahl, 0);  // Gesamtanzahl aller Touren
+			
+				const percentage = ((selectedCount / totalCount) * 100).toFixed(2);  // Prozent mit 2 Dezimalstellen
+				const message = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("tourPercentageMessage", [selectedStatus, percentage]);
+			
+				sap.m.MessageToast.show(message);*/
+			},
 
 			onCloseTourStartFragment: function () {
 				//Tourstart Fragment schließen
