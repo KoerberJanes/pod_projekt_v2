@@ -12,12 +12,14 @@
         <customHeader>
 			<Bar>
 				<contentMiddle>
-					<Title text="PieChartDiagram-Test"/>
+					<Title text="{i18n>tourStatiscticsDialogTitle}"/>
 				</contentMiddle>
 			</Bar>
 		</customHeader>
 
-        <content><!--WICHTIG: Die normale Form ist nicht mit dem viz Kompatibel: Dezember 2024-->
+        <content><!--WICHTIG: Die normale Form ist nicht mit dem viz Kompatibel, daher Layout NICHT ÄNDERN: Dezember 2024-->
+
+            <!--Panel auskommentiert, da zusätzlicher Platz dafür erforderlich ist-->
 			<!--<Panel id='settingsPanel' class="panelStyle" expandable="true" expanded="false" headerText="{i18n>settings}" width="auto">
                 <content>
                     <Switch id='dataLabelSwitch' class='settingsSwitch' state="{/dataLabel/defaultState}" change='onDataLabelChanged'>
@@ -27,19 +29,10 @@
                     </Switch>
                 </content>
             </Panel> -->
-
-            <!--<form:SimpleForm id="TourStatisticsForm" layout="ResponsiveGridLayout" title="">
-				<form:content>-->
-            <layout:FixFlex id='chartFixFlex' minFlexSize="250">
+            <layout:FixFlex id='chartFixFlex' minFlexSize="500">
                 <layout:flexContent>
-					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData" 
-                    vizProperties="{
-                        'plotArea': {
-                            'dataLabel': {
-                                'visible': true
-                            }
-                        }
-                    }" >
+					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData">
+                    <!--Hexcodes: Rot, Blau, Grün-->
                         <viz:dataset>
                             <viz.data:FlattenedDataset data="{TourModel>/resultsForDiagram}">
                                 <viz.data:dimensions>
@@ -63,8 +56,6 @@
                     </viz:VizFrame>
                 </layout:flexContent>
             </layout:FixFlex>
-				<!--</form:content>
-			</form:SimpleForm>-->
 		</content>
 
 

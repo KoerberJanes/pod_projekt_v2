@@ -502,9 +502,17 @@ sap.ui.define(
 					oStatusCount[sStatus] = (oStatusCount[sStatus] || 0) + 1;
 				});
 
+				// Farbzuordnung: Status -> Farbe
+				const oColorMapping = {
+					"10": "#6dbd73", // Freigegeben
+					"50": "#e57373", // Beladen
+					"70": "#5aaafa", // Beendet
+					"90": "#6dbd73"  // Abgeschlossen
+				};
+
 				// Map für Diagrammdaten
 				const aMappedResults = Object.entries(oStatusCount).map(([sStatus, iCount]) => {
-					let sStatusLabel;
+					let sStatusLabel, sColor;
 					switch (sStatus) {
 						case "10":
 							sStatusLabel = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("invoiceStatusApproved");
@@ -521,9 +529,11 @@ sap.ui.define(
 						default:
 							sStatusLabel = "Unbekannt";
 					}
+					sColor = oColorMapping[sStatus]; // Farbe aus Mapping holen
 					return {
 						routeStatusLabel: sStatusLabel,
-						Anzahl: iCount
+						Anzahl: iCount,
+						Farbe: sColor
 					};
 				});
 
@@ -531,6 +541,31 @@ sap.ui.define(
 				//console.log("Mapped Results for Diagram:", aMappedResults);
 
 				oModel.setProperty("/resultsForDiagram", aMappedResults);
+
+				// Farben setzen im VizFrame
+				const aColors = aMappedResults.map(item => item.Farbe);
+				const oVizFrame = this.byId("idVizFrame");
+				if (oVizFrame) {
+					oVizFrame.setVizProperties({
+						title: {
+							visible: false  // Titel des Diagramms ausblenden
+						},
+						plotArea: {
+							colorPalette: aColors,
+							dataLabel: {
+								visible: true
+							}
+						},
+						legend: {
+							visible: true,
+							isScrollable: false, // Keine Scrollbars, sorgt für gute Formatierung
+							title: {
+								visible: false //Titel der Legende ausblenden
+							}
+						}
+					});
+				}
+
 				oModel.updateBindings();
 			},
 
