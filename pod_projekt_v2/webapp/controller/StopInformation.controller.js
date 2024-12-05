@@ -13,7 +13,7 @@ sap.ui.define(
 
 			onPressBtnAvisNr: function (oEvent) {
 				//Natives anrufen der Telefonnummer
-				let sPhoneAvis = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/phoneAvis");
+				let sPhoneAvis = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/orders/0/phoneAvis");
 				sap.m.URLHelper.triggerTel(sPhoneAvis);
 			},
 

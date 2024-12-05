@@ -3,14 +3,14 @@
     xmlns="sap.m" 
     xmlns:form="sap.ui.layout.form" displayBlock="true"
     xmlns:customControl="podprojekt.utils">
-    <Page id="UnterschriftPageId">
+    <Page id="UnterschriftPageId" title="{i18n>signingPageTitle}&#13;{i18n>buildNo}">
         <customHeader>
             <Bar>
                 <contentLeft>
                     <Button id="navBackToQuittierungPageId" press="onNavToQuittierung" icon="sap-icon://nav-back"/>
                 </contentLeft>
                 <contentMiddle>
-                    <Title text="{i18n>signingPageTitle}"/>
+                    <Title text="{i18n>signingPageTitle}&#13;{i18n>buildNo}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>
@@ -28,13 +28,13 @@
                         </contentRight>
                     </Bar>
                     <Label id="idAdresseLabel" text="{i18n>adress}"/>
-                    <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
+                    <Text text="{StopInformationModel>/tour/orders/0/addressName1}&#13;&#10;{StopInformationModel>/tour/orders/0/zipCode} {StopInformationModel>/tour/orders/0/city}" width="100%"/>
                     
                     <Label id="idLSNrLabel" text="{i18n>deliveryNoteNumber}"/>
-                    <Text text="{StopInformationModel>/tour/shipmentNumber}"/>
+                    <Text text="{StopInformationModel>/tour/orders/0/shipmentNumber}"/>
                     <Label id="idNVEsLabel" text="{i18n>numberedDispatchUnits}"/>
-                    <Text text="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
-                    <Text text="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length} {i18n>nves} {i18n>cleared}"/>
+                    <Text text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalLoadedNVEs}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
+                    <Text text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNves}.length} {i18n>nves} {i18n>cleared}"/>
 
                     <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
                     <Text text="X {i18n>deliveryItems} {i18n>processed}"/><!--TODO: Hier muss ich noch die Liste ueberarbeiten, damit eine 2 Listen (Lieferscheine und Retouren) amgezeigt werden können-->
@@ -48,7 +48,7 @@
                     <Label id="idDatumUhrzeitLabel" text="{i18n>dateAndTime}"/>
                     <Text text="{CustomerModel>/dateAndTime}"/>
                     <Label id="idGeoCoordinatesLabel" text="{i18n>geoCoordinates}"/>
-                    <Text text="B:{StopInformationModel>/tour/startGeoB}, L:{StopInformationModel>/tour/startGeoL}"/>
+                    <Text text="B:{StopInformationModel>/tour/orders/0/startGeoB}, L:{StopInformationModel>/tour/orders/0/startGeoL}"/>
                     <Label id="idSignFieldLabel" text="{i18n>signature}" labelFor="digitalSignatureId" required="true"/>
                     <Text/>
                 </form:content>

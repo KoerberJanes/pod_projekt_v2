@@ -17,7 +17,7 @@ sap.ui.define(
 				this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			},
 
-			updateBindings:function(sModelName){
+			updateModelBindings:function(sModelName){
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
@@ -105,7 +105,7 @@ sap.ui.define(
 				//Prüfen ob noch Nves zu quittieren sind
 				StatusSounds.playBeepSuccess();
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aRemainingNves = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
 				if (aRemainingNves.length > 0) {
 					//Wenn mehr als eine NVE zu quittieren ist
@@ -118,17 +118,17 @@ sap.ui.define(
 			_processRemainingNves: function (aRemainingNves) {
 				//NVEs werden alle quittiert
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aLoadingNvesTemp = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs"); //verladene Nves
+				let aLoadingNvesTemp = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs"); //verladene Nves
 				let aUpdatedLoadingNvesTemp = [...aLoadingNvesTemp, ...aRemainingNves]; // zusammenführen der Nves
 
-				oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs", aUpdatedLoadingNvesTemp); //Model der Temp verladenen Nves fuellen
-				oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", []); //Model der noch zu bearbeitenden Nves leeren
+				oStopInformationModel.setProperty("/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs", aUpdatedLoadingNvesTemp); //Model der Temp verladenen Nves fuellen
+				oStopInformationModel.setProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", []); //Model der noch zu bearbeitenden Nves leeren
 			},
 
 			checkForUnsavedNves: function () {
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aClearingNvesTemp = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs"); //geklaerte Nves
-				let aLoadingNvesTemp = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs"); //verladene Nves
+				let aClearingNvesTemp = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs"); //geklaerte Nves
+				let aLoadingNvesTemp = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs"); //verladene Nves
 
 				if (aClearingNvesTemp.length > 0 || aLoadingNvesTemp.length > 0) {
 					//Mindestens eine Nve wurde entweder verladen oder geklaert
@@ -150,7 +150,7 @@ sap.ui.define(
 							//Speichern
 							this.showSavingSuccessfullMessage();
 							this._saveAllTempStoredNVEs();
-							this.updateBindings("StopModel");
+							this.updateModelBindings("StopModel");
 							this.navBackToQuittierung();
 						} else {
 							//Abbrechen
@@ -180,14 +180,14 @@ sap.ui.define(
 
 			AbortCurrentLoadedAndClearedNves: function () {
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aClearingNvesTemp = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs"); //geklaerte Nves
-				let aLoadingNvesTemp = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs"); //verladene Nves
-				let aLoadingUnits = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+				let aClearingNvesTemp = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs"); //geklaerte Nves
+				let aLoadingNvesTemp = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs"); //verladene Nves
+				let aLoadingUnits = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
 				// Temp verladen und geklaerte Nves zusammenfassen und mit den unbearbeiteten zusammenfassen
 				let aUpdatedLoadingUnits = [...aLoadingUnits, ...aClearingNvesTemp, ...aLoadingNvesTemp];
 
-				oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", aUpdatedLoadingUnits);
+				oStopInformationModel.setProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", aUpdatedLoadingUnits);
 				this._emptyTempModels();
 				this.navBackToQuittierung();
 			},
@@ -195,7 +195,7 @@ sap.ui.define(
 			checkIfNvesWhereLoaded: function () {
 				let bTempLoadedNves = false;
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aLoadingNvesTemp = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs"); //verladene Nves
+				let aLoadingNvesTemp = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs"); //verladene Nves
 
 				if (aLoadingNvesTemp.length > 0) {
 					bTempLoadedNves = true;
@@ -206,7 +206,7 @@ sap.ui.define(
 			checkIfNvesWhereCleared: function () {
 				let bTempClearedNves = false;
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aClearingNvesTemp = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs"); //geklaerte Nves
+				let aClearingNvesTemp = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs"); //geklaerte Nves
 
 				if (aClearingNvesTemp.length > 0) {
 					bTempClearedNves = true;
@@ -225,7 +225,7 @@ sap.ui.define(
 				} else {
 					this.showSavingSuccessfullMessage();
 					this._saveAllTempStoredNVEs();
-					this.updateBindings("StopModel");
+					this.updateModelBindings("StopModel");
 				}
 			},
 
@@ -239,19 +239,19 @@ sap.ui.define(
 			},
 
 			_mergeAndSaveNves: function (oModel, sTempProperty, sTotalProperty) {
-				let aTempNves = oModel.getProperty("/tour/aDeliveryNotes/0/" + sTempProperty);
-				let aTotalNves = oModel.getProperty("/tour/aDeliveryNotes/0/" + sTotalProperty);
+				let aTempNves = oModel.getProperty("/tour/orders/0/aDeliveryNotes/0/" + sTempProperty);
+				let aTotalNves = oModel.getProperty("/tour/orders/0/aDeliveryNotes/0/" + sTotalProperty);
 
 				if (aTempNves.length > 0) {
 					let aUpdatedTotalNves = [...aTotalNves, ...aTempNves];
-					oModel.setProperty("/tour/aDeliveryNotes/0/" + sTotalProperty, aUpdatedTotalNves);
+					oModel.setProperty("/tour/orders/0/aDeliveryNotes/0/" + sTotalProperty, aUpdatedTotalNves);
 				}
 			},
 
 			_emptyTempModels: function () {
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempClearedNVEs", []);
-				oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aTempLoadedNVEs", []);
+				oStopInformationModel.setProperty("/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs", []);
+				oStopInformationModel.setProperty("/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs", []);
 			},
 
 			nveClearingDialogConfirm: function () {
@@ -341,7 +341,7 @@ sap.ui.define(
 				let oManualNveInputModel = this.getOwnerComponent().getModel("manualNveInputModel");
 				let sManualNveUserInput = oManualNveInputModel.getProperty("/manualInput"); //UserInput aus Feld auslesen
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aLoadingUnits = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
+				let aLoadingUnits = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
 
 				let oLoadingNve = aLoadingUnits.find((element) => element.label1 === sManualNveUserInput);
 
@@ -367,7 +367,7 @@ sap.ui.define(
 			saveTempNve(oNve, type) {
 				StatusSounds.playBeepSuccess();
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let tempNvesKey = type === "Clearing" ? "/tour/aDeliveryNotes/0/aTempClearedNVEs" : "/tour/aDeliveryNotes/0/aTempLoadedNVEs";
+				let tempNvesKey = type === "Clearing" ? "/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs" : "/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs";
 				let aTempNves = oStopInformationModel.getProperty(tempNvesKey);
 				let aUpdatedTempNves = [...aTempNves, oNve];
 
@@ -377,10 +377,10 @@ sap.ui.define(
 
 			removeProcessedNve: function (oDiffNve) {
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aRemainingNves = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
+				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits");
 				let aNewFilteredNves = aRemainingNves.filter((oCurrentNve) => oCurrentNve !== oDiffNve);
 
-				oStopInformationModel.setProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", aNewFilteredNves);
+				oStopInformationModel.setProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits", aNewFilteredNves);
 
 				this.decideWichDialogShouldBeClosed();
 			},

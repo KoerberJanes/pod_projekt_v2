@@ -8,7 +8,7 @@
     xmlns:layout="sap.ui.layout"
 >
 
-    <Dialog id="TourStatisticsDialog" initialFocus="" afterOpen="" >
+    <Dialog id="TourStatisticsDialog" title="{i18n>tourStatiscticsDialogTitle}&#13;{i18n>buildNo}" initialFocus="" afterOpen="" >
         <customHeader>
 			<Bar>
 				<contentMiddle>

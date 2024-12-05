@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core" 
 	xmlns:form="sap.ui.layout.form">
 
-	<Dialog id="TourstartDialog" initialFocus="" afterOpen="onDialogAfterOpen">
+	<Dialog id="TourstartDialog" title="{i18n>tourstartDialogTitle}&#13;{i18n>buildNo}" initialFocus="" afterOpen="onDialogAfterOpen">
 		<customHeader>
 			<Bar>
 				<contentMiddle>

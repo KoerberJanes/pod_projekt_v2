@@ -4,7 +4,7 @@
     xmlns="sap.m"
     xmlns:form="sap.ui.layout.form" 
     xmlns:upload="sap.m.upload" displayBlock="true">
-    <Page id="confirmationPage">
+    <Page id="confirmationPage" title="{i18n>confirmationTitle}&#13;{i18n>buildNo}">
         <customHeader>
             <Bar>
                 <contentLeft>
@@ -50,7 +50,7 @@
                     <Label text="{i18n>showDeliveryItems}"/>
                     <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{settings>/deliveryItemsVisible}"/>
                     <Label ></Label>
-                    <List  id="deliveryNoteList" includeItemInSelection="true" items="{StopInformationModel>/tour/aDeliveryNotes}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
+                    <List  id="deliveryNoteList" includeItemInSelection="true" items="{StopInformationModel>/tour/orders/0/aDeliveryNotes}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
                        <headerToolbar>
                             <Toolbar>
                                 <Title text="{i18n>deliveryItems}"/>
@@ -59,17 +59,17 @@
                         <items>
                             <StandardListItem
                                 title="{StopInformationModel>shipmentNumber}"
-                                icon="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'sap-icon://high-priority' : 'sap-icon://approvals'}"
-                                info="{= ${StopInformationModel>tour/0/loadingUnits/0/isReturning} === true ? ${i18n>returning} : ${i18n>unloading}}"
-                                infoState="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'Success'}"
+                                icon="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'sap-icon://high-priority' : 'sap-icon://approvals'}"
+                                info="{= ${StopInformationModel>tour/orders/0/loadingUnits/0/isReturning} === true ? ${i18n>returning} : ${i18n>unloading}}"
+                                infoState="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'Success'}"
                                 type="Navigation"
                                 press="onDeliveryNotePressed"/>
                         </items>
                     </List>
                     <MessageStrip id="messageStripDeliveryItemList" 
-                        visible="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? true : false}" 
+                        visible="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? true : false}" 
                         text="{i18n>notALlNvesProcessed}" 
-                        type="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'None'}" />
+                        type="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'None'}" />
 
                     <Label id="complaints" text="{i18n>complaints}"/>
                     <Switch id="complaintsSwitch" type="AcceptReject" state="{settings>/complaintsSwitch}"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->

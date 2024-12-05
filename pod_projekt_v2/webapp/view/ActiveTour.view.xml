@@ -4,7 +4,7 @@
     xmlns="sap.m" 
     xmlns:form="sap.ui.layout.form"
     displayBlock="true">
-    <Page id="activetourPageId" title="{i18n>activetourPageTitle}">
+    <Page id="activetourPageId" title="{i18n>activetourPageTitle}&#13;{i18n>buildNo}">
         <customHeader>
                 <Bar id="activeTourPageBar">
                     
@@ -51,6 +51,8 @@
                                     <Label text="{StopModel>country} {StopModel>zipCode} {StopModel>city}" class="sapUiSmallMarginBegin"/>
                                 </VBox>
                                 <VBox width="7%">
+                                    <core:Icon src="sap-icon://signature" class="sapUiTinyMarginTop" color="{= ${StopModel>stopStatus} === '70' ? 'Positive' : 'Negative'}"
+                                    visible="{= ${StopModel>/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length === 0 }"/>
                                     <core:Icon src="sap-icon://navigation-right-arrow" class="sapUiTinyMarginTop"/>
                                 </VBox>
                             </HBox>

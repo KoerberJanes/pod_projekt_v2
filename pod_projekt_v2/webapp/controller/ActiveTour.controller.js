@@ -15,7 +15,7 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
-			updateBindings:function(sModelName){
+			updateModelBindings:function(sModelName){
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
@@ -37,11 +37,15 @@ sap.ui.define(
 			onSetStoppInformation: function (oPressedModelObject) {
 				//Herausfinden welcher Stop in der Liste ausgewaehlt wurde
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let oPressedModelObjectDetails = oPressedModelObject.orders[0]; //Detailreichere Informationen über das Modelobjekt
+				//let oPressedModelObjectDetails = oPressedModelObject.orders[0]; //Detailreichere Informationen über das Modelobjekt
 
-				oStopInformationModel.setProperty("/tour", oPressedModelObjectDetails);
-				this.createLoadingUnitsDetailedDescription(oPressedModelObjectDetails);
-				this.updateBindings("StopInformationModel");
+				//oStopInformationModel.setProperty("/tour", oPressedModelObjectDetails);
+				//this.createLoadingUnitsDetailedDescription(oPressedModelObjectDetails);
+
+				oStopInformationModel.setProperty("/tour", oPressedModelObject);
+				this.createLoadingUnitsDetailedDescription(oPressedModelObject.orders[0]);
+
+				this.updateModelBindings("StopInformationModel");
 			},
 
 			createLoadingUnitsDetailedDescription: function (oPressedModelObjectDetails) {

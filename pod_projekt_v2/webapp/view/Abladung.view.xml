@@ -2,7 +2,7 @@
     xmlns:mvc="sap.ui.core.mvc" 
     xmlns="sap.m"
     xmlns:form="sap.ui.layout.form">
-    <Page id="AbladungPageId">
+    <Page id="AbladungPageId" title="{i18n>unloadingTitle}&#13;{i18n>buildNo}">
         <customHeader>
             <Bar id="undloadingPageBar">                    
                 <contentLeft>
@@ -35,11 +35,11 @@
                             <Text id="NVEText" text="{= ${i18n>nvesToDeliveryNote} + ' ' + ${StopInformationModel>/tour/shipmentNumber}}"/>
                             <ToolbarSpacer/>
                             <ToolbarSpacer/>
-                            <Text id="txtNVEAnzahl" text="{= ${StopInformationModel>/tour/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length}  / 
-                                {= ${StopInformationModel>/tour/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aTotalLoadedNVEs}.length + ${StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
+                            <Text id="txtNVEAnzahl" text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalLoadedNVEs}.length}  / 
+                                {= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalLoadedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
                         </content>
                     </OverflowToolbar>
-                    <Tree id="NVETree" items="{StopInformationModel>/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}" >
+                    <Tree id="NVETree" items="{StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}" >
                         <CustomTreeItem type="Active">
                             <content>
                                 <HBox>

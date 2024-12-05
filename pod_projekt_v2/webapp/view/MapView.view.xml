@@ -3,7 +3,7 @@
   xmlns="sap.m"
   xmlns:vbm="sap.ui.vbm"
   controllerName="podprojekt.controller.MapView">
-  <Page id="MapViewTitleId" title="{i18n>mapTitle}">
+  <Page id="MapViewTitleId" title="{i18n>mapTitle}&#13;{i18n>buildNo}">
     <customHeader>
       <Bar>
           <contentLeft>

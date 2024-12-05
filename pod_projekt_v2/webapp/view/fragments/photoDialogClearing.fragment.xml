@@ -2,7 +2,7 @@
     xmlns="sap.m" 
     xmlns:core="sap.ui.core" 
     xmlns:form="sap.ui.layout.form">
-	<Dialog id="photoDialogClearing" afterOpen="addCameraPlayerToCameraDialog" afterClose="">
+	<Dialog id="photoDialogClearing" title="&#13;{i18n>buildNo}" afterOpen="addCameraPlayerToCameraDialog" afterClose="">
         <customHeader>
             <Bar >
                 <contentLeft>

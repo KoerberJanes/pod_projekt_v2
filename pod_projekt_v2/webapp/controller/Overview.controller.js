@@ -139,7 +139,7 @@ sap.ui.define(
 				} else{ // Sofern kein Filter ausgewählt wurde, alle Datensätze anzeigen
 					oBinding.filter([]); // Leere Filter anwenden, um alle Datensätze anzuzeigen
 				}
-				this.getOwnerComponent().getModel("TourModel").updateBindings(true);
+				this.updateModelBindings("TourModel");
 			},
 
 			_applyFilters: function(aTours, oFilterData) {
@@ -335,64 +335,78 @@ sap.ui.define(
 
 				oStopModel.setProperty("/results", aRespectiveTourStops); //Setzen der Stops
 				// Prüfung der DeliveryNotes und NVEs
-				if (this.isDeliveryNoteAndNVEsOverlap(aRespectiveTourStops)) {
+				if (this.validateDeliveryNotesForStops(aRespectiveTourStops)) {
 					this.onNavToActiveTour();
 				} else {
 					this.createDeliveryNotes();
 				}
 			},
 
-			isDeliveryNoteAndNVEsOverlap: function (aRespectiveTourStops) {
-				
-				let isValid = true; // Statusparameter, der die Gültigkeit speichert
+			validateDeliveryNotesForStops: function (aRespectiveTourStops) {
+				let isValid = true;  // Statusparameter, der die Gültigkeit speichert
 
+    			// Hilfsfunktion, die überprüft, ob ein NVE in einem der Arrays im Lieferschein enthalten ist
+				const isNveInNote = (nve, note) => {
+					return (
+						note.aTempClearedNVEs.includes(nve) ||
+						note.aTempLoadedNVEs.includes(nve) ||
+						note.aTotalClearedNves.includes(nve) ||
+						note.aTotalLoadedNVEs.includes(nve) ||
+						note.aUnprocessedNumberedDispatchUnits.includes(nve)
+					);
+				};
+
+				// Iteriere über alle Tour Stops
 				aRespectiveTourStops.forEach((stop) => {
-					if (!isValid) return; // Wenn bereits ungültig, keine weiteren Prüfungen
-			
 					const orders = stop.orders;
+
+					// Falls keine Bestellungen für den Stop vorhanden sind, sollte ein neuer Lieferschein erstellt werden
 					if (!orders || orders.length === 0) {
 						isValid = false;
 						return;
 					}
-			
-					const firstOrder = orders[0];
-					const deliveryNotes = firstOrder.aDeliveryNotes;
-					const newNVEs = firstOrder.loadingUnits;
-			
-					if (!Array.isArray(deliveryNotes) || deliveryNotes.length === 0) {
+
+					// Flag, um zu erkennen, ob für eine Bestellung ein Lieferschein erstellt werden muss
+					let shouldCreateNewDeliveryNote = false;
+
+					// Iteriere durch die Orders des Stops
+					orders.forEach((order) => {
+						const deliveryNotes = order.aDeliveryNotes;
+						const newNVEs = order.loadingUnits;
+
+						// Falls keine Lieferscheine existieren, wird ein neuer Lieferschein benötigt
+						if (!Array.isArray(deliveryNotes) || deliveryNotes.length === 0) {
+							shouldCreateNewDeliveryNote = true;
+						} else {
+							// Überprüfen, ob alle NVEs im Lieferschein enthalten sind
+							const allNVEsCovered = newNVEs.every((nve) =>
+								deliveryNotes.some((note) => isNveInNote(nve, note))
+							);
+
+							// Falls eine NVE nicht abgedeckt ist, muss ein neuer Lieferschein erstellt werden
+							if (!allNVEsCovered) {
+								shouldCreateNewDeliveryNote = true;
+							}
+						}
+					});
+
+					// Wenn für einen Stop ein Lieferschein benötigt wird, setzen wir den Status auf false
+					if (shouldCreateNewDeliveryNote) {
 						isValid = false;
-						return;
-					}
-			
-					if (!Array.isArray(newNVEs) || newNVEs.length === 0) {
-						isValid = false;
-						return;
-					}
-			
-					if (!newNVEs.every((nve) =>
-						deliveryNotes.some((note) =>
-							note.aTempClearedNVEs.includes(nve) ||
-							note.aTempLoadedNVEs.includes(nve) ||
-							note.aTotalClearedNves.includes(nve) ||
-							note.aTotalLoadedNVEs.includes(nve) ||
-							note.aUnprocessedNumberedDispatchUnits.includes(nve)
-						)
-					)) {
-						isValid = false;
-						return;
 					}
 				});
-			
-				return isValid; // Nur ein einziges `return` am Ende der Methode
+
+				return isValid;  // Gibt true zurück, wenn alle NVEs abgedeckt sind und kein neuer Lieferschein benötigt wird
 			},
 
 			createDeliveryNotes: function () {
-				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
+				
+				/*let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
 				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); // Array an Stops der ausgewählten Tour
 
 				aRespectiveTourStops.forEach((stop) => {
 					let {orders} = stop;
-					let order = orders[0];
+					let order = orders[0]; //Hier für mehrere Orders ausführen lassen
 					let {shipmentNumber, shipmentCondition, shipmentConditionCaption, loadingUnits, aDeliveryNotes} = order;
 
 					if (!Array.isArray(order.aDeliveryNotes)) {
@@ -414,19 +428,62 @@ sap.ui.define(
 					order.aDeliveryNotes = [...order.aDeliveryNotes, oNewDeliveryNote];
 				});
 
+				this.linkNvesToDeliveryNote(aRespectiveTourStops);*/
+
+				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
+				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); // Array an Stops der ausgewählten Tour
+
+				aRespectiveTourStops.forEach((stop) => {
+					let {orders} = stop;
+
+					// Schleife über alle Bestellungen eines Stops
+					orders.forEach((order) => {
+						let {shipmentNumber, shipmentCondition, shipmentConditionCaption, loadingUnits, aDeliveryNotes} = order;
+
+						if (!Array.isArray(order.aDeliveryNotes)) {
+							order.aDeliveryNotes = [];
+						}
+
+						let oNewDeliveryNote = {
+							shipmentNumber,
+							shipmentCondition,
+							shipmentConditionCaption,
+							aTempClearedNVEs: [],
+							aTotalClearedNves: [],
+							aTempLoadedNVEs: [],
+							aTotalLoadedNVEs: [],
+							aUnprocessedNumberedDispatchUnits: loadingUnits,
+						};
+
+						// Füge das neue Delivery Note zu den bestehenden hinzu
+						order.aDeliveryNotes = [...order.aDeliveryNotes, oNewDeliveryNote];
+					});
+				});
+
 				this.linkNvesToDeliveryNote(aRespectiveTourStops);
 			},
 
-			linkNvesToDeliveryNote: function (aRespectiveTourStops) {
-				//NVEs bekommen zusaetzliches Attribut um DeliveryNote zuordnen zu koennen
-
-				aRespectiveTourStops.forEach((stop) => {
-					// Extrahiere das Array der ungeordneten NVEs und die zugehörige Sendungsnummer
+			linkNvesToDeliveryNote: function (aRespectiveTourStops) {//NVEs bekommen zusaetzliches Attribut um DeliveryNote zuordnen zu koennen
+				
+				/*aRespectiveTourStops.forEach((stop) => {
 					let aUnprocessedNves = stop.orders[0].aDeliveryNotes[0].aUnprocessedNumberedDispatchUnits;
 
-					// Setze die Sendungsnummer für alle NVEs
-					aUnprocessedNves.forEach((nve) => {
+					aUnprocessedNves.forEach((nve) => {// Setze die Sendungsnummer für alle NVEs
 						nve.deliveryNoteShipmentNumber = stop.orders[0].aDeliveryNotes[0].shipmentNumber;
+					});
+				});
+				this.onNavToActiveTour();*/
+
+				aRespectiveTourStops.forEach((stop) => {
+					// Iteriere durch alle Bestellungen des Stops
+					stop.orders.forEach((order) => {
+						// Extrahiere das Array der ungeordneten NVEs und die zugehörige Sendungsnummer
+						let aUnprocessedNves = order.aDeliveryNotes[0].aUnprocessedNumberedDispatchUnits;
+			
+						// Setze die Sendungsnummer für alle NVEs
+						aUnprocessedNves.forEach((nve) => {
+							nve.deliveryNoteShipmentNumber = order.aDeliveryNotes[0].shipmentNumber;
+						});
 					});
 				});
 				this.onNavToActiveTour();
@@ -566,6 +623,7 @@ sap.ui.define(
 						interaction: {
 							selectability: {
 								mode: "SINGLE"  // Nur ein Element kann ausgewählt werden
+								//Alternativ gibt es "MULTIPLE", "NONE"
 							}
 						}
 					});
@@ -575,7 +633,11 @@ sap.ui.define(
 					oPopOver.connect(oVizFrame.getVizUid());
 				}
 
-				oModel.updateBindings();
+				this.updateModelBindings("TourModel");
+			},
+
+			updateModelBindings:function(sModelName){
+				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
 			TourStatisticsDialogClose:function(){
@@ -614,6 +676,7 @@ sap.ui.define(
 			},
 
 			onNavToActiveTour: function () {
+				this.updateModelBindings("StopModel");
 				//Navigation zu den Stops der derzeitgen Tour
 				StatusSounds.playBeepSuccess();
 				let oRouter = this.getOwnerComponent().getRouter();

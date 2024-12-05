@@ -166,7 +166,7 @@ sap.ui.define(
 			checkIfNvesAreProcessed: function () {
 				//Prüfen ob noch nicht bearbeitete Nves existieren
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aRemainingNves = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
 				if (aRemainingNves.length > 0) {
 					//Es sind noch Nves zu bearbeiten
@@ -338,6 +338,12 @@ sap.ui.define(
 				oPhotoListModel.setProperty("/photos", aUpdatedPhotos);
 			},
 
+			clearCustomerInput:function(){
+				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
+
+				oCustomerModel.setProperty("/customerName", "");
+			},
+
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
 				StatusSounds.playBeepError();
 				MessageBox.error(this._oBundle.getText(sMessageKey), {
@@ -381,6 +387,8 @@ sap.ui.define(
 			},
 
 			onNavToOverview: function () {
+				this.clearCustomerInput();
+				
 				//Navigation zurueck zur Uebersicht
 				let oRouter = this.getOwnerComponent().getRouter();
 
@@ -388,6 +396,8 @@ sap.ui.define(
 			},
 
 			onNavToStopInformation: function () {
+				this.clearCustomerInput();
+
 				//Navigation zurueck zur Uebersicht
 				let oRouter = this.getOwnerComponent().getRouter();
 

@@ -3,7 +3,7 @@
     xmlns="sap.m" 
     xmlns:form="sap.ui.layout.form"
     displayBlock="true">
-    <Page id="stopInformationPageId" title="{i18n>stopInformationTitle}">
+    <Page id="stopInformationPageId" title="{i18n>stopInformationTitle}&#13;{i18n>buildNo}">
         
         <customHeader>
             <Bar>
@@ -37,9 +37,9 @@
                     <Label/>
                     <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>mapTitle}"/>
                     <Label text="{i18n>note}"></Label>
-                    <TextArea id="taHinweis" value="{StopInformationModel>/tour/comment}" growing="true" editable="false"></TextArea> <!--{StopInformationModel>/tour/shipmentConditionCaption}" ?-->
+                    <TextArea id="taHinweis" value="{StopInformationModel>/tour/orders/0/comment}" growing="true" editable="false"></TextArea> <!--{StopInformationModel>/tour/shipmentConditionCaption}" ?-->
                     <Label text="{i18n>avisNumber}"></Label>
-                    <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{StopInformationModel>/tour/phoneAvis}"/>
+                    <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{StopInformationModel>/tour/orders/0/phoneAvis}"/>
                     
                 </form:content>
             </form:SimpleForm>

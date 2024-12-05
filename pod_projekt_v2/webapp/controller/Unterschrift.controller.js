@@ -32,7 +32,7 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
-			updateBindings:function(sModelName){
+			updateModelBindings:function(sModelName){
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
@@ -163,13 +163,28 @@ sap.ui.define(
 			},
 			changeDisplayedNvesOfStop: function () {
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aRemainingNves = oStopInformationModel.getProperty("/tour/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
-				oStopInformationModel.setProperty("/tour/loadingUnits", aRemainingNves);
+				oStopInformationModel.setProperty("/tour/orders/0/loadingUnits", aRemainingNves);
+
+				this.setCurrentStopStatus();
+			},
+
+			setCurrentStopStatus:function(){
+
+				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
+				let oCurrentStop = oStopInformationModel.getProperty("/tour");
+
+				
+
+
+				//let oStopModel = this.getOwnerComponent().getModel("StopModel");
+				
+				//oStopModel.setProperty("/tour/orderStatus", "70"); //Status auf 'finished' setzen
 
 				this.resetUserInput();
 				this.resetUserPhotos();
-				this.onNavToActiveTour(); //--> HashManager übernimmt aktualisierung von Models
+				this.onNavToActiveTour(); 
 			},
 
 			setTourStatusProcessed: function () {
@@ -177,11 +192,7 @@ sap.ui.define(
 				let oCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
 
 				oCurrentTour.routeStatus = "10";
-				//TODO: Update Models
-				this.updateBindings("StopInformationModel");
-				this.updateBindings("StopModel");
-				this.updateBindings("TourModel")
-				this.onNavToOverview(); //--> HashManager übernimmt aktualisierung von Models
+				this.onNavToOverview(); 
 			},
 
 			resetUserInput: function () {
@@ -200,12 +211,22 @@ sap.ui.define(
 			},
 
 			onNavToActiveTour: function () {
+				//Models über Statusänderung der Stops informieren
+				this.updateModelBindings("StopInformationModel");
+				this.updateModelBindings("StopModel");
+				this.updateModelBindings("TourModel");
+
 				let oRouter = this.getOwnerComponent().getRouter();
 
 				oRouter.navTo("ActiveTour");
 			},
 
 			onNavToOverview: function () {
+				//Models über Statusänderung der Tour informieren
+				this.updateModelBindings("StopInformationModel");
+				this.updateModelBindings("StopModel");
+				this.updateModelBindings("TourModel");
+
 				let oRouter = this.getOwnerComponent().getRouter();
 
 				oRouter.navTo("Overview");
