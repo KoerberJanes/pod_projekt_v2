@@ -562,8 +562,17 @@ sap.ui.define(
 							title: {
 								visible: false //Titel der Legende ausblenden
 							}
+						},
+						interaction: {
+							selectability: {
+								mode: "SINGLE"  // Nur ein Element kann ausgewählt werden
+							}
 						}
 					});
+
+					// Popover verbinden
+					const oPopOver = this.byId("idPopOver");
+					oPopOver.connect(oVizFrame.getVizUid());
 				}
 
 				oModel.updateBindings();
@@ -593,24 +602,9 @@ sap.ui.define(
 			},
 
 			onVizFrameSelectData: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("data"); //Das ausgewählte Diagrammelement
 
-				/*const selectedData = oEvent.getParameter("data")[0];  // Das erste (und einzige) Element der Auswahl
-
-				if (!selectedData) {
-					return;
-				}
-			
-				const selectedStatus = selectedData.data.Status;
-				const selectedCount = selectedData.data.Anzahl;
-			
-				const oModel = this.getView().getModel("TourModel");
-				const aResults = oModel.getProperty("/resultsForDiagram");
-				const totalCount = aResults.reduce((sum, item) => sum + item.Anzahl, 0);  // Gesamtanzahl aller Touren
-			
-				const percentage = ((selectedCount / totalCount) * 100).toFixed(2);  // Prozent mit 2 Dezimalstellen
-				const message = this.getOwnerComponent().getModel("i18n").getResourceBundle().getText("tourPercentageMessage", [selectedStatus, percentage]);
-			
-				sap.m.MessageToast.show(message);*/
+				
 			},
 
 			onCloseTourStartFragment: function () {

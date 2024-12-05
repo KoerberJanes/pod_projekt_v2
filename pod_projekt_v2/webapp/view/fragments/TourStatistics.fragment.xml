@@ -29,7 +29,7 @@
                     </Switch>
                 </content>
             </Panel> -->
-            <layout:FixFlex id='chartFixFlex' minFlexSize="500">
+            <layout:FixFlex id='chartFixFlex' minFlexSize="350">
                 <layout:flexContent>
 					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData">
                     <!--Hexcodes: Rot, Blau, Grün-->
@@ -51,7 +51,9 @@
                         </viz:feeds>
                     
                         <viz:dependents>
-                            <viz:Popover id="idPopOver"></viz:Popover>
+                            <viz:Popover id="idPopOver">
+
+                            </viz:Popover>
                         </viz:dependents>
                     </viz:VizFrame>
                 </layout:flexContent>
