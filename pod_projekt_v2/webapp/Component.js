@@ -42,7 +42,7 @@ sap.ui.define([
 					"routeType": "",
 					"routeTypeCaption": "",
 					"returnRoute": false,
-					"routeStatus": "90",
+					"routeStatus": "50",
 					"deliveryAgreement": "",
 					"deliveryAgreementBarcode": "",
 					"stops": [{

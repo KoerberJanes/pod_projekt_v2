@@ -211,10 +211,7 @@ sap.ui.define(
 			},
 
 			onNavToActiveTour: function () {
-				//Models über Statusänderung der Stops informieren
-				this.updateModelBindings("StopInformationModel");
-				this.updateModelBindings("StopModel");
-				this.updateModelBindings("TourModel");
+				this.updateModelBindings("StopModel"); //Aktualisiert die verbleibenden NVEs und das Unterschrift Icon
 
 				let oRouter = this.getOwnerComponent().getRouter();
 
@@ -226,6 +223,7 @@ sap.ui.define(
 				this.updateModelBindings("StopInformationModel");
 				this.updateModelBindings("StopModel");
 				this.updateModelBindings("TourModel");
+				this.resetUserInput();
 
 				let oRouter = this.getOwnerComponent().getRouter();
 

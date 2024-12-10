@@ -20,11 +20,11 @@
             </customHeader>
         <content>
             <!-- FilterBar -->
-            <fb:FilterBar id="filterBar" liveMode="true" search="onFilterSearch" filterBarExpanded="false">
+            <fb:FilterBar id="filterBar" search="onFilterSearch" filterBarExpanded="false">
                 <fb:filterGroupItems>
-                    <fb:FilterGroupItem name="RouteStatus" label="{i18n>routeStatusLabel}" groupName="StatusFilter" visibleInFilterBar="true" >
+                    <fb:FilterGroupItem name="RouteStatus" label="{i18n>routeStatusLabel}" groupName="StatusFilter" visibleInFilterBar="true" > <!--visibleInFilterBar="true" notwendig, sonst keine Filter sichtbar-->
                         <fb:control>
-                            <MultiComboBox name="RouteStatus" selectionChange=".onSelectionChange" items="{filtersModel>/routeStatuses}">
+                            <MultiComboBox name="RouteStatus" selectionChange="onSelectionChange" items="{filtersModel>/routeStatuses}">
                                 <core:Item key="{filtersModel>key}" text="{filtersModel>status}" />
                             </MultiComboBox>
                         </fb:control>
@@ -58,7 +58,7 @@
                                         ${TourModel>routeStatus} === '50' ? 'sap-icon://shipping-status' :
                                             ${TourModel>routeStatus} === '70' ? 'sap-icon://BusinessSuiteInAppSymbols/icon-box-truck-empty' : 'sap-icon://complete'}"
                             type="Navigation"
-                            press="setPressedTour"> <!--setPressedTour-->
+                            press="setPressedTour">
                         </StandardListItem>
                     </List>
                 </form:content>

@@ -51,8 +51,7 @@
                                     <Label text="{StopModel>country} {StopModel>zipCode} {StopModel>city}" class="sapUiSmallMarginBegin"/>
                                 </VBox>
                                 <VBox width="7%">
-                                    <core:Icon src="sap-icon://signature" class="sapUiTinyMarginTop" color="{= ${StopModel>stopStatus} === '70' ? 'Positive' : 'Negative'}"
-                                    visible="{= ${StopModel>/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length === 0 }"/>
+                                    <core:Icon src="sap-icon://signature" class="sapUiTinyMarginTop" color="{= ${StopModel>stopStatus} === '70' ? 'Positive' : 'Negative'}"/>
                                     <core:Icon src="sap-icon://navigation-right-arrow" class="sapUiTinyMarginTop"/>
                                 </VBox>
                             </HBox>
