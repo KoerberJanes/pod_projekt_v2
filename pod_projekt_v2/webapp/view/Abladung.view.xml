@@ -25,6 +25,8 @@
                             <Label text="{i18n>adress}"/>
                             <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
                         </HBox>
+                        <Label id="ShipmentConditionId" text="{i18n>deliveryNoteShipmentConditionCaption}"/>
+                        <Text text="Kran notwendig" width="50%"/>
                 </form:content>
             </form:SimpleForm>
 
@@ -32,19 +34,19 @@
                 <form:content>
                     <OverflowToolbar id="NVEBar">
                         <content>
-                            <Text id="NVEText" text="{= ${i18n>nvesToDeliveryNote} + ' ' + ${StopInformationModel>/tour/shipmentNumber}}"/>
+                            <Text id="NVEText" text="{= ${i18n>nvesToDeliveryNote} + ' ' + ${DeliveryNoteModel>/note/shipmentNumber}}"/>
                             <ToolbarSpacer/>
                             <ToolbarSpacer/>
-                            <Text id="txtNVEAnzahl" text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalLoadedNVEs}.length}  / 
-                                {= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTempClearedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNves}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTempLoadedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalLoadedNVEs}.length + ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
+                            <Text id="txtNVEAnzahl" text="{= ${DeliveryNoteModel>/note/aTempClearedNVEs}.length + ${DeliveryNoteModel>/note/aTotalClearedNves}.length + ${DeliveryNoteModel>/note/aTempLoadedNVEs}.length + ${DeliveryNoteModel>/note/aTotalLoadedNVEs}.length}  / 
+                                {= ${DeliveryNoteModel>/note/aTempClearedNVEs}.length + ${DeliveryNoteModel>/note/aTotalClearedNves}.length + ${DeliveryNoteModel>/note/aTempLoadedNVEs}.length + ${DeliveryNoteModel>/note/aTotalLoadedNVEs}.length + ${DeliveryNoteModel>/note/aUnprocessedNumberedDispatchUnits}.length}"/>
                         </content>
                     </OverflowToolbar>
-                    <Tree id="NVETree" items="{StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}" >
+                    <Tree id="NVETree" items="{DeliveryNoteModel>/note/aUnprocessedNumberedDispatchUnits}" >
                         <CustomTreeItem type="Active">
                             <content>
                                 <HBox>
-                                    <Title text="{StopInformationModel>accurateDescription}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/>
-                                    <Button text="{i18n>clearing}" visible="{= ${StopInformationModel>detailedInformation} === undefined ? false : true}" press="onClearingButtonPress"/>
+                                    <Title text="{DeliveryNoteModel>accurateDescription}" class="sapUiLargeMarginEnd sapUiSmallMarginTop"/>
+                                    <Button text="{i18n>clearing}" visible="{= ${DeliveryNoteModel>detailedInformation} === undefined ? false : true}" press="onClearingButtonPress"/>
                                 </HBox>
                             </content>
                         </CustomTreeItem>

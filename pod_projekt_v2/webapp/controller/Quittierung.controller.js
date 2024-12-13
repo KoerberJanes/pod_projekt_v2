@@ -86,7 +86,13 @@ sap.ui.define(
 			},
 
 			onDeliveryNotePressed: function (oEvent) {
-				//let oPressedDeliveryNote=oEvent.getSource().getBindingContext("StopInformationModel").getObject(); //Fuer den Fall, dass es mal mehrere DeliveryNotes geben sollte
+				let oPressedDeliveryNote=oEvent.getSource().getBindingContext("StopInformationModel").getObject(); //Fuer den Fall, dass es mal mehrere DeliveryNotes geben sollte
+				this.setPressedDeliveryNoteModel(oPressedDeliveryNote);
+			},
+
+			setPressedDeliveryNoteModel:function(oPressedDeliveryNote){
+				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
+				oDeliveryNoteModel.setProperty("/note", oPressedDeliveryNote);
 				this.onNavToAbladung();
 			},
 

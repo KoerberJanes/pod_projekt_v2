@@ -265,7 +265,14 @@
             { "key": "90", "status": "Abgeschlossen" }
           ]
         }
+      },
+      "DeliveryNoteModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "note": {}
+        }
       }
+
     },
     "resources": {
       "css": [

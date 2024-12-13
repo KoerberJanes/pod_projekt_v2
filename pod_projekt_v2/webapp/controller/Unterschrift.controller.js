@@ -220,7 +220,6 @@ sap.ui.define(
 
 			onNavToOverview: function () {
 				//Models über Statusänderung der Tour informieren
-				this.updateModelBindings("StopInformationModel");
 				this.updateModelBindings("StopModel");
 				this.updateModelBindings("TourModel");
 				this.resetUserInput();

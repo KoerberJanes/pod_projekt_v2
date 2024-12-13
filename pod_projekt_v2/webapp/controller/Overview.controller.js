@@ -47,27 +47,27 @@ sap.ui.define(
 				//let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
 
 				/*
-        oODataModel.read(sPath, {
-          filters: aFilters,
+				oODataModel.read(sPath, {
+				filters: aFilters,
 
-          success: (oData) => {
-              this.busyDialogClose();
-              StatusSounds.playBeepSuccess();
-              let aRecievedTours=oData.getProperty("/results");
+				success: (oData) => {
+					this.busyDialogClose();
+					StatusSounds.playBeepSuccess();
+					let aRecievedTours=oData.getProperty("/results");
 
-              if(aRecievedTours.length===0){
-                  this._showErrorMessageBox("noToursLoaded", () => {}); //Fahrer hat keine Touren
-              } else{
-                  this.handleRecievedTours(aRecievedTours); //Setzen der Touren in Model
-              }
+					if(aRecievedTours.length===0){
+						this._showErrorMessageBox("noToursLoaded", () => {}); //Fahrer hat keine Touren
+					} else{
+						this.handleRecievedTours(aRecievedTours); //Setzen der Touren in Model
+					}
 
-          },
-          error: (oError) => {
-              this.busyDialogClose();
-              //Bisher keine Funktion
-          }
-        });
-        */
+				},
+				error: (oError) => {
+					this.busyDialogClose();
+					//Bisher keine Funktion
+				}
+				});
+        		*/
 
 				if (bTestCase) {
 					//Success-Fall simulieren
