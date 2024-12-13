@@ -10,7 +10,7 @@
             <!--custom Header Items-->
             <Bar id="clearDialogHeaderBar">
                 <contentLeft>
-                    <Title id="clearDialogTitle" text="{i18n>clearing}&#13;"/><!--{CurrentClearingObjectModel>/clearingObject/ProductId} Das gibt die Lieferscheinnummer an-->
+                    <Title id="clearDialogTitle" text="{i18n>clearing}&#13;{i18n>buildNo}"/><!--{CurrentClearingObjectModel>/clearingObject/ProductId} Das gibt die Lieferscheinnummer an-->
                 </contentLeft>
             </Bar>
         </customHeader>

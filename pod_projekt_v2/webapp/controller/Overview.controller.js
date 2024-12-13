@@ -21,6 +21,7 @@ sap.ui.define(
 			getUrlParameters() {
 				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
 				let sIdEumDev;
+				let userRole = '';
 
 				// Abfragen der Startup-Parameter, wenn verfügbar
 				const startupParams = this.getOwnerComponent().getComponentData()?.startupParameters;
@@ -33,6 +34,7 @@ sap.ui.define(
 
 				//Vielleicht noch das Setzen des Namens
 				oCustomerModel.setProperty("/driverId", sIdEumDev);
+				oCustomerModel.setProperty("/role", userRole);
 			},
 
 			simulateBackendCallForTours: function (bTestCase) {
@@ -74,6 +76,11 @@ sap.ui.define(
 					this.onBusyDialogClose();
 					let oTourModel = this.getOwnerComponent().getModel("TourModel"); //Demo Model bereits vorab gefüllt
 					let aTourModelItems = oTourModel.getProperty("/results"); //Inhalt für Abfrage benoetigt. Wird später durch das oData Model ersetzt
+
+					let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
+					let userRole = ''; //Disponent oder eben nicht
+					oCustomerModel.setProperty("/role", userRole);
+					this.updateModelBindings("CustomerModel");
 					
 					if (aTourModelItems.length === 0) {
 						//Keine Tour vorhanden
@@ -97,10 +104,19 @@ sap.ui.define(
 
 			filterFinishedStops: function (aRecievedTours) {
 				//Beendete oder Abgeschlossene Touren werden gefiltert
-				//return aRecievedTours.filter((tour) => tour.routeStatus !== "90" && tour.routeStatus !== "70");
+				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
+				let oCustomerRole = oCustomerModel.getProperty(("/role"));
 
-				//Demo für den Filter
-				return aRecievedTours;
+				if(oCustomerRole !== 'dispo'){
+					//kein Dispo, Touren Filtern
+					return aRecievedTours.filter((tour) => tour.routeStatus !== "90" && tour.routeStatus !== "70" && tour.routeStatus !== "10");
+				} else{
+					//Dispo, alle Touren zurueckgeben
+					return aRecievedTours;
+				}
+				
+
+				
 			},
 
 			onFilterSearch: function(oEvent) {

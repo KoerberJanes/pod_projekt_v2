@@ -8,7 +8,7 @@
         <customHeader>
             <Bar id="inputDialogHeaderBar">
                 <contentMiddle>
-                    <Title id="inputDialogTitle" text="{i18n>manualInputTitle}"/>
+                    <Title id="inputDialogTitle" text="{i18n>manualInputTitle}&#13;{i18n>buildNo}"/>
                 </contentMiddle>    
             </Bar>
         </customHeader>

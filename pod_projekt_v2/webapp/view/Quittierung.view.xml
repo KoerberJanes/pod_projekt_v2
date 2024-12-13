@@ -11,7 +11,7 @@
                     <Button id="navBackToStopInformationPageId" press="onNavToStopInformation" icon="sap-icon://nav-back"/>
                 </contentLeft>
                 <contentMiddle>
-                    <Title id="confirmationTitleId" text="{i18n>confirmationTitle}"/>
+                    <Title id="confirmationTitleId" text="{i18n>confirmationTitle}&#13;{i18n>buildNo}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>

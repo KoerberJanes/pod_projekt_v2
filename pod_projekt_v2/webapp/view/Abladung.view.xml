@@ -9,7 +9,7 @@
                     <Button id="navBackToQuittierungPageId" press="checkForUnsavedNves" icon="sap-icon://nav-back"/>
                 </contentLeft>
                 <contentMiddle>
-                    <Title id="unloadingTitleId" text="{i18n>unloadingTitle}"/>
+                    <Title id="unloadingTitleId" text="{i18n>unloadingTitle}&#13;{i18n>buildNo}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>

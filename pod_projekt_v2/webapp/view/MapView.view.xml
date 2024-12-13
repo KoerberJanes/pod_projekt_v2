@@ -10,7 +10,7 @@
               <Button id="navBackToStopInformationPageId" press="onNavToStopInformation" icon="sap-icon://nav-back"/>
           </contentLeft>
           <contentMiddle>
-              <Title text="{i18n>signingPageTitle}"/>
+              <Title text="{i18n>signingPageTitle}&#13;{i18n>buildNo}"/>
           </contentMiddle>
           <contentRight>
           </contentRight>

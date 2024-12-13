@@ -12,7 +12,7 @@
                         <Button id="navBackToOverviewPageId" press="onNavToOverview" icon="sap-icon://nav-back"/>
                     </contentLeft>
                     <contentMiddle>
-                        <Title id="activeTourTitleId" text="{i18n>activetourPageTitle}"/>
+                        <Title id="activeTourTitleId" text="{i18n>activetourPageTitle}&#13;{i18n>buildNo}"/>
                     </contentMiddle>
                     <contentRight>
                     </contentRight>

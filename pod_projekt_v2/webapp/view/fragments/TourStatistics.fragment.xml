@@ -12,7 +12,7 @@
         <customHeader>
 			<Bar>
 				<contentMiddle>
-					<Title text="{i18n>tourStatiscticsDialogTitle}"/>
+					<Title text="{i18n>tourStatiscticsDialogTitle}&#13;{i18n>buildNo}"/>
 				</contentMiddle>
 			</Bar>
 		</customHeader>

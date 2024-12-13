@@ -11,7 +11,7 @@
                     <Button id="navBackToActiveTourPageId" press="onNavToActiveTour" icon="sap-icon://nav-back"/>
                 </contentLeft>
                 <contentMiddle>
-                    <Title text="{i18n>stopInformationTitle}"/>
+                    <Title text="{i18n>stopInformationTitle}&#13;{i18n>buildNo}"/>
                 </contentMiddle>
                 <contentRight>
                 </contentRight>
