@@ -8,16 +8,16 @@ sap.ui.define(
 
 		return Controller.extend("podprojekt.controller.Main", {
 			onInit: function () {
-				this.saftyPig();
+				this.safetyPig();
 			},
 			onNavToOverview: function () {
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("Overview");
 			},
 
-			saftyPig: function(){
+			safetyPig: function(){
 				//Formatierung ist leider nicht besser möglich gewesen
-				console.log("Vorsicht vor wildem Code, daher das Safty Pig:");
+				console.log("Vorsicht vor wildem Code, daher das safety-Pig:");
 				console.log(`
                          _
  _._ _..._ .-',     _.._(\`))
