@@ -32,6 +32,22 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
+			formatRetoureText:function(aDeliveryNotes, retouresText, processedText){
+				// Fallback, wenn aDeliveryNotes nicht geladen oder kein Array ist
+				const count = Array.isArray(aDeliveryNotes) ? aDeliveryNotes.filter(note => note.bRetoure === true).length : 0;
+
+				// Formatierter Text mit der Anzahl
+				return `${count} ${retouresText} ${processedText}`;
+			},
+
+			formatDeliveryNoteText:function(aDeliveryNotes, retouresText, processedText){
+				// Fallback, wenn aDeliveryNotes nicht geladen oder kein Array ist
+				const count = Array.isArray(aDeliveryNotes) ? aDeliveryNotes.filter(note => note.bRetoure === false).length : 0;
+
+				// Formatierter Text mit der Anzahl
+				return `${count} ${retouresText} ${processedText}`;
+			},
+
 			updateModelBindings:function(sModelName){
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},

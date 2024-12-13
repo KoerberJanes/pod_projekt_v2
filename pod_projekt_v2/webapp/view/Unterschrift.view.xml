@@ -37,8 +37,23 @@
                     <Text text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNves}.length} {i18n>nves} {i18n>cleared}"/>
 
                     <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
-                    <Text text="X {i18n>deliveryItems} {i18n>processed}"/><!--TODO: Hier muss ich noch die Liste ueberarbeiten, damit eine 2 Listen (Lieferscheine und Retouren) amgezeigt werden können-->
-                    <Text text="Y {i18n>retoures} {i18n>processed}"/>
+                    <Text text="{
+                        parts: [
+                          { path: 'StopInformationModel>/tour/orders/0/aDeliveryNotes' },
+                          { path: 'i18n>deliveryItems' },
+                          { path: 'i18n>processed' }
+                        ],
+                        formatter: '.formatDeliveryNoteText'
+                      }"/>
+                    <Text text="{
+                        parts: [
+                          { path: 'StopInformationModel>/tour/orders/0/aDeliveryNotes' },
+                          { path: 'i18n>retoures' },
+                          { path: 'i18n>processed' }
+                        ],
+                        formatter: '.formatRetoureText'
+                      }" />
+                        <!--"{path: 'StopInformationModel>/tour/orders/0/aDeliveryNotes', formatter: '.countNonRetoureNotes'}"-->
                     <Label id="idLeihgutLabel" text="{i18n>loadingDevices}"/>
                     <Text text="A {i18n>unloaded}"/>
                     <Text text="B {i18n>charged}"/>

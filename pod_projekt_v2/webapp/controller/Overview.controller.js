@@ -400,35 +400,6 @@ sap.ui.define(
 			},
 
 			createDeliveryNotes: function () {
-				
-				/*let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
-				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); // Array an Stops der ausgewählten Tour
-
-				aRespectiveTourStops.forEach((stop) => {
-					let {orders} = stop;
-					let order = orders[0]; //Hier für mehrere Orders ausführen lassen
-					let {shipmentNumber, shipmentCondition, shipmentConditionCaption, loadingUnits, aDeliveryNotes} = order;
-
-					if (!Array.isArray(order.aDeliveryNotes)) {
-						order.aDeliveryNotes = [];
-					}
-
-					let oNewDeliveryNote = {
-						shipmentNumber,
-						shipmentCondition,
-						shipmentConditionCaption,
-						aTempClearedNVEs: [],
-						aTotalClearedNves: [],
-						aTempLoadedNVEs: [],
-						aTotalLoadedNVEs: [],
-						aUnprocessedNumberedDispatchUnits: loadingUnits,
-					};
-
-					// Füge das neue Delivery Note zu den bestehenden hinzu
-					order.aDeliveryNotes = [...order.aDeliveryNotes, oNewDeliveryNote];
-				});
-
-				this.linkNvesToDeliveryNote(aRespectiveTourStops);*/
 
 				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
 				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); // Array an Stops der ausgewählten Tour
@@ -453,9 +424,10 @@ sap.ui.define(
 							aTempLoadedNVEs: [],
 							aTotalLoadedNVEs: [],
 							aUnprocessedNumberedDispatchUnits: loadingUnits,
+							bRetoure: false //muss geschaut werden woran das festgemacht werden kann
 						};
 
-						// Füge das neue Delivery Note zu den bestehenden hinzu
+						// Füge den neuen Delivery Note zu den bestehenden hinzu
 						order.aDeliveryNotes = [...order.aDeliveryNotes, oNewDeliveryNote];
 					});
 				});
