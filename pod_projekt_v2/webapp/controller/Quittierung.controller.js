@@ -8,7 +8,7 @@ sap.ui.define(
 
 		// Definierte Konstanten
 		const ROUTE_QUITTIERUNG = "Quittierung";
-		const REGEX_CUSTOMER_NAME = /^[a-zA-Z\-]{2,15}$/; //nur Ziffern mit mindestlaenge 2, maxlaenge 15 und Sonderzeichen '-'
+		const REGEX_CUSTOMER_NAME = /^[a-zA-ZäöüßÄÖÜ\-]{2,15}$/; //nur Buchstaben mit mindestlaenge 2, maxlaenge 15 und Sonderzeichen '-'
 
 		return Controller.extend("podprojekt.controller.Quittierung", {
 			onInit: function () {
