@@ -31,10 +31,10 @@
 		</content>
 
 		<beginButton>
-            <Button id="TourstartFragmentButtonConfirm" text="{i18n>ok}" type="Emphasized" press="onTourStartDialogButtonCallback"/>
+            <Button id="TourstartFragmentButtonConfirm" text="{i18n>ok}" type="Emphasized" press="onTourStartDialogButtonAccept"/>
         </beginButton>
         <endButton>
-            <Button id="TourstartFragmentButtonAbort" text="{i18n>abort}" type="Emphasized" press="onTourStartDialogButtonCallback"/>
+            <Button id="TourstartFragmentButtonAbort" text="{i18n>abort}" type="Emphasized" press="onTourStartDialogButtonReject"/>
         </endButton>		
 	</Dialog>
 </core:FragmentDefinition>

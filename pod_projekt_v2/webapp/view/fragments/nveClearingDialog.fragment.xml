@@ -30,7 +30,7 @@
                     <TextArea id="taBemerkungen" value="{CurrentSittingClearingNvesModel>/remarks}"></TextArea>
                     <ToggleButton id="fotoListeToggleButton" icon="{=${settings>/photoListClearingVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{settings>/photoListClearingVisible}"/>
                     <Label/>
-                    <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="selectCheck" class="sapUiVisibleOnlyOnDesktop"/>
+                    <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="clearingNvesSelectCheck" class="sapUiVisibleOnlyOnDesktop"/>
                     <Label/>
                     <!--<u:FileUploader id="btnAddPhoto" buttonOnly="true" buttonText="{i18n>foto}" icon="sap-icon://add-photo" useMultipart="false" mimeType="image/*" change="onFotoMobile" width="100%" class="sapUiHideOnDesktop"/>-->
                     <upload:UploadSet id="photoClearingList" visible="{= ${settings>/photoListClearingVisible}}" fileTypes="png, image/*" instantUpload="false"

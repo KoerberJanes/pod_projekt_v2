@@ -13,17 +13,15 @@ sap.ui.define(
 		const ACCURACY_THRESHOLD = 100;
 
 		return Controller.extend("podprojekt.controller.MapView", {
-			onInit: function () {
-				//Beim erstmaligen aufrufen der Seite muss die Methode angehängt werden, damit die Position des
-				//Markers immer auf den aktuellen Stop Zeigt
+			onInit: function () { //Beim erstmaligen aufrufen der Seite muss die Methode angehängt werden, damit die Position des Markers immer auf den aktuellen Stop Zeigt
+				//TODO: Ladeindikator
 				this._oRouter = this.getOwnerComponent().getRouter();
 				this._oRouter.getRoute("MapView").attachPatternMatched(this.setSpotsIntoGeoMap, this);
 			},
 
 			onAfterRendering: function () {},
 
-			setSpotsIntoGeoMap: function () {
-				//Hinzufügen eines einzelnen Stops für die GeoMap
+			setSpotsIntoGeoMap: function () { //Hinzufügen eines einzelnen Stops für die GeoMap
 				let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
 				let {targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB} = oCurrentStop;
 
@@ -31,12 +29,9 @@ sap.ui.define(
 				this.getCurrentPosition(false);
 			},
 
-			createDestinationSpot: function (oCurrentStop, sTargetGeoL, sTargetGeoB) {
-				//Erstellen eines Stops
+			createDestinationSpot: function (oCurrentStop, sTargetGeoL, sTargetGeoB) { //Erstellen eines Stops
 				let oGeoMapStopModel = this.getOwnerComponent().getModel("SpotModel");
-
-				//Zuruecksetzen notwendig, weil sonst immer wieder der gleiche Stopp drin ist
-				oGeoMapStopModel.setProperty("/spot", []);
+				oGeoMapStopModel.setProperty("/spot", []); //Zuruecksetzen notwendig, weil sonst immer wieder der gleiche Stopp drin ist
 
 				let aGeoMapSpots = oGeoMapStopModel.getProperty("/spot");
 				// Neues Stop-Objekt erstellen
@@ -101,7 +96,7 @@ sap.ui.define(
 				);
 			},
 
-			removeOldOwnPosition: function () {
+			removeOldOwnPosition: function () { //entfernen vom alten eigenen Pointer
 				let oGeoMapStopModel = this.getOwnerComponent().getModel("SpotModel");
 				let aGeoMapSpots = oGeoMapStopModel.getProperty("/spot");
 
@@ -123,13 +118,12 @@ sap.ui.define(
 				//}
 			},
 
-			toCurrentPosition: function (sCurrentGeoL, sCurrentGeoB) {
+			toCurrentPosition: function (sCurrentGeoL, sCurrentGeoB) { //Sprung auf der Map zum eigenen Pointer
 				let oGeoMap = this.getView().byId("GeoMap");
 				oGeoMap.zoomToGeoPosition(parseFloat(sCurrentGeoL), parseFloat(sCurrentGeoB), MAP_ALTITUDE_TARGET);
 			},
 
-			onToTargetPosition: function () {
-				//Zur Position des derzeit ausgewählten Stops
+			onToTargetPosition: function () { //Zur Position des derzeit ausgewählten Stops
 				let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
 				let {targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB} = oCurrentStop;
 				let oGeoMap = this.getView().byId("GeoMap");

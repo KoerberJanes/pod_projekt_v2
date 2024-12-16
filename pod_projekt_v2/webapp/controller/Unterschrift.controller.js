@@ -15,20 +15,16 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
-			formatRetoureText:function(aDeliveryNotes, retouresText, processedText){
-				// Fallback, wenn aDeliveryNotes nicht geladen oder kein Array ist
+			formatRetoureText:function(aDeliveryNotes, retouresText, processedText){ // Fallback, wenn aDeliveryNotes nicht geladen oder kein Array ist
 				const count = Array.isArray(aDeliveryNotes) ? aDeliveryNotes.filter(note => note.bRetoure === true).length : 0;
 
-				// Formatierter Text mit der Anzahl
-				return `${count} ${retouresText} ${processedText}`;
+				return `${count} ${retouresText} ${processedText}`;// Formatierter Text mit der Anzahl
 			},
 
-			formatDeliveryNoteText:function(aDeliveryNotes, retouresText, processedText){
-				// Fallback, wenn aDeliveryNotes nicht geladen oder kein Array ist
+			formatDeliveryNoteText:function(aDeliveryNotes, retouresText, processedText){ // Fallback, wenn aDeliveryNotes nicht geladen oder kein Array ist
 				const count = Array.isArray(aDeliveryNotes) ? aDeliveryNotes.filter(note => note.bRetoure === false).length : 0;
 
-				// Formatierter Text mit der Anzahl
-				return `${count} ${retouresText} ${processedText}`;
+				return `${count} ${retouresText} ${processedText}`; // Formatierter Text mit der Anzahl
 			},
 
 			updateModelBindings:function(sModelName){
@@ -39,12 +35,11 @@ sap.ui.define(
 				this.getView().byId("digitalSignatureId").clearArea();
 			},
 
-			onCheckIfStopSigned: function () {
+			onCheckIfStopSigned: function () { //Pruefen ob die Tour unterschrieben wurde
 				let sDigitalSignatureId = this.byId("digitalSignatureId");
 				let sSignatureAsSvg = sDigitalSignatureId.getSignatureAsString();
 
-				if (sSignatureAsSvg) {
-					// Feld enthält etwas und wurde unterschrieben!
+				if (sSignatureAsSvg) { // Feld enthält etwas und wurde unterschrieben!
 					this.simulateBackendCall();
 				} else {
 					this._showErrorMessageBox("noSignatureDetected", () => {});
@@ -149,18 +144,17 @@ sap.ui.define(
 				}
 			},
 
-			checkIfAllStopsAreCompleted: function () {
+			checkIfAllStopsAreCompleted: function () { //Prüfen ob es nicht abgeschlossene Stops ( '90' abgeschlossene Stops '70' ) gibt
 				//!Statuscodes müssen abgesprochen werden
 				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Tour mit allen Stopps und Infos vorhanden
 
-				if (aStopsOfCurrentTour.some((element) => element.stopStatus === "90")) {
-					//Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
-					this.changeDisplayedNvesOfStop(); //Hier wird ein Test gemacht
+				if (aStopsOfCurrentTour.some((element) => element.stopStatus === "90")) { //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
+					this.changeDisplayedNvesOfStop(); 
 				} else {
-					this.setTourStatusProcessed(); //Hier wird auch ein Test gemacht
+					this.setTourStatusProcessed(); 
 				}
 			},
-			changeDisplayedNvesOfStop: function () {
+			changeDisplayedNvesOfStop: function () { //Aendern der Anzeige von verbleibenden NVEs in der Stoppuebersicht
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
 				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
@@ -170,24 +164,15 @@ sap.ui.define(
 			},
 
 			setCurrentStopStatus:function(){
-
-				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let oCurrentStop = oStopInformationModel.getProperty("/tour");
-
-				
-
-
-				//let oStopModel = this.getOwnerComponent().getModel("StopModel");
-				
-				//oStopModel.setProperty("/tour/orderStatus", "70"); //Status auf 'finished' setzen
+				//let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
+				//let oCurrentStop = oStopInformationModel.getProperty("/tour");
 
 				this.resetUserInput();
 				this.resetUserPhotos();
 				this.onNavToActiveTour(); 
 			},
 
-			setTourStatusProcessed: function () {
-				//!Statuscodes müssen abgesprochen werden
+			setTourStatusProcessed: function () { //!Statuscodes müssen abgesprochen werden
 				let oCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
 
 				oCurrentTour.routeStatus = "10";
@@ -204,33 +189,29 @@ sap.ui.define(
 
 			resetUserPhotos: function () {
 				let oPhotoListModel = this.getOwnerComponent().getModel("PhotoModel");
-				//let aPhotoListItems=oPhotoListModel.getProperty("/photos");
 
 				oPhotoListModel.setProperty("/photos", []);
 			},
 
-			onNavToActiveTour: function () {
+			onNavToActiveTour: function () { //Nicht alle Stopps beendet
 				this.updateModelBindings("StopModel"); //Aktualisiert die verbleibenden NVEs und das Unterschrift Icon
 
 				let oRouter = this.getOwnerComponent().getRouter();
-
 				oRouter.navTo("ActiveTour");
 			},
 
-			onNavToOverview: function () {
+			onNavToOverview: function () { //Alle Stopps beendet, navigation zur Touruebersicht
 				//Models über Statusänderung der Tour informieren
 				this.updateModelBindings("StopModel");
 				this.updateModelBindings("TourModel");
 				this.resetUserInput();
 
 				let oRouter = this.getOwnerComponent().getRouter();
-
 				oRouter.navTo("Overview");
 			},
 
 			onNavToQuittierung: function () {
 				let oRouter = this.getOwnerComponent().getRouter();
-
 				oRouter.navTo("Quittierung");
 			},
 		});

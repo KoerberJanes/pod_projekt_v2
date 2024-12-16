@@ -78,7 +78,7 @@ sap.ui.define(
 					let aTourModelItems = oTourModel.getProperty("/results"); //Inhalt für Abfrage benoetigt. Wird später durch das oData Model ersetzt
 
 					let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
-					let userRole = ''; //Disponent oder eben nicht
+					let userRole = 'dispo'; //Disponent oder eben nicht
 					oCustomerModel.setProperty("/role", userRole);
 					this.updateModelBindings("CustomerModel");
 					
@@ -97,60 +97,49 @@ sap.ui.define(
 			handleRecievedTours: function (aRecievedTours) {
 				//Verarbeiten der erhaltenen Touren
 				let oTourModel = this.getOwnerComponent().getModel("TourModel");
-				let aFilteredTours = this.filterFinishedStops(aRecievedTours);
+				let aFilteredTours = this.getFilteredStops(aRecievedTours);
 
 				oTourModel.setProperty("/results", aFilteredTours);
 			},
 
-			filterFinishedStops: function (aRecievedTours) {
-				//Beendete oder Abgeschlossene Touren werden gefiltert
+			getFilteredStops: function (aRecievedTours) { //Tour-Stati werden gefiltert
+				
 				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
-				let oCustomerRole = oCustomerModel.getProperty(("/role"));
+				let sCustomerRole = oCustomerModel.getProperty(("/role"));
 
-				if(oCustomerRole !== 'dispo'){
-					//kein Dispo, Touren Filtern
-					return aRecievedTours.filter((tour) => tour.routeStatus !== "90" && tour.routeStatus !== "70" && tour.routeStatus !== "10");
-				} else{
-					//Dispo, alle Touren zurueckgeben
-					return aRecievedTours;
-				}
-				
-
-				
+				return sCustomerRole !== 'dispo' ? aRecievedTours.filter((tour) => !["90", "70", "10"].includes(tour.routeStatus)) : aRecievedTours;
 			},
 
 			onFilterSearch: function(oEvent) {
-				var oFilterBar = this.byId("filterBar");
-				var oList = this.byId("tourSelectionList"); // Deine Liste
-				var oBinding = oList.getBinding("items"); // Die Bindung der "items"-Aggregation der Liste
+				let oFilterBar = this.byId("filterBar");
+				let oList = this.byId("tourSelectionList"); // Deine Liste
+				let oBinding = oList.getBinding("items"); // Die Bindung der "items"-Aggregation der Liste
 			
-				var aGroupItems = oFilterBar.getFilterGroupItems();
+				let aGroupItems = oFilterBar.getFilterGroupItems();
 			
 				// Durch alle FilterGroupItems iterieren und das Steuerelement für RouteStatus finden
-				var aSelectedRouteStatus = [];
+				let aSelectedRouteStatus = [];
 				aGroupItems.forEach(function(oGroupItem) {
 					if (oGroupItem.getName() === "RouteStatus") { // Prüfen, ob die Gruppe "RouteStatus" heißt (für den Fall, dass es mehrere geben kann)
-						var oControl = oGroupItem.getControl(); // Das Steuerelement (MultiComboBox) für RouteStatus holen
+						let oControl = oGroupItem.getControl(); // Das Steuerelement (MultiComboBox) für RouteStatus holen
 						aSelectedRouteStatus = oControl.getSelectedKeys(); // Gibt ein Array von ausgewählten Schlüsseln zurück
 					}
 				});
 			
 				
 				if (aSelectedRouteStatus.length > 0) { // Sicherstellen, dass es ausgewählte Werte gibt
-					var aFilters = [];
+					let aFilters = [];
 			
-					
 					aSelectedRouteStatus.forEach(function(statusKey) {// Für jedes Element in aSelectedRouteStatus einen Filter erstellen
-						var oRouteStatusFilter = new sap.ui.model.Filter(// Filter für "routeStatus" erstellen, der mit einem der ausgewählten Status übereinstimmt
+						let oRouteStatusFilter = new sap.ui.model.Filter(// Filter für "routeStatus" erstellen, der mit einem der ausgewählten Status übereinstimmt
 							"routeStatus", // Das Feld im TourModel, nach dem gefiltert wird
 							sap.ui.model.FilterOperator.EQ, // Der "Equal"-Operator für jedes einzelne Element
 							statusKey // Der einzelne Wert
 						);
 						aFilters.push(oRouteStatusFilter); // Filter zur Filter-Liste hinzufügen
 					});
-					//console.log("Alle Filter:", aFilters);
 
-					var oFinalFilter = new sap.ui.model.Filter(aFilters, false); // Kombiniert alle Filter mit "OR"-Verknüpfung
+					let oFinalFilter = new sap.ui.model.Filter(aFilters, false); // Kombiniert alle Filter mit "OR"-Verknüpfung
 					oBinding.filter(oFinalFilter); // Die Tourenliste wird jetzt nach dem Status gefiltert
 				} else{ // Sofern kein Filter ausgewählt wurde, alle Datensätze anzeigen
 					oBinding.filter([]); // Leere Filter anwenden, um alle Datensätze anzuzeigen
@@ -158,11 +147,10 @@ sap.ui.define(
 				this.updateModelBindings("TourModel");
 			},
 
-			_applyFilters: function(aTours, oFilterData) {
-				// Beispielhafte Filterlogik anwenden (kann nach Bedarf erweitert werden)
-				var aFilteredTours = aTours.filter(function(tour) {
+			_applyFilters: function(aTours, oFilterData) { // Beispielhafte Filterlogik anwenden (kann nach Bedarf erweitert werden)
+				let aFilteredTours = aTours.filter(function(tour) {
 					// Beispiel: Filter auf 'routeStatuses' anwenden
-					var status = tour.routeStatus; // Angenommen, die Touren haben ein "routeStatus"-Feld
+					let status = tour.routeStatus; // Angenommen, die Touren haben ein "routeStatus"-Feld
 			
 					// Überprüfen, ob der Tour-Status im Filter enthalten ist
 					return oFilterData.routeStatuses.some(function(filterStatus) {
@@ -175,13 +163,13 @@ sap.ui.define(
 			},
 
 			onSelectionChange: function(oEvent) {
-				var aSelectedItems = oEvent.getSource().getSelectedItems(); // Alle ausgewählten Items in der MultiComboBox
-				var aSelectedKeys = aSelectedItems.map(function(item) {
+				let aSelectedItems = oEvent.getSource().getSelectedItems(); // Alle ausgewählten Items in der MultiComboBox
+				let aSelectedKeys = aSelectedItems.map(function(item) {
 					return item.getKey(); // Alle ausgewählten "key"-Werte holen
 				});
 
 				// Zugriff auf das Model
-				var oFilterData = this.getOwnerComponent().getModel("filtersModel").getData();
+				let oFilterData = this.getOwnerComponent().getModel("filtersModel").getData();
 
 				// Filter auf das Model anwenden
 				oFilterData.selectedRouteStatuses = aSelectedKeys; // Eine neue Eigenschaft für die selektierten Filter hinzufügen
@@ -195,7 +183,7 @@ sap.ui.define(
 
 			onResetFilters: function() {
 				// Zugriff auf das Model
-				var oFilterData = this.getOwnerComponent().getModel("filtersModel").getData();
+				let oFilterData = this.getOwnerComponent().getModel("filtersModel").getData();
 
 				// Zurücksetzen des Filterstatus auf leeren Wert oder Standardwert
 				oFilterData.selectedRouteStatuses = [];
@@ -207,8 +195,7 @@ sap.ui.define(
 				// this._applyFilters(aTours, oFilterData);
 			},
 
-			setPressedTour: function (oEvent) {
-				//Ausgewählte Tour-Infos in Model für Fragment setzen
+			setPressedTour: function (oEvent) { //Ausgewählte Tour-Infos in Model für Fragment setzen
 				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
 				let oPressedModelObject = oEvent.getSource().getBindingContext("TourModel").getObject();
 
@@ -254,23 +241,15 @@ sap.ui.define(
 				});
 			},
 
-			onTourStartDialogButtonCallback: function (oEvent) {
-				//Callback vom TourStartFrtagment um Buttons zu unterscheiden
-				let sButtonId = oEvent.getSource().getId().split("-").pop();
-
-				if (sButtonId === "TourstartFragmentButtonConfirm") {
-					//Bestätigen
-					this.checkIfInputConstraintsComply();
-				}
-
-				if (sButtonId === "TourstartFragmentButtonAbort") {
-					//Abbrechen
-					this.onCloseTourStartFragment(); //Dialog Schließen
-				}
+			onTourStartDialogButtonAccept:function(oEvent){ //Fuer weitere Logik
+				this.checkIfInputConstraintsComply();
 			},
 
-			resetMileageUserInput: function () {
-				//Sowohl Model als auch Input leeren
+			onTourStartDialogButtonReject:function(oEvent){ //Fuer weitere Logik
+				this.onCloseTourStartFragment();
+			},
+
+			resetMileageUserInput: function () { //Sowohl Model als auch Inputfeld leeren
 				this.getView().byId("kilometerInput").setValue("");
 				this.getOwnerComponent().getModel("TourStartFragmentModel").setProperty("/mileage", "");
 			},
@@ -283,20 +262,17 @@ sap.ui.define(
 				oTourStartFragmentModel.setProperty("/mileage", oInput.getValue());
 			},
 
-			onMileageInputLiveChange: function (oEvent) {
-				//Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
+			onMileageInputLiveChange: function (oEvent) { //Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
 				let oInput = oEvent.getSource();
 				this.handleRequiredField(oInput);
 				this.checkInputConstraints(oInput);
 			},
 
-			handleRequiredField: function (oInput) {
-				//Wenn kein Wert im Inputfeld vorliegt, Rot markieren
+			handleRequiredField: function (oInput) { //Wenn kein Wert im Inputfeld vorliegt, Rot markieren
 				oInput.setValueState(oInput.getValue() ? "None" : "Error");
 			},
 
-			checkInputConstraints: function (oInput) {
-				//Wenn Wert nicht der Regex entspricht, Rot markieren
+			checkInputConstraints: function (oInput) { //Wenn Wert nicht der Regex entspricht, Rot markieren
 				let oBinding = oInput.getBinding("value");
 				let sValueState = "None";
 
@@ -308,50 +284,44 @@ sap.ui.define(
 				oInput.setValueState(sValueState);
 			},
 
-			checkIfInputConstraintsComply: function () {
-				//Werteeingabe gegen regex pruefen
+			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
 				let sTourStartFragmentInput = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/mileage"); // User-Eingabe
 
-				if (REGEX_TOUR_MILEAGE.test(sTourStartFragmentInput)) {
-					//Eingabe-Parameter passen
+				if (REGEX_TOUR_MILEAGE.test(sTourStartFragmentInput)) { //Eingabe-Parameter passen
 					this.checkIfEnteredValueInRange();
-				} else {
-					//Eingabe-Parameter passen nicht
+				} else { //Eingabe-Parameter passen nicht
 					this._showErrorMessageBox("nameNotMatchingRegex", () => this.scrollToInputAfterError());
 				}
 			},
 
-			checkIfEnteredValueInRange: function () {
-				//Pruefen ob Tolleranz eingehalten wurde
+			checkIfEnteredValueInRange: function () { //Pruefen ob Tolleranz eingehalten wurde
 				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel"); //Ausgewaehlte Tour-Infos
 				let iTourStartFragmentInput = oTourStartFragmentModel.getProperty("/mileage"); //User-Eingabe
-
-				let iRespectiveTourMileage = oTourStartFragmentModel.getProperty("/tour/mileage");
-				let iRespectiveTourMileageTolerance = oTourStartFragmentModel.getProperty("/tour/mileageTolerance");
+				let iRespectiveTourMileage = oTourStartFragmentModel.getProperty("/tour/mileage"); //Aktuelle Tour-Mileage
+				let iRespectiveTourMileageTolerance = oTourStartFragmentModel.getProperty("/tour/mileageTolerance"); //Aktuelle tolleranz für Tour-Mileage
 
 				// Berechnung der Toleranzgrenzen
 				const iMinRange = iRespectiveTourMileage - iRespectiveTourMileageTolerance;
 				const iMaxRange = iRespectiveTourMileage + iRespectiveTourMileageTolerance;
 
-				if (iTourStartFragmentInput >= iMinRange && iTourStartFragmentInput <= iMaxRange) {
-					//Eingabe in Tolleranz
+				if (iTourStartFragmentInput >= iMinRange && iTourStartFragmentInput <= iMaxRange) { //Eingabe in Tolleranz
 					this.setStopInformationModelData();
-				} else {
-					//Eingabe nicht in Tolleranz
+				} else { //Eingabe nicht in Tolleranz
 					this._showErrorMessageBox("tolleranceNotAccepted", () => this.scrollToInputAfterError());
 				}
 				this.resetMileageUserInput(); //Bei akzeptierter Eingabe das Feld leeren
 			},
 
-			setStopInformationModelData: function () {
-				//Tolleranz eingehalten und Stops der Tour in entsprechendes Model setzen
-				let oStopModel = this.getOwnerComponent().getModel("StopModel"); //Stop Model
-				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
+			setStopInformationModelData: function () { //Tolleranz eingehalten und Stops der Tour in entsprechendes Model setzen
+				//TODO: Stopreihenfolge absteigend sortieren
+				//TODO: Verschieben der Stopps ueber buttons (moeglichst multi-select faehig)
+				//TODO: Anzeigen wie viele Stopps selektiert (moeglichst)
+				let oStopModel = this.getOwnerComponent().getModel("StopModel"); 
+				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel"); 
 				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); //Array an Stops der ausgewaehlten Tour
 
 				oStopModel.setProperty("/results", aRespectiveTourStops); //Setzen der Stops
-				// Prüfung der DeliveryNotes und NVEs
-				if (this.validateDeliveryNotesForStops(aRespectiveTourStops)) {
+				if (this.validateDeliveryNotesForStops(aRespectiveTourStops)) { // Prüfung ob DeliveryNotes und NVEs bereits gesetzt wurden
 					this.onNavToActiveTour();
 				} else {
 					this.createDeliveryNotes();
@@ -452,16 +422,6 @@ sap.ui.define(
 			},
 
 			linkNvesToDeliveryNote: function (aRespectiveTourStops) {//NVEs bekommen zusaetzliches Attribut um DeliveryNote zuordnen zu koennen
-				
-				/*aRespectiveTourStops.forEach((stop) => {
-					let aUnprocessedNves = stop.orders[0].aDeliveryNotes[0].aUnprocessedNumberedDispatchUnits;
-
-					aUnprocessedNves.forEach((nve) => {// Setze die Sendungsnummer für alle NVEs
-						nve.deliveryNoteShipmentNumber = stop.orders[0].aDeliveryNotes[0].shipmentNumber;
-					});
-				});
-				this.onNavToActiveTour();*/
-
 				aRespectiveTourStops.forEach((stop) => {
 					// Iteriere durch alle Bestellungen des Stops
 					stop.orders.forEach((order) => {
@@ -486,22 +446,23 @@ sap.ui.define(
 
 			onDialogAfterOpen: function (oEvent) {
 				// Der TourstartDialog ist geöffnet, setze den Fokus
-				let oInput = this.getView().byId("kilometerInput");
-				if (oInput && oInput.getDomRef()) {
-					requestAnimationFrame(() => {
-						oInput.focus();
-					});
+				// Der TourstartDialog ist geöffnet, setze den Fokus
+				const oInput = this.getView()?.byId("kilometerInput");
+
+				if (oInput?.getDomRef()) {
+					requestAnimationFrame(() => oInput.focus());
 				}
 			},
 
 			scrollToInputAfterError: function () {
 				this.resetMileageUserInput();
-				let oInputField = this.getView().byId("kilometerInput");
+				const oInputField = this.getView()?.byId("kilometerInput");
 
-				oInputField.setValueState("Error");
+				oInputField?.setValueState("Error");
+
 				requestAnimationFrame(() => {
 					// Stelle sicher, dass das DOM bereit ist, bevor du den Fokus setzt
-					if (oInputField && oInputField.getDomRef()) {
+					if (oInputField?.getDomRef()) {
 						oInputField.focus();
 					}
 				});
@@ -514,14 +475,6 @@ sap.ui.define(
 					width: "15em",
 				});
 				this.simulateBackendCallForTours();
-			},
-			
-			TourStatisticsDialogConfirm:function(){
-				
-			},
-
-			TourStatisticsDialogReject:function(){
-
 			},
 
 			TourStatisticsDialogOpen:function(){
@@ -582,9 +535,6 @@ sap.ui.define(
 					};
 				});
 
-				//Debugging
-				//console.log("Mapped Results for Diagram:", aMappedResults);
-
 				oModel.setProperty("/resultsForDiagram", aMappedResults);
 
 				// Farben setzen im VizFrame
@@ -632,29 +582,8 @@ sap.ui.define(
 				this.byId("TourStatisticsDialog").close();
 			},
 
-			onDataLabelChanged: function(oEvent) { //Methode nur notwendig, wenn Einstellungen vorhanden
-				// Den VizFrame holen
-				var oVizFrame = this.byId("idVizFrame");
-				
-				// Den neuen Zustand des Switches aus dem Event extrahieren
-				var bState = oEvent.getParameter('state');
-			
-				// Wenn oVizFrame existiert, VizProperties setzen
-				if (oVizFrame) {
-					oVizFrame.setVizProperties({
-						plotArea: {
-							dataLabel: {
-								visible: bState // Datenlabel sichtbar oder nicht, je nach Zustand des Switches
-							}
-						}
-					});
-				}
-			},
-
-			onVizFrameSelectData: function (oEvent) {
-				var oSelectedItem = oEvent.getParameter("data"); //Das ausgewählte Diagrammelement
-
-				
+			onVizFrameSelectData: function (oEvent) { //offen fuer weitere FizFrame logik
+				let oSelectedItem = oEvent.getParameter("data"); //Das ausgewählte Diagrammelement
 			},
 
 			onCloseTourStartFragment: function () {

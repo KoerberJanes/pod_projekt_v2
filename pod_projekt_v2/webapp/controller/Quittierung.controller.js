@@ -20,20 +20,18 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
-			_onObjectMatched: function () {
-				//Fokus-Methoden aufruf nach dem Routing
+			_onObjectMatched: function () { //Fokus-Methoden aufruf nach dem Routing
 				this._setFocus();
 			},
 
 			_setFocus: function () {
 				//Tatsächliches setzen des Fokus
 				// Verzögertes Setzen des Fokus, um sicherzustellen, dass das Element vollständig gerendert ist
-				requestAnimationFrame(() => {
-					let oInput = this.byId("recipientNameInp");
-					if (oInput) {
-						oInput.focus();
-					}
-				});
+				const oInput = this.getView()?.byId("recipientNameInp");
+
+				if (oInput?.getDomRef()) {
+					requestAnimationFrame(() => oInput.focus());
+				}
 			},
 
 			onCustomerNameInputChange: function (oEvent) {
@@ -44,20 +42,17 @@ sap.ui.define(
 				oCustomerModel.setProperty("/customerName", oInput.getValue());
 			},
 
-			onCustomerNameInputLiveChange: function (oEvent) {
-				//Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
+			onCustomerNameInputLiveChange: function (oEvent) { //Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
 				let oInput = oEvent.getSource();
 				this._handleRequiredField(oInput);
 				this._checkInputConstraints(oInput);
 			},
 
-			_handleRequiredField: function (oInput) {
-				//Wenn kein Wert im Inputfeld vorliegt, Rot markieren
+			_handleRequiredField: function (oInput) { //Wenn kein Wert im Inputfeld vorliegt, Rot markieren
 				oInput.setValueState(oInput.getValue() ? "None" : "Error");
 			},
 
-			_checkInputConstraints: function (oInput) {
-				//Wenn Wert nicht der Regex entspricht, Rot markieren
+			_checkInputConstraints: function (oInput) { //Wenn Wert nicht der Regex entspricht, Rot markieren
 				let oBinding = oInput.getBinding("value");
 				let sValueState = "None";
 
@@ -69,8 +64,7 @@ sap.ui.define(
 				oInput.setValueState(sValueState);
 			},
 
-			onRecipientNotFound: function () {
-				//Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
+			onRecipientNotFound: function () { //TODO: Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
 				this._showMessageToast("dummyProcessFinished", 2500);
 
 				setTimeout(() => {
@@ -85,7 +79,7 @@ sap.ui.define(
 				});
 			},
 
-			onDeliveryNotePressed: function (oEvent) {
+			onDeliveryNotePressed: function (oEvent) { //Infos fuer deliveryNote in Model setzen
 				let oPressedDeliveryNote=oEvent.getSource().getBindingContext("StopInformationModel").getObject(); //Fuer den Fall, dass es mal mehrere DeliveryNotes geben sollte
 				this.setPressedDeliveryNoteModel(oPressedDeliveryNote);
 			},
@@ -96,24 +90,21 @@ sap.ui.define(
 				this.onNavToAbladung();
 			},
 
-			addCameraPlayerToCameraDialog: function () {
-				//Erstellen des VideoPlayers für den CameraStream und diesen in den Dialog setzen
+			addCameraPlayerToCameraDialog: function () {//Erstellen des VideoPlayers für den CameraStream und diesen in den Dialog setzen
 				this.onPhotoTypesSelectChange(); //Initiales setzen des Models für die gemachten Fotos
-				let oVideoContainer = this.byId("videoFeedContainer"); //TODO sprechenderen Namen im Fragment verwenden
+				let oVideoContainer = this.byId("videoFeedContainer"); 
 				oVideoContainer.setContent("<video id='player' width='100%' autoplay></video>"); //an das HTML Element in der XML view einen videoplayer für die Kamera anheften
 				this.enableVideoStream();
 			},
 
-			enableVideoStream: function () {
-				// Video Streams starten
+			enableVideoStream: function () { // Video Streams starten
 				navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
 					let oPlayer = document.getElementById("player");
 					if (oPlayer) oPlayer.srcObject = stream;
 				});
 			},
 
-			disableVideoStreams: function () {
-				//Video Streams beenden
+			disableVideoStreams: function () { //Video Streams beenden
 				let oVideoStream = document.getElementById("player");
 				if (oVideoStream) {
 					let oMediaStream = oVideoStream.srcObject;
@@ -124,8 +115,7 @@ sap.ui.define(
 				this.clearPhotoModel();
 			},
 
-			onOpenPhotoDialog: function () {
-				//Dialog für das aufnehmen eines Fotos oeffnen
+			onOpenPhotoDialog: function () { //Dialog für das aufnehmen eines Fotos oeffnen
 				this.oAddFotoDialog ??= this.loadFragment({
 					name: "podprojekt.view.fragments.fotomachen",
 				});
@@ -133,58 +123,51 @@ sap.ui.define(
 				this.oAddFotoDialog.then((oDialog) => oDialog.open());
 			},
 
-			scrollToInputAfterError: function () {
+			scrollToInputAfterError: function () { //View zum Empfaenger Namen scrollen
 				let oInputField = this.getView().byId("recipientNameInp");
 
-				oInputField.setValueState("Error");
-				setTimeout(() => {
-					oInputField.focus();
-				}, 50);
+				if (oInputField?.getDomRef()) {
+					oInputField.setValueState("Error");
+					requestAnimationFrame(() => oInputField.focus());
+				}
 			},
 
-			scrollToDeliveryNotesAfterError: function () {
+			scrollToDeliveryNotesAfterError: function () { //View zur deliveryNote scrollen
 				let oDeliveryNotesTable = this.getView().byId("deliveryNoteList");
 				let oDeliveryNote = oDeliveryNotesTable.getItems()[0];
 
-				setTimeout(() => {
-					oDeliveryNote.focus();
-				}, 50);
+				if (oDeliveryNote?.getDomRef()) {
+					requestAnimationFrame(() => oDeliveryNote.focus());
+				}
 			},
 
 			checkSignConditions: function () {
 				this.checkIfInputConstraintsComply();
 			},
 
-			checkIfInputConstraintsComply: function () {
-				//Werteeingabe gegen regex pruefen
+			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
 				let oCustomerModel = this.getView().getModel("CustomerModel");
 				let sCustomerModelInput = oCustomerModel.getProperty("/customerName");
 
-				if (REGEX_CUSTOMER_NAME.test(sCustomerModelInput)) {
-					//Eingabe-Parameter passen
+				if (REGEX_CUSTOMER_NAME.test(sCustomerModelInput)) { //Eingabe-Parameter passen
 					this.checkIfNvesAreProcessed();
-				} else {
-					//Eingabe-Parameter passen nicht
+				} else { //Eingabe-Parameter passen nicht
 					this._showErrorMessageBox("nameNotMatchingRegex", () => this.scrollToInputAfterError());
 				}
 			},
 
-			checkIfNvesAreProcessed: function () {
-				//Prüfen ob noch nicht bearbeitete Nves existieren
+			checkIfNvesAreProcessed: function () { //Prüfen ob noch nicht bearbeitete Nves existieren
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
 				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
-				if (aRemainingNves.length > 0) {
-					//Es sind noch Nves zu bearbeiten
+				if (aRemainingNves.length > 0) { //Es sind noch Nves zu bearbeiten
 					this._showErrorMessageBox("notPermitedToSignTour", () => this.scrollToDeliveryNotesAfterError());
-				} else {
-					//Es sind keine Nves mehr zu bearbeiten
+				} else { //Es sind keine Nves mehr zu bearbeiten
 					this.setSigningDateAndTime();
 				}
 			},
 
-			setSigningDateAndTime: function () {
-				//Erstellen des Datums und der Uhrzeit fuer die Unterschrift-Seite
+			setSigningDateAndTime: function () { //Erstellen des Datums und der Uhrzeit fuer die Unterschrift-Seite
 				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
 				let sDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "dd.MM.YYYY HH:mm:ss",
@@ -194,19 +177,16 @@ sap.ui.define(
 				this.onNavToUnterschrift();
 			},
 
-			onAddFotoDialogClose: function () {
-				//Schließen Dialog
+			onAddFotoDialogClose: function () { //Schließen Dialog
 				this.disableVideoStreams();
 				this.byId("FotoMachenDialog").close();
 			},
 
-			checkIfPhotoNeedsToBeCleared: function () {
-				//Prüfen ob bereits ein Foto angezeigt wird
+			checkIfPhotoNeedsToBeCleared: function () { //Prüfen ob bereits ein Foto angezeigt wird
 				let oPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
 				let oSavedPhoto = oPhotoModel.getProperty("/photo"); //Zuletzt aufgenommenes Foto
 
-				if (Object.keys(oSavedPhoto).length !== 0) {
-					//Wenn Objekt Attribute enthält, vermeindliches Foto loeschen
+				if (Object.keys(oSavedPhoto).length !== 0) { //Wenn Objekt Attribute enthält, vermeindliches Foto loeschen
 					this.clearPhotoModel();
 				}
 
@@ -219,8 +199,7 @@ sap.ui.define(
 				oPhotoModel.setProperty("/photo", {});
 			},
 
-			onSnappPicture: function () {
-				//(neues) Foto machen
+			onSnappPicture: function () { //(neues) Foto machen
 				let oVideoFeed = document.getElementById("player"); //VideoStream
 				let canvas = document.createElement("canvas");
 				let context = canvas.getContext("2d");
@@ -263,36 +242,27 @@ sap.ui.define(
 				oPhotoTypeSelectedModel.setProperty("/type", oSelectedType);
 			},
 
-			checkPhotoLimit: function (sPhotoType) {
-				//Wirft eine Fehlermeldung, wenn Menge an Fotos überschritten wird
-
+			checkPhotoLimit: function (sPhotoType) { //Wirft eine Fehlermeldung, wenn Menge an Fotos überschritten wird
+				
 				// Definiere die erlaubten Foto-Grenzen für verschiedene Typen
 				let PHOTO_LIMITS = {
 					"Zum Stopp": 5,
 					"Zur Beanstandung": 3,
-					Test: 0,
+					"Test": 0
 				};
 
-				// Hole das erlaubte Limit basierend auf dem Foto-Typ
-				let iAllowedPhotos = PHOTO_LIMITS[sPhotoType] || 0;
-
-				// Hole das Modell für die ausgewählten Foto-Typen
+				let iAllowedPhotos = PHOTO_LIMITS[sPhotoType] || 0; // Hole das erlaubte Limit basierend auf dem Foto-Typ
 				let oPhotoTypeSelectedModel = this.getOwnerComponent().getModel("PhotoTypeSelectedModel");
+				let iCurrentPhotoCount = oPhotoTypeSelectedModel.getProperty("/type/photo").length; // Erhalte die Anzahl der aktuellen Fotos
 
-				// Erhalte die Anzahl der aktuellen Fotos
-				let iCurrentPhotoCount = oPhotoTypeSelectedModel.getProperty("/type/photo").length;
-
-				// Überprüfe, ob noch Platz für weitere Fotos ist
-				return iCurrentPhotoCount < iAllowedPhotos;
+				return iCurrentPhotoCount < iAllowedPhotos; // Überprüfe, ob noch Platz für weitere Fotos ist
 			},
 
-			onCheckIfPhotoTaken: function () {
+			onCheckIfPhotoTaken: function () { //Pruefen ob bereits ein Foto geschossen wurde und das 'alte' geloescht werden muss
 				let oLatestPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
 				let oTakenPhoto = oLatestPhotoModel.getProperty("/photo"); //'Geschossenes' Foto
 
-				//Muss geprüft werden weil Model-Inhalt leeres Objekt ist
-				if (Object.keys(oTakenPhoto).length !== 0) {
-					//Wenn Objekt Attribute enthält, exisitert ein Foto
+				if (Object.keys(oTakenPhoto).length !== 0) {//Wenn Objekt Attribute enthält, exisitert ein Foto
 					this.confirmFoto();
 				} else {
 					MessageToast.show("Es wurde kein Foto geschossen!", {
@@ -302,8 +272,7 @@ sap.ui.define(
 				}
 			},
 
-			confirmFoto: function () {
-				//Foto bestätigen und übernehmen
+			confirmFoto: function () { //Foto bestätigen und übernehmen
 				let oLatestPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
 				let oTakenPhoto = oLatestPhotoModel.getProperty("/photo"); //Geschossenes Foto
 
@@ -329,8 +298,7 @@ sap.ui.define(
 				});
 			},
 
-			saveNewImage: function (oImage) {
-				//Speichern von zu letzt geschossenem Foto
+			saveNewImage: function (oImage) { //Speichern von zu letzt geschossenem Foto
 				let oPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
 				oPhotoModel.setProperty("/photo", oImage);
 				oPhotoModel.refresh();
@@ -357,8 +325,7 @@ sap.ui.define(
 				});
 			},
 
-			onFotoabfrageDialogOpen: async function () {
-				//Oeffnen Fotoabfrage frament
+			onFotoabfrageDialogOpen: async function () { // Oeffnen Fotoabfrage fragment
 				if (!this.oFotoabfrageDialog) {
 					try {
 						// Lade das Fragment, wenn es noch nicht geladen wurde
@@ -377,36 +344,30 @@ sap.ui.define(
 				this.oFotoabfrageDialog.open();
 			},
 
-			onNavToAbladung: function () {
-				//Navigation zur Abladung View
+			onNavToAbladung: function () { //Navigation zur Abladung View
 				let oRouter = this.getOwnerComponent().getRouter();
 
 				oRouter.navTo("Abladung");
 			},
 
-			onNavToUnterschrift: function () {
-				//Navigation zur Unterschrift View
+			onNavToUnterschrift: function () { //Navigation zur Unterschrift View
 				StatusSounds.playBeepSuccess();
 				let oRouter = this.getOwnerComponent().getRouter();
 
 				oRouter.navTo("Unterschrift");
 			},
 
-			onNavToOverview: function () {
+			onNavToOverview: function () { //Navigation zurueck zur Uebersicht
 				this.clearCustomerInput();
 				
-				//Navigation zurueck zur Uebersicht
 				let oRouter = this.getOwnerComponent().getRouter();
-
 				oRouter.navTo("Overview");
 			},
 
-			onNavToStopInformation: function () {
+			onNavToStopInformation: function () { //Navigation zurueck zur Uebersicht
 				this.clearCustomerInput();
 
-				//Navigation zurueck zur Uebersicht
 				let oRouter = this.getOwnerComponent().getRouter();
-
 				oRouter.navTo("StopInformation");
 			},
 		});

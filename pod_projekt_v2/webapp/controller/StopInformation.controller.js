@@ -17,20 +17,17 @@ sap.ui.define(
 				sap.m.URLHelper.triggerTel(sPhoneAvis);
 			},
 
-			onNavToMap: function () {
-				//Navigation zur GeoMap View
+			onNavToMap: function () { //Navigation zur GeoMap View
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("MapView");
 			},
 
-			onNavToQuittierung: function () {
-				//Navigation zur Quittierung View
+			onNavToQuittierung: function () { //Navigation zur Quittierung View
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("Quittierung");
 			},
 
-			onNavToActiveTour: function () {
-				//Navigation zur Quittierung View
+			onNavToActiveTour: function () { //Navigation zur ActiveTour View
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("ActiveTour");
 			},

@@ -18,17 +18,6 @@
 		</customHeader>
 
         <content><!--WICHTIG: Die normale Form ist nicht mit dem viz Kompatibel, daher Layout NICHT ÄNDERN: Dezember 2024-->
-
-            <!--Panel auskommentiert, da zusätzlicher Platz dafür erforderlich ist-->
-			<!--<Panel id='settingsPanel' class="panelStyle" expandable="true" expanded="false" headerText="{i18n>settings}" width="auto">
-                <content>
-                    <Switch id='dataLabelSwitch' class='settingsSwitch' state="{/dataLabel/defaultState}" change='onDataLabelChanged'>
-                        <layoutData>
-                            <FlexItemData growFactor="1" />
-                        </layoutData>
-                    </Switch>
-                </content>
-            </Panel> -->
             <layout:FixFlex id='chartFixFlex' minFlexSize="350">
                 <layout:flexContent>
 					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData">
@@ -62,10 +51,10 @@
 
 
         <beginButton>
-            <Button id="TourStatisticsButtonConfirm" text="{i18n>ok}" type="Emphasized" press="TourStatisticsDialogClose"/><!--TourStatisticsDialogConfirm-->
+            <Button id="TourStatisticsButtonConfirm" text="{i18n>ok}" type="Emphasized" press="TourStatisticsDialogClose"/>
         </beginButton>
         <endButton>
-            <!--<Button id="TourStatisticsButtonAbort" text="{i18n>abort}" type="Emphasized" press="TourStatisticsDialogReject"/>-->
+            
         </endButton>	
 
     </Dialog>
