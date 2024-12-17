@@ -68,7 +68,8 @@
           "deliveryItemsVisible": true,
           "loadingDevicesVisible": false,
           "photoListVisible": false,
-          "photoListClearingVisible": false
+          "photoListClearingVisible": false,
+          "bStoppSequenceChangeable": true
         }
       },
       "CustomerModel":{
@@ -102,6 +103,12 @@
         "settings": {
           "tour": {},
           "mileage":"380000"
+        }
+      }, 
+      "customStopPositionModel":{
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "position":""
         }
       }, 
       "RecipientNameModel":{

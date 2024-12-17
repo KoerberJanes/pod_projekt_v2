@@ -1,0 +1,39 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+
+    <Dialog id="customStopPositionDialog"  title="{i18n>buildNo}" afterOpen="">
+        <customHeader>
+            <Bar >
+                <contentLeft>
+                    <Title id="customStopPositionDialogTitle" text="{i18n>customPositionDialogTitle} &#13;{i18n>buildNo}"/>
+                </contentLeft>
+                <contentRight>
+                </contentRight>
+            </Bar>
+        </customHeader>
+		<content>
+            <form:SimpleForm id="customPositionForm">
+                <form:content>
+                    <Label id="custonPositionLabel" text="{i18n>position}"></Label>
+                    <Input id="CustomPositionInput" liveChange="onCutomPositionInputLiveChange" valueLiveUpdate="true" change="onCustomPositionInputChange" showClearIcon="true"
+                        value="{
+							path: 'customStopPositionModel>/position',
+							type: 'sap.ui.model.type.Integer',
+							constraints: {
+								minLength: 1,
+								search: '^[0-9]+$'
+							}
+					}"/>
+                </form:content>
+            </form:SimpleForm>
+		</content>
+        <beginButton>
+            <Button id="customStopPositionButtonConfirm" text="{i18n>ok}" type="Emphasized" press="onCustomStopPositionAccept"/>
+        </beginButton>
+        <endButton>
+            <Button id="customStopPositionButtonAbort" text="{i18n>abort}" type="Emphasized" press="onCustomStopPositionReject"/>
+        </endButton>		
+    </Dialog>
+</c:FragmentDefinition>

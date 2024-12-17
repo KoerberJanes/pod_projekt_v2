@@ -290,7 +290,7 @@ sap.ui.define(
 				if (REGEX_TOUR_MILEAGE.test(sTourStartFragmentInput)) { //Eingabe-Parameter passen
 					this.checkIfEnteredValueInRange();
 				} else { //Eingabe-Parameter passen nicht
-					this._showErrorMessageBox("nameNotMatchingRegex", () => this.scrollToInputAfterError());
+					this._showErrorMessageBox("notMatchingRegex", () => this.scrollToInputAfterError());
 				}
 			},
 
@@ -320,12 +320,23 @@ sap.ui.define(
 				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel"); 
 				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); //Array an Stops der ausgewaehlten Tour
 
-				oStopModel.setProperty("/results", aRespectiveTourStops); //Setzen der Stops
+				let aDescendingStopOrder = this.sortStopsDescending(aRespectiveTourStops);
+				oStopModel.setProperty("/results", aDescendingStopOrder); //Setzen der Stops
+
 				if (this.validateDeliveryNotesForStops(aRespectiveTourStops)) { // Prüfung ob DeliveryNotes und NVEs bereits gesetzt wurden
 					this.onNavToActiveTour();
 				} else {
 					this.createDeliveryNotes();
 				}
+			},
+
+			sortStopsDescending:function(aStops){ // Sortieren der Stopps in absteigender Reihenfolge nach 'sequence'
+				return aStops.sort((stopA, stopB) => {
+					let sequenceA = stopA.sequence || 0; // Falls 'sequence' fehlt, Standardwert 0
+					let sequenceB = stopB.sequence || 0;
+					
+					return sequenceB - sequenceA; // Absteigend sortieren
+				});
 			},
 
 			validateDeliveryNotesForStops: function (aRespectiveTourStops) {
