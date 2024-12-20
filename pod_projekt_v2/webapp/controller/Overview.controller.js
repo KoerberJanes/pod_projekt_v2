@@ -70,7 +70,7 @@ sap.ui.define(
 			},
 
 			simulateBackendCallForTours: function (bTestCase) {
-				this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten.
+				//this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten.
 				//Methoden und Filter koennen hier erstellt werden.
 
 				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
@@ -124,13 +124,13 @@ sap.ui.define(
 					} else {
 						//Error-Fall simulieren
 					}
-					this.closeBusyDialog();
+					//this.closeBusyDialog();
 				}, 1000);
 
 			},
 
 			simulateBackendCallForStopps: function (bTestCase) {
-				this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten.
+				//this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten.
 				//Methoden und Filter koennen hier erstellt werden.
 			
 				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
@@ -163,16 +163,19 @@ sap.ui.define(
 				});
 				*/
 			
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						if (bTestCase) {
+							//Success-Fall simulieren
+							//this.setStopInformationModelData();
+							return resolve();
+						} else {
+							//Error-Fall simulieren
+							return reject("Fehler beim erhalten von Stopps");
+						}
+					}, 1000);
+				});
 				
-				setTimeout(() => {
-					this.closeBusyDialog();
-					if (bTestCase) {
-						//Success-Fall simulieren
-						this.setStopInformationModelData();
-					} else {
-						//Error-Fall simulieren
-					}
-				}, 1000);
 			},
 
 			handleRecievedTours: function (aRecievedTours) {
@@ -359,7 +362,21 @@ sap.ui.define(
 				const iMaxRange = iRespectiveTourMileage + iRespectiveTourMileageTolerance;
 
 				if (iTourStartFragmentInput >= iMinRange && iTourStartFragmentInput <= iMaxRange) { //Eingabe in Tolleranz
-					this.simulateBackendCallForStopps(true); //Simulation vom erhalten der Stopps
+					this.openBusyDialog();
+					let aPromises = [];
+
+					aPromises.push(this.simulateBackendCallForStopps(true)); //Simulation vom erhalten der Stopps
+
+					Promise.all(aPromises)
+					.then(() => {
+						this.closeBusyDialog();
+						this.setStopInformationModelData(); 
+					})
+					.catch((error) => {
+						this.closeBusyDialog();
+						//Fokus in eingabefeld
+						console.error("Error during backend calls:",error);
+					});
 				} else { //Eingabe nicht in Tolleranz
 					this._showErrorMessageBox("tolleranceNotAccepted", () => this.scrollToInputAfterError());
 				}

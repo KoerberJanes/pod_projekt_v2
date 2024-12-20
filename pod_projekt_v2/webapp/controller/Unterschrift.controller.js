@@ -51,7 +51,7 @@ sap.ui.define(
 							return resolve();
 						} else {
 							//Error-Fall simulieren
-							return reject();
+							return reject("Fehler beim senden des Stopps.");
 						}
 					}, 1000);
 				});
@@ -98,6 +98,7 @@ sap.ui.define(
 						this.setCurrentStopAsFinished();
 					})	
 					.catch((error) => {
+						this.closeBusyDialog();
 						console.error("Error during backend calls:", error);
 					});
 				} else {

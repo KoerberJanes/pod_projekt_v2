@@ -60,7 +60,7 @@ sap.ui.define(
 							return resolve();
 						} else {
 							//Error-Fall simulieren
-							return reject();
+							return reject("Fehler beim absenden der Soppreihenfolge.");
 						}
 					}, 1000);
 				});
@@ -100,7 +100,7 @@ sap.ui.define(
 							return resolve();
 						} else {
 							//Error-Fall simulieren
-							return reject();
+							return reject("Fehler beim erhalten von NVEs.");
 						}
 					}, 1000);
 				});
@@ -412,7 +412,7 @@ sap.ui.define(
 					this.setStopOrderChangedToFalse();
 				})
 				.catch((error) =>{
-					//this.closeBusyDialog();
+					this.closeBusyDialog();
 					console.error("Error during backend calls:", error);
 				});
 			},
@@ -436,6 +436,7 @@ sap.ui.define(
 						this.setStopOrderChangedToFalse();
 					})
 					.catch((error) =>{
+						this.closeBusyDialog();
 						console.error("Error during backend calls:", error);
 					});
 					
@@ -462,6 +463,7 @@ sap.ui.define(
 								this.setStopOrderChangedToFalse();
 							})
 							.catch((error) =>{
+								this.closeBusyDialog();
 								console.error("Error during backend calls:", error);
 							});
 						} else { //Abbrechen

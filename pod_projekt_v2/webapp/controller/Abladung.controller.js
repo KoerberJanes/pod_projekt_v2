@@ -318,6 +318,7 @@ sap.ui.define(
 					}
 				})
 				.catch((error) => {
+					this.closeBusyDialog();
 					console.error("Error during backend calls:", error);
 					// Optional: Fehlerhandling einbauen
 				});	
