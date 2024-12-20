@@ -15,6 +15,49 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
+			simulateBackendCallForSigneageOfStopp: function (bTestCase) {
+				//this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten ggf. nicht notwendig, da nur gesendet wird
+				//Methoden und Filter koennen hier erstellt werden.
+			
+				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+				let oODataModel = this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
+				//let oFilter1 = new Filter(); //Filter Attribut 1
+				//let oFilter2 = new Filter(); //Filter Attribut 2
+				//let oFilter3 = new Filter(); //Filter Attribut 3
+				//let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+			
+				/*
+				oODataModel.read(sPath, {
+				filters: aFilters,
+			
+				success: (oData) => {
+					this.busyDialogClose();
+					StatusSounds.playBeepSuccess();
+					
+				},
+				error: (oError) => {
+					this.busyDialogClose();
+					//Bisher keine Funktion
+				}
+				});
+				*/
+
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						//this.closeBusyDialog();
+						if (bTestCase) {
+							//Success-Fall simulieren
+							//this.setStopOrderChangedToFalse();
+							return resolve();
+						} else {
+							//Error-Fall simulieren
+							return reject();
+						}
+					}, 1000);
+				});
+				
+			},
+
 			formatRetoureText:function(aDeliveryNotes, retouresText, processedText){ // Fallback, wenn aDeliveryNotes nicht geladen oder kein Array ist
 				const count = Array.isArray(aDeliveryNotes) ? aDeliveryNotes.filter(note => note.bRetoure === true).length : 0;
 
@@ -37,13 +80,34 @@ sap.ui.define(
 
 			onCheckIfStopSigned: function () { //Pruefen ob die Tour unterschrieben wurde
 				let sDigitalSignatureId = this.byId("digitalSignatureId");
-				let sSignatureAsSvg = sDigitalSignatureId.getSignatureAsString();
+				let sSignatureAsPng = sDigitalSignatureId.getSignatureAsPng();
 
-				if (sSignatureAsSvg) { // Feld enthält etwas und wurde unterschrieben!
-					this.simulateBackendCall();
+				if (sSignatureAsPng) { // Feld enthaelt etwas und wurde unterschrieben!
+					this.openBusyDialog();
+					this.setSignatureOfStopp(sSignatureAsPng);
+
+					let aPromises = [];
+
+					aPromises.push(this.simulateBackendCallForSigneageOfStopp(true));
+
+					Promise.all(aPromises)
+					.then(() => {
+						this.closeBusyDialog();
+						this.onClearSignField();
+						this.showBackendConfirmMessage();
+						this.setCurrentStopAsFinished();
+					})	
+					.catch((error) => {
+						console.error("Error during backend calls:", error);
+					});
 				} else {
 					this._showErrorMessageBox("noSignatureDetected", () => {});
 				}
+			},
+
+			setSignatureOfStopp:function(sSignatureAsPng){
+				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
+				oStopInformationModel.setProperty("/tour/finishedSignature", sSignatureAsPng)
 			},
 
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
@@ -51,67 +115,6 @@ sap.ui.define(
 				MessageBox.error(this._oBundle.getText(sMessageKey), {
 					onClose: fnOnClose || function () {}, // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
 				});
-			},
-
-			busyDialogOpen: async function () {
-				if (!this.oBusyDialog) {
-					try {
-						// Lade das Fragment, wenn es noch nicht geladen wurde
-						this.oBusyDialog = await this.loadFragment({
-							name: "podprojekt.view.fragments.BusyDialog",
-						});
-					} catch (error) {
-						// Fehlerbehandlung bei Problemen beim Laden des Fragments
-						console.error("Fehler beim Laden des BusyDialogs:", error);
-						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
-						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
-					}
-				}
-			},
-
-			busyDialogClose: function () {
-				setTimeout(() => {
-					if (this.byId("BusyDialog")) this.byId("BusyDialog").close();
-				}, 500);
-			},
-
-			simulateBackendCall: function () {
-				//this.busyDialogOpen();
-
-				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
-				let oODataModel = this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
-				//let oFilter1 = new Filter(); //Filter Attribut 1
-				//let oFilter2 = new Filter(); //Filter Attribut 2
-				//let oFilter3 = new Filter(); //Filter Attribut 3
-				//let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
-
-				/*
-                oODataModel.read(sPath, {
-                filters: aFilters,
-
-                success: (oData) => {
-                    this.busyDialogClose();
-                    StatusSounds.playBeepSuccess();
-                    let aRecievedTours=oData.getProperty("/results");
-
-                    if(aRecievedTours.length===0){
-                        this.noToursError(); //Fahrer hat keine Touren
-                    } else{
-                        this.handleRecievedTours(aRecievedTours); //Setzen der Touren in Model
-                    }
-
-                },
-                error: (oError) => {
-                    this.busyDialogClose();
-                    StatusSounds.playBeepError();
-                    //Bisher keine Funktion
-                }
-                */
-
-				this.busyDialogClose();
-				this.onClearSignField();
-				this.showBackendConfirmMessage();
-				this.setCurrentStopAsFinished();
 			},
 
 			onRefreshDateAndTime: function () {
@@ -131,8 +134,8 @@ sap.ui.define(
 			},
 
 			setCurrentStopAsFinished: function () {
-				//!Statuscodes müssen abgesprochen werden
-				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel"); //Infos über derzeitigen Stopp
+				//!Statuscodes muessen abgesprochen werden
+				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel"); //Infos ueber derzeitigen Stopp
 				let oCurrentStop = oStopInformationModel.getProperty("/tour"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
 				let oTourStartModel = this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
 				let aStopsOfCurrentTour = oTourStartModel.getProperty("/tour/stops"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
@@ -144,16 +147,18 @@ sap.ui.define(
 				}
 			},
 
-			checkIfAllStopsAreCompleted: function () { //Prüfen ob es nicht abgeschlossene Stops ( '90' abgeschlossene Stops '70' ) gibt
-				//!Statuscodes müssen abgesprochen werden
+			checkIfAllStopsAreCompleted: function () { //Pruefen ob es nicht abgeschlossene Stops ( '90' abgeschlossene Stops '70' ) gibt
+				//!Statuscodes muessen abgesprochen werden
 				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Tour mit allen Stopps und Infos vorhanden
+				let bAllStoppsProcessed = aStopsOfCurrentTour.every((element) => element.stopStatus === "70");
 
-				if (aStopsOfCurrentTour.some((element) => element.stopStatus === "90")) { //Wenn einer der Stopps noch nicht abgeschlossen wurde --> Status '90'
+				if (!bAllStoppsProcessed) { //Pruefen ob es mindestens einen Stopp gibt, der nicht den Status 70 hat
 					this.changeDisplayedNvesOfStop(); 
 				} else {
 					this.setTourStatusProcessed(); 
 				}
 			},
+
 			changeDisplayedNvesOfStop: function () { //Aendern der Anzeige von verbleibenden NVEs in der Stoppuebersicht
 				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
 				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
@@ -172,7 +177,7 @@ sap.ui.define(
 				this.onNavToActiveTour(); 
 			},
 
-			setTourStatusProcessed: function () { //!Statuscodes müssen abgesprochen werden
+			setTourStatusProcessed: function () { //!Statuscodes muessen abgesprochen werden
 				let oCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
 
 				oCurrentTour.routeStatus = "10";
@@ -181,7 +186,6 @@ sap.ui.define(
 
 			resetUserInput: function () {
 				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
-				//TODO: LoadingDevices. Entweder Objekte nach erhalt vom Backend aendern oder expressionBinding verwenden
 				//let oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
 
 				oCustomerModel.setProperty("/customerName", "");
@@ -193,6 +197,56 @@ sap.ui.define(
 				oPhotoListModel.setProperty("/photos", []);
 			},
 
+			setStopOrderChangedToTrue:function(){
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				oSettingsModel.setProperty("/bStopOrderChanged", true);
+			},
+
+			setStopOrderChangedToFalse:function(){
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				oSettingsModel.setProperty("/bStopOrderChanged", false);
+			},
+
+			setUserViewerSettingToTrue:function(){
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				oSettingsModel.setProperty("/bViewerMode", true);
+			},
+
+			setUserViewerSettingToFalse:function(){
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				oSettingsModel.setProperty("/bViewerMode", false);
+			},
+
+			onTourReviewed:function(){
+				this.setUserViewerSettingToFalse();
+				this.setStopOrderChangedToFalse();
+				this.onNavToActiveTour();
+			},
+
+			openBusyDialog: async function () {
+				//Lade-Dialog oeffnen
+				if (!this.oBusyDialog) {
+					try {
+						// Lade das Fragment, wenn es noch nicht geladen wurde
+						this.oBusyDialog = await this.loadFragment({
+							name: "podprojekt.view.fragments.BusyDialog",
+						});
+					} catch (error) {
+						// Fehlerbehandlung bei Problemen beim Laden des Fragments
+						console.error("Fehler beim Laden des BusyDialogs:", error);
+						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
+						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
+					}
+				}
+
+				// Öffne das Dialog, wenn es erfolgreich geladen wurde
+				this.oBusyDialog.open();
+			},
+			
+			closeBusyDialog: function () {
+				this.byId("BusyDialog").close();
+			},
+
 			onNavToActiveTour: function () { //Nicht alle Stopps beendet
 				this.updateModelBindings("StopModel"); //Aktualisiert die verbleibenden NVEs und das Unterschrift Icon
 
@@ -201,7 +255,7 @@ sap.ui.define(
 			},
 
 			onNavToOverview: function () { //Alle Stopps beendet, navigation zur Touruebersicht
-				//Models über Statusänderung der Tour informieren
+				//Models ueber Statusaenderung der Tour informieren
 				this.updateModelBindings("StopModel");
 				this.updateModelBindings("TourModel");
 				this.resetUserInput();

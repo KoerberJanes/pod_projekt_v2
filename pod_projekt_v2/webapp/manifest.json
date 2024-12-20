@@ -69,7 +69,9 @@
           "loadingDevicesVisible": false,
           "photoListVisible": false,
           "photoListClearingVisible": false,
-          "bStoppSequenceChangeable": true
+          "bStoppSequenceChangeable": true,
+          "bViewerMode": false,
+          "bStopOrderChanged": false
         }
       },
       "CustomerModel":{
@@ -78,7 +80,7 @@
           "role": "",
           "dateAndTime": "",
           "driverId": "",
-          "driverName": "Default Driver",
+          "driverName": "Test Driver",
           "customerName": ""
         }
       },

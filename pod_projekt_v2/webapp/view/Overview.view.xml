@@ -38,13 +38,13 @@
                         growing="true" growingThreshold="10" busyIndicatorDelay="500">
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Label id="assignedToursLabel" text="{i18n>assignedTours}"/>
+                                <Label id="assignedToursLabel" text="{i18n>assignedTours}&#10;{CustomerModel>/driverName}"/>
                                 <ToolbarSpacer/>
                                 <Button id="diagramBtn" press="TourStatisticsDialogOpen" icon="sap-icon://filter-analytics" type="Emphasized"/>
                                 <Button id="refreshBtn" press="onRefreshTours" icon="sap-icon://refresh" type="Emphasized"/>
                             </OverflowToolbar>
                         </headerToolbar>
-                        <!--Abfrage geht nur bis Status 70 weil, bei gleichbleibender Auswahl dann die default Loesung gewählt wird (Success) -->
+                        <!--Abfrage geht nur bis Status 70 weil, bei gleichbleibender Auswahl dann die default Loesung gewaehlt wird (Success) -->
                         <StandardListItem title="{TourModel>routeCaption}" description="{TourModel>externalId}" wrapping="true" 
                             info="{= ${TourModel>routeStatus} === '10' ? ${i18n>invoiceStatusApproved} : 
                                     ${TourModel>routeStatus} === '50' ? ${i18n>invoiceStatusLoaded} :

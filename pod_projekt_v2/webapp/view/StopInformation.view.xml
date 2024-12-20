@@ -33,7 +33,7 @@
                             ${StopInformationModel>/tour/sequence} >= 10 ? '0' + ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1} :
                             '00' + ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1}}" /><!--Wenn hier nur die '2' wie im Original angezeit werden soll, wird der Parameter 'sequence' Verwendet-->
                     <Label text="{i18n>adress}"></Label>
-                    <TextArea editable="false" growing="true" value="{StopInformationModel>/tour/street}&#13;{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"/>
+                    <TextArea editable="false" growing="true" value="{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country}&#13;{StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"/>
                     <Label/>
                     <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>mapTitle}"/>
                     <Label text="{i18n>note}"></Label>

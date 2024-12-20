@@ -25,7 +25,7 @@
               </vbm:items>
             </vbm:Spots>
         </vbm:vos>
-          <!--Legende, falls mal eine erwünscht sein sollte, wirft derzeit aber einen Fehler, den ich nicht so ohne weiteres Beheben kann.
+          <!--Legende, falls mal eine erwuenscht sein sollte, wirft derzeit aber einen Fehler, den ich nicht so ohne weiteres Beheben kann.
           <vbm:legend>
             <vbm:Legend id="GeoMapLegend" caption="Legend">
               <vbm:LegendItem text="Default spot" image="PinBlue.png" />

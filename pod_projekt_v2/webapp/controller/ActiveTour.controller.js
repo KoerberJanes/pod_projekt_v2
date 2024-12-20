@@ -1,24 +1,109 @@
 sap.ui.define(
-	["sap/ui/core/mvc/Controller", "sap/m/MessageBox", "podprojekt/utils/StatusSounds",
-	"sap/gantt/def/gradient/Stop"],
+	["sap/ui/core/mvc/Controller", 
+	"sap/m/MessageBox", 
+	"podprojekt/utils/StatusSounds",
+	"sap/m/MessageToast",
+	"sap/gantt/def/gradient/Stop",],
 	/**
 	 * @param {typeof sap.ui.core.mvc.Controller} Controller
 	 */
-	function (Controller, MessageBox, StatusSounds) {
+	function (Controller, MessageBox, StatusSounds, MessageToast) {
 		"use strict";
 
-		const STOP_STATUS_PROCESSED = "70"; // Konstanten für Statuscodes
+		const STOP_STATUS_PROCESSED = "70"; // Konstanten fuer Statuscodes
 		const REGEX_CUSTOM_POSITION = /^[0-9]+$/; //Es sind nur Ziffern erlaubt mit einer Mindestlaenge von 1
 
 		return Controller.extend("podprojekt.controller.ActiveTour", {
 			onInit: function () {},
 
 			onAfterRendering: function () {
-				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
+				this._oBundle = this.getView().getModel("i18n").getResourceBundle();				
 			},
 
 			updateModelBindings:function(sModelName){
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
+			},
+
+			simulateBackendCallForStoppOrderChange: function (bTestCase) {
+				//this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten ggf. nicht notwendig, da nur gesendet wird
+				//Methoden und Filter koennen hier erstellt werden.
+			
+				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+				let oODataModel = this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
+				//let oFilter1 = new Filter(); //Filter Attribut 1
+				//let oFilter2 = new Filter(); //Filter Attribut 2
+				//let oFilter3 = new Filter(); //Filter Attribut 3
+				//let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+			
+				/*
+				oODataModel.read(sPath, {
+				filters: aFilters,
+			
+				success: (oData) => {
+					this.busyDialogClose();
+					StatusSounds.playBeepSuccess();
+					
+				},
+				error: (oError) => {
+					this.busyDialogClose();
+					//Bisher keine Funktion
+				}
+				});
+				*/
+
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						//this.closeBusyDialog();
+						if (bTestCase) {
+							//Success-Fall simulieren
+							//this.setStopOrderChangedToFalse();
+							return resolve();
+						} else {
+							//Error-Fall simulieren
+							return reject();
+						}
+					}, 1000);
+				});
+				
+			},
+
+			simulateBackendCallToGetNVEs: function (bTestCase, oPressedModelObject) {
+				//Methoden und Filter koennen hier erstellt werden.
+			
+				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+				let oODataModel = this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
+				//let oFilter1 = new Filter(); //Filter Attribut 1
+				//let oFilter2 = new Filter(); //Filter Attribut 2
+				//let oFilter3 = new Filter(); //Filter Attribut 3
+				//let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+			
+				/*
+				oODataModel.read(sPath, {
+				filters: aFilters,
+			
+				success: (oData) => {
+					this.busyDialogClose();
+					StatusSounds.playBeepSuccess();
+					
+				},
+				error: (oError) => {
+					this.busyDialogClose();
+					//Bisher keine Funktion
+				}
+				});
+				*/
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						if (bTestCase) {
+							//Success-Fall simulieren
+							//this.onSetStoppInformation(oPressedModelObject); //Setzen der Infos fuer die Detail-Anzeige des Stopps & erstellen der Lieferscheine
+							return resolve();
+						} else {
+							//Error-Fall simulieren
+							return reject();
+						}
+					}, 1000);
+				});
 			},
 
 			onCustomPositionInputChange: function (oEvent) {
@@ -51,7 +136,7 @@ sap.ui.define(
 				oInput.setValueState(sValueState);
 			},
 
-			onCheckIfStopOrderChangeableForButtons:function(oEvent){ //Pruefen ob Stoppreihenfolge verändert werden darf
+			onCheckIfStopOrderChangeableForButtons:function(oEvent){ //Pruefen ob Stoppreihenfolge veraendert werden darf
 				let oPressedEventId = oEvent.getSource().getId().split("-").pop();
 
 				if(this.getStoppSequenceChangeable()){
@@ -61,8 +146,20 @@ sap.ui.define(
 				}
 			},
 
-			getIfNvesAreUnprocessed:function(){ //Erhalten des Wertes ob NVEs nicht verarbeitet wurden
+			getIfNvesAreUnprocessed:function(){ //Erhalten des Wertes ob NVEs unberarbeitet sind
 				let bNvesAreUnprocessed = true;
+				let oStopModel = this.getOwnerComponent().getModel("StopModel");
+				let aStops = oStopModel.getProperty("/results");
+
+				// Pruefen, ob alle NVEs verarbeitet wurden
+				bNvesAreUnprocessed = aStops.every(stop => //geht jeden Stopp durch
+					stop.orders?.every(order => //geh jede order durch
+						order.aDeliveryNotes?.every(deliveryNote => //geh jede deliveryNote durch
+							deliveryNote.aTempLoadedNVEs.length === 0 &&
+							deliveryNote.aTotalLoadedNVEs.length === 0
+						)
+					)
+				); //Solange bis bedingung nicht mehr zutrifft oder alles getestet wurde
 
 				return bNvesAreUnprocessed;
 			},
@@ -70,9 +167,17 @@ sap.ui.define(
 			checkIfNvesAreProcessed:function(oPressedEventId){ //Pruefen ob bisher keine NVE verladen wurde
 
 				if(this.getIfNvesAreUnprocessed()){
-					this.checkIfNvesAreSelected(oPressedEventId);
+					this.checkIfOrderReverseBtnIsPressed(oPressedEventId);
 				} else{
 					this._showErrorMessageBox(this._oBundle.getText("stopNvesAreProcessed"), () => {});
+				}
+			},
+
+			checkIfOrderReverseBtnIsPressed:function(oPressedEventId){
+				if(oPressedEventId === "btnReverse"){
+					this.differanciateStopOrderChangeEvents(oPressedEventId, []);
+				} else{
+					this.checkIfNvesAreSelected(oPressedEventId);
 				}
 			},
 
@@ -139,7 +244,7 @@ sap.ui.define(
 				let oStopModel = this.getOwnerComponent().getModel("StopModel");
     			let aStops = oStopModel.getProperty("/results");
 
-				// Alle ausgewählten Items aus der aktuellen Liste entfernen
+				// Alle ausgewaehlten Items aus der aktuellen Liste entfernen
 				aSelectedStopModelItems.forEach(item => {
 					let index = aStops.indexOf(item);
 					if (index > -1) {
@@ -149,7 +254,7 @@ sap.ui.define(
 
 				// Neue position ermitteln
 				let iValidPosition = aStops.findIndex(stop => stop.sequence < iCustomPosition);
-				aStops.splice(iValidPosition, 0, ...aSelectedStopModelItems); // Items an der benutzerdefinierten Position einfügen
+				aStops.splice(iValidPosition, 0, ...aSelectedStopModelItems); // Items an der benutzerdefinierten Position einfuegen
 
 				this.adjustStopSequence(aStops);// Stoppreihenfolge Nummern anpassen
 				this.updateModelBindings("StopModel"); // Model-Bindings aktualisieren, um die UI zu synchronisieren
@@ -240,6 +345,8 @@ sap.ui.define(
 					default:
 						break;
 				}
+
+				this.setStopOrderChangedToTrue();
 				
 				this.adjustStopSequence(aModelStops); // Stoppreihenfolge Nummern werden angepasst
 
@@ -253,7 +360,7 @@ sap.ui.define(
 				let oList = this.byId("stopSelectionList"); // Die ID der Liste
 
 				if (oList && oList.getItems()) {
-					oList.removeSelections(true); // Vorherige Selektionen löschen
+					oList.removeSelections(true); // Vorherige Selektionen loeschen
 					oList.getItems().forEach(oItem => {
 						let oContext = oItem.getBindingContext("StopModel");
 						let oObject = oContext.getObject();
@@ -276,22 +383,92 @@ sap.ui.define(
 				});
 			},
 
-			getStoppSequenceChangeable:function(){ //Erhalten des Wertes für Änderbarkeit der Stoppreihenfolge
+			getStoppSequenceChangeable:function(){ //Erhalten des Wertes fuer Aenderbarkeit der Stoppreihenfolge
 				return this.getOwnerComponent().getModel("settings").getProperty("/bStoppSequenceChangeable");
 			},
 
-			checkIfStoppAlreadyDealtWith: function (oEvent) { //!Statuscodes müssen abgesprochen werden
+			checkIfStoppAlreadyDealtWith: function (oEvent) { //!Statuscodes muessen abgesprochen werden
 				let oPressedModelObject = oEvent.getSource().getBindingContext("StopModel").getObject();
 				let iNumberOfUnprocessedNves = oPressedModelObject.orders[0].loadingUnits.length;
 				let sStopStatus = oPressedModelObject.stopStatus; //in Kombination mit der Methode: 'setCurrentStopAsFinished'
 
 				if (iNumberOfUnprocessedNves === 0 && sStopStatus === STOP_STATUS_PROCESSED) { //Keine unbearbeiteten NVEs und Stopp hat status erledigt
-					this._showErrorMessageBox("stopAlreadyProcessed", () => {});
-					//TODO: Anstatt Fehlermeldung, navigation zur Quittierung ohne bearbeitungsmoeglichkeiten.
-					//TODO: Zusätzlich noch Foto der Abschlussuebersicht anzeigen lassen
+					//this._showErrorMessageBox("stopAlreadyProcessed", () => {});
+					this.viewerModeFragmentOpen();
 				} else { //Stop zum verarbeiten vorbereiten
-					this.onSetStoppInformation(oPressedModelObject);
+					this.checkIfStopOrderChanged(oPressedModelObject);
+					//
 				}
+			},
+
+			saveStopOrderChanges:function(){
+				this.openBusyDialog();
+				let aPromises = [];
+				aPromises.push(this.simulateBackendCallForStoppOrderChange(true)); // senden der neuen Stoppreihenfolge an das Backend
+
+				Promise.all(aPromises)
+				.then(() => {
+					this.closeBusyDialog();
+					this.setStopOrderChangedToFalse();
+				})
+				.catch((error) =>{
+					//this.closeBusyDialog();
+					console.error("Error during backend calls:", error);
+				});
+			},
+
+			checkIfStopOrderChanged:function(oPressedModelObject){ //Objekt muss fuer NVEs mitgegeben werden.
+				let aPromises = [];
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				let bStopOrderChanged = oSettingsModel.getProperty("/bStopOrderChanged");
+
+				if(bStopOrderChanged){
+					this.showStopOrderChangedMessage(oPressedModelObject);
+				} else{
+					this.openBusyDialog();
+					aPromises.push(this.simulateBackendCallForStoppOrderChange(true)); // senden der neuen Stoppreihenfolge an das Backend
+					aPromises.push(this.simulateBackendCallToGetNVEs(true, oPressedModelObject));
+
+					Promise.all(aPromises)
+					.then(() => {
+						this.closeBusyDialog();
+						this.onSetStoppInformation(oPressedModelObject);
+						this.setStopOrderChangedToFalse();
+					})
+					.catch((error) =>{
+						console.error("Error during backend calls:", error);
+					});
+					
+				}
+			},
+
+			showStopOrderChangedMessage:function(oPressedModelObject){
+				MessageBox.show(this._oBundle.getText("saveChangedStopOrder"), {
+					icon: MessageBox.Icon.INFORMATION,
+					title: this._oBundle.getText("changedStopOrder"),
+					actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+					emphasizedAction: MessageBox.Action.YES,
+					onClose: (oAction) => {
+						if (oAction === "YES") { //Speichern
+							this.openBusyDialog();
+							let aPromises = [];
+							aPromises.push(this.simulateBackendCallForStoppOrderChange(true)); // senden der neuen Stoppreihenfolge an das Backend
+							aPromises.push(this.simulateBackendCallToGetNVEs(true, oPressedModelObject)); // Bekommen der NVEs fuer den ausgewaehlten Stopp
+							
+							Promise.all(aPromises)
+							.then(() => {
+								this.closeBusyDialog();
+								this.onSetStoppInformation(oPressedModelObject);
+								this.setStopOrderChangedToFalse();
+							})
+							.catch((error) =>{
+								console.error("Error during backend calls:", error);
+							});
+						} else { //Abbrechen
+							//NOP
+						}
+					},
+				});
 			},
 
 			onSetStoppInformation: function (oPressedModelObject) { //Setzen des Stopps fuer weitere Verarbeitung
@@ -318,11 +495,91 @@ sap.ui.define(
 				this.onNavToStopInformation();
 			},
 
+			emptyCustomInputPosition:function(){
+				let oCustomPositionModel = this.getOwnerComponent().getModel("customStopPositionModel");
+				oCustomPositionModel.setProperty("/position", 0);
+			},
+
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
 				StatusSounds.playBeepError();
 				MessageBox.error(this._oBundle.getText(sMessageKey), {
 					onClose: fnOnClose || function () {}, // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
 				});
+			},
+			
+			onStopDisplayModeAccept:function(){
+				this.setUserViewerSettingToTrue();
+				this.onNavToStopInformation();
+			},
+
+			setUserViewerSettingToTrue:function(){
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				oSettingsModel.setProperty("/bViewerMode", true);
+			},
+
+			setUserViewerSettingToFalse:function(){
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				oSettingsModel.setProperty("/bViewerMode", false);
+			},
+
+			setStopOrderChangedToTrue:function(){
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				oSettingsModel.setProperty("/bStopOrderChanged", true);
+			},
+
+			setStopOrderChangedToFalse:function(){
+				let oSettingsModel = this.getOwnerComponent().getModel("settings");
+				oSettingsModel.setProperty("/bStopOrderChanged", false);
+				this.showStopOrderSavingSuccessfullMessage();
+			},
+
+			onStopDisplayModeReject:function(){
+				this.viewerModeFragmentClose();
+			},
+
+			showStopOrderSavingSuccessfullMessage: function () {
+				MessageToast.show(this._oBundle.getText("stopOrderChangedSuccessfull"), {
+					duration: 1000,
+					width: "15em",
+				});
+			},
+
+			openBusyDialog: async function () {
+				//Lade-Dialog oeffnen
+				if (!this.oBusyDialog) {
+					try {
+						// Lade das Fragment, wenn es noch nicht geladen wurde
+						this.oBusyDialog = await this.loadFragment({
+							name: "podprojekt.view.fragments.BusyDialog",
+						});
+					} catch (error) {
+						// Fehlerbehandlung bei Problemen beim Laden des Fragments
+						console.error("Fehler beim Laden des BusyDialogs:", error);
+						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
+						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
+					}
+				}
+
+				// Öffne das Dialog, wenn es erfolgreich geladen wurde
+				this.oBusyDialog.open();
+			},
+			
+			closeBusyDialog: function () {
+				this.byId("BusyDialog").close();
+			},
+
+			viewerModeFragmentOpen:function(){
+				this.oCustomStopPostitionFragment ??= this.loadFragment({
+					name: "podprojekt.view.fragments.displayStoppInViewerMode",
+				});
+
+				this.oCustomStopPostitionFragment.then((oDialog) => {
+					oDialog.open();
+				});
+			},
+
+			viewerModeFragmentClose:function(){
+				this.byId("stopDisplayModeDialog").close();
 			},
 
 			customStopPostitionFragmentOpen:function(){
@@ -336,7 +593,8 @@ sap.ui.define(
 				});
 			},
 
-			customStopPostitionFragmentClose:function(){
+			customStopPostitionFragmentClose:function(){ //schliessen des Dialogs
+				this.emptyCustomInputPosition();
 				this.byId("customStopPositionDialog").close();
 			},
 

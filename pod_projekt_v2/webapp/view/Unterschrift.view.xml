@@ -24,7 +24,7 @@
                             <Title id="OvtbTitle" text="{CustomerModel>/driverName}" level="H2" />
                         </contentMiddle>
                         <contentRight>
-                            <Button id="idDateRefreshButton" type="Emphasized" icon="sap-icon://refresh" press="onRefreshDateAndTime" width="20%"/>
+                            <Button id="idDateRefreshButton" enabled="{= ${settings>/bViewerMode} === true ? false : true }" type="Emphasized" icon="sap-icon://refresh" press="onRefreshDateAndTime" width="20%"/>
                         </contentRight>
                     </Bar>
                     <Label id="idAdresseLabel" text="{i18n>adress}"/>
@@ -34,7 +34,7 @@
                     <Text text="{StopInformationModel>/tour/orders/0/shipmentNumber}"/>
                     <Label id="idNVEsLabel" text="{i18n>numberedDispatchUnits}"/>
                     <Text text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalLoadedNVEs}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
-                    <Text text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNves}.length} {i18n>nves} {i18n>cleared}"/>
+                    <Text text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNVEs}.length} {i18n>nves} {i18n>cleared}"/>
 
                     <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
                     <Text text="{
@@ -70,8 +70,9 @@
             </form:SimpleForm>
             <!--Leider ist mir keine bessere Idee gekommen, dass das Signature-Feld mittig angeziegt wird-->
             <Button width="5%" icon="sap-icon://decline" press="onClearSignField"/>
-            <VBox alignItems="Center" >
-                <customControl:DigitalSignature id="digitalSignatureId" />
+            <VBox alignItems="Center">
+                <customControl:DigitalSignature id="digitalSignatureId" visible="{= ${settings>/bViwerMode} === true ? false : true}" /> <!--visible scheint hier nicht zu funktionieren, in der vbox uebrigends auch nicht-->
+                <ImageContent id="alreadySignedPicture" src="{StopInformationModel>/tour/finishedSignature}" visible="{settings>/bViwerMode}"/>
             </VBox>
         </content>
 
@@ -82,7 +83,13 @@
                 <contentMiddle>
                 </contentMiddle>
                 <contentRight>
-                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onCheckIfStopSigned"/>
+                    <Button text="{i18n>listCustomerTours}" icon="sap-icon://home-share" press="onNavToOverview" 
+                        visible="{= ${settings>/bViewerMode} === false ? false : 
+                        ${TourStartFragmentModel>/tour/routeStatus} === '10' ? true : false }"/>
+                    <Button text="{i18n>listActiveTourStops}" icon="sap-icon://undo" press="onTourReviewed" 
+                        visible="{= ${settings>/bViewerMode} === false ? false : 
+                        ${TourStartFragmentModel>/tour/routeStatus} === '10' ? false : true }"/>
+                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onCheckIfStopSigned" visible="{= ${settings>/bViewerMode} === true ? false : true }"/>
                 </contentRight>
             </Bar>
         </footer>

@@ -1,0 +1,31 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+
+    <Dialog id="stopDisplayModeDialog"  title="{i18n>buildNo}" afterOpen="">
+        <customHeader>
+            <Bar >
+                <contentLeft>
+                    <Title id="stopDisplayModeDialogTitle" text="{i18n>stopDisplayModeDialogTitle} &#13;{i18n>buildNo}"/>
+                </contentLeft>
+                <contentRight>
+                </contentRight>
+            </Bar>
+        </customHeader>
+		<content>
+            <form:SimpleForm id="stopDisplayModeForm">
+                <form:content>
+                    <!--Hier muss man die 'rows' Eigenschaft ggf. auf das Display anpassen-->
+                    <TextArea value="{i18n>stopAlreadyProcessed}&#13;{i18n>changeToDisplayMode}" rows="3" editable="false"/>
+                </form:content>
+            </form:SimpleForm>
+		</content>
+        <beginButton>
+            <Button id="stopDisplayModeButtonConfirm" text="{i18n>yes}" type="Emphasized" press="onStopDisplayModeAccept"/>
+        </beginButton>
+        <endButton>
+            <Button id="stopDisplayModeButtonAbort" text="{i18n>no}" type="Emphasized" press="onStopDisplayModeReject"/>
+        </endButton>		
+    </Dialog>
+</c:FragmentDefinition>

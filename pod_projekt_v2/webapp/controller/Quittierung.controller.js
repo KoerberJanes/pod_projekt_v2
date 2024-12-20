@@ -20,13 +20,17 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
+			updateModelBindings:function(sModelName){
+				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
+			},
+
 			_onObjectMatched: function () { //Fokus-Methoden aufruf nach dem Routing
 				this._setFocus();
 			},
 
 			_setFocus: function () {
-				//Tatsächliches setzen des Fokus
-				// Verzögertes Setzen des Fokus, um sicherzustellen, dass das Element vollständig gerendert ist
+				//Tatsaechliches setzen des Fokus
+				// Verzoegertes Setzen des Fokus, um sicherzustellen, dass das Element vollstaendig gerendert ist
 				const oInput = this.getView()?.byId("recipientNameInp");
 
 				if (oInput?.getDomRef()) {
@@ -68,7 +72,8 @@ sap.ui.define(
 				this._showMessageToast("dummyProcessFinished", 2500);
 
 				setTimeout(() => {
-					this.onNavToOverview();
+					this.onNavToActiveTour();
+					//this.onNavToOverview();
 				}, 2000);
 			},
 
@@ -186,7 +191,7 @@ sap.ui.define(
 				let oPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
 				let oSavedPhoto = oPhotoModel.getProperty("/photo"); //Zuletzt aufgenommenes Foto
 
-				if (Object.keys(oSavedPhoto).length !== 0) { //Wenn Objekt Attribute enthält, vermeindliches Foto loeschen
+				if (Object.keys(oSavedPhoto).length !== 0) { //Wenn Objekt Attribute enthaelt, vermeindliches Foto loeschen
 					this.clearPhotoModel();
 				}
 
@@ -262,7 +267,7 @@ sap.ui.define(
 				let oLatestPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
 				let oTakenPhoto = oLatestPhotoModel.getProperty("/photo"); //'Geschossenes' Foto
 
-				if (Object.keys(oTakenPhoto).length !== 0) {//Wenn Objekt Attribute enthält, exisitert ein Foto
+				if (Object.keys(oTakenPhoto).length !== 0) {//Wenn Objekt Attribute enthaelt, exisitert ein Foto
 					this.confirmFoto();
 				} else {
 					MessageToast.show("Es wurde kein Foto geschossen!", {
@@ -272,7 +277,7 @@ sap.ui.define(
 				}
 			},
 
-			confirmFoto: function () { //Foto bestätigen und übernehmen
+			confirmFoto: function () { //Foto bestaetigen und übernehmen
 				let oLatestPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
 				let oTakenPhoto = oLatestPhotoModel.getProperty("/photo"); //Geschossenes Foto
 
@@ -340,8 +345,19 @@ sap.ui.define(
 					}
 				}
 
-				// Öffne das Dialog, wenn es erfolgreich geladen wurde
+				// oeffne das Dialog, wenn es erfolgreich geladen wurde
 				this.oFotoabfrageDialog.open();
+			},
+
+			onViewerModeUnterschrift:function(){
+				this.onNavToUnterschrift();
+			},
+
+			onNavToActiveTour: function () { //Nicht alle Stopps beendet
+				this.updateModelBindings("StopModel"); //Aktualisiert die verbleibenden NVEs und das Unterschrift Icon
+
+				let oRouter = this.getOwnerComponent().getRouter();
+				oRouter.navTo("ActiveTour");
 			},
 
 			onNavToAbladung: function () { //Navigation zur Abladung View

@@ -17,16 +17,16 @@
 			</Bar>
 		</customHeader>
 
-        <content><!--WICHTIG: Die normale Form ist nicht mit dem viz Kompatibel, daher Layout NICHT ÄNDERN: Dezember 2024-->
+        <content><!--WICHTIG: Die normale Form ist nicht mit dem viz kompatibel, daher Layout NICHT AENDERN: Dezember 2024-->
             <layout:FixFlex id='chartFixFlex' minFlexSize="350">
                 <layout:flexContent>
 					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData">
-                    <!--Hexcodes: Rot, Blau, Grün-->
+                    <!--Hexcodes: Rot, Blau, Gruen-->
                         <viz:dataset>
                             <viz.data:FlattenedDataset data="{TourModel>/resultsForDiagram}">
                                 <viz.data:dimensions>
                                     <viz.data:DimensionDefinition name="Status" value="{TourModel>routeStatusLabel}" />
-                                        <!--Expression-Binding wird nicht unterstützt: Dezember 2024-->
+                                        <!--Expression-Binding wird nicht unterstuetzt: Dezember 2024-->
                                 </viz.data:dimensions>
                                 <viz.data:measures>
                                     <viz.data:MeasureDefinition name="Anzahl" value="{TourModel>Anzahl}" />

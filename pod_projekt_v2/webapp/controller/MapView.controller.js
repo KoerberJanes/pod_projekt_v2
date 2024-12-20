@@ -6,14 +6,14 @@ sap.ui.define(
 	function (Controller, MessageToast) {
 		"use strict";
 
-		// Konstanten für Hardcodierte Werte
+		// Konstanten fuer Hardcodierte Werte
 		const MAP_ALTITUDE_TARGET = 15; // von 0 (weit weg) bis 20 oder so (sehr nah)
 		const GPS_TIMEOUT = 5000;
 		const GPS_MAX_AGE = 0;
 		const ACCURACY_THRESHOLD = 100;
 
 		return Controller.extend("podprojekt.controller.MapView", {
-			onInit: function () { //Beim erstmaligen aufrufen der Seite muss die Methode angehängt werden, damit die Position des Markers immer auf den aktuellen Stop Zeigt
+			onInit: function () { //Beim erstmaligen aufrufen der Seite muss die Methode angehaengt werden, damit die Position des Markers immer auf den aktuellen Stop Zeigt
 				//TODO: Ladeindikator
 				this._oRouter = this.getOwnerComponent().getRouter();
 				this._oRouter.getRoute("MapView").attachPatternMatched(this.setSpotsIntoGeoMap, this);
@@ -21,12 +21,18 @@ sap.ui.define(
 
 			onAfterRendering: function () {},
 
-			setSpotsIntoGeoMap: function () { //Hinzufügen eines einzelnen Stops für die GeoMap
-				let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
-				let {targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB} = oCurrentStop;
+			setSpotsIntoGeoMap: function () { //Hinzufuegen eines einzelnen Stops fuer die GeoMap
+				//this.onBusyDialogOpen();
 
-				this.createDestinationSpot(oCurrentStop, sTargetGeoL, sTargetGeoB);
-				this.getCurrentPosition(false);
+				requestAnimationFrame(() => {
+					let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
+					let {targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB} = oCurrentStop;
+
+					this.createDestinationSpot(oCurrentStop, sTargetGeoL, sTargetGeoB);  
+					this.getCurrentPosition(false); // Abrufen der aktuellen Position
+
+					//this.onBusyDialogClose(); // Ladeindikator schließen
+				});
 			},
 
 			createDestinationSpot: function (oCurrentStop, sTargetGeoL, sTargetGeoB) { //Erstellen eines Stops
@@ -74,17 +80,14 @@ sap.ui.define(
 			},
 
 			getCurrentPosition: function (bZoomToSpot) {
-				//Zurücksetzen der Map Position auf aktuellen Ort?
-				//Leider abgesehen von der boolschen-let keine andere Möglichkeit eingefallen
-				this.onBusyDialogOpen();
+				//Zuruecksetzen der Map Position auf aktuellen Ort?
+				//Leider abgesehen von der boolschen-let keine andere Moeglichkeit eingefallen
 
 				navigator.geolocation.getCurrentPosition(
 					(oPosition) => {
-						this.onBusyDialogClose();
 						this.checkIfOwnLoactionIsAccurate(oPosition, bZoomToSpot);
 					},
 					(oError) => {
-						this.onBusyDialogClose();
 						MessageToast.show("Could not fetch Geo-Location");
 					},
 					{
@@ -94,6 +97,7 @@ sap.ui.define(
 						maximumAge: GPS_MAX_AGE,
 					}
 				);
+				//this.onBusyDialogClose();
 			},
 
 			removeOldOwnPosition: function () { //entfernen vom alten eigenen Pointer
@@ -108,9 +112,9 @@ sap.ui.define(
 
 			checkIfOwnLoactionIsAccurate: function (oPosition, bZoomToSpot) {
 				let sAccuracy = oPosition.coords.accuracy;
-				//TODO: Hier wurde die Prüfung auskommentiert weil sie sehr sehr ungenau ist
+				//! Hier wurde die Pruefung auskommentiert weil sie sehr sehr ungenau ist
 
-				//if(sAccuracy>ACCURACY_THRESHOLD){ //Pruefen ob die Daten überhaupt genau genug sind!
+				//if(sAccuracy>ACCURACY_THRESHOLD){ //Pruefen ob die Daten ueberhaupt genau genug sind!
 				//MessageToast.show("Trying to fetch more accurate data! Accuracy is not good enough!");
 				//} else{
 				let {longitude: sCurrentGeoL, latitude: sCurrentGeoB} = oPosition.coords;
@@ -123,7 +127,7 @@ sap.ui.define(
 				oGeoMap.zoomToGeoPosition(parseFloat(sCurrentGeoL), parseFloat(sCurrentGeoB), MAP_ALTITUDE_TARGET);
 			},
 
-			onToTargetPosition: function () { //Zur Position des derzeit ausgewählten Stops
+			onToTargetPosition: function () { //Zur Position des derzeit ausgewaehlten Stops
 				let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
 				let {targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB} = oCurrentStop;
 				let oGeoMap = this.getView().byId("GeoMap");

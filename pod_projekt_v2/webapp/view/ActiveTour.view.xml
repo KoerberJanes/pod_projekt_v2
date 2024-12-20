@@ -6,69 +6,86 @@
     displayBlock="true">
     <Page id="activetourPageId" title="{i18n>activetourPageTitle}&#13;{i18n>buildNo}">
         <customHeader>
-                <Bar id="activeTourPageBar">
-                    
-                    <contentLeft>
-                        <Button id="navBackToOverviewPageId" press="onNavToOverview" icon="sap-icon://nav-back"/>
-                    </contentLeft>
-                    <contentMiddle>
-                        <Title id="activeTourTitleId" text="{i18n>activetourPageTitle}&#13;{i18n>buildNo}"/>
-                    </contentMiddle>
-                    <contentRight>
-                    </contentRight>
+            <Bar id="activeTourPageBar">
+                
+                <contentLeft>
+                    <Button id="navBackToOverviewPageId" press="onNavToOverview" icon="sap-icon://nav-back"/>
+                </contentLeft>
+                <contentMiddle>
+                    <Title id="activeTourTitleId" text="{i18n>activetourPageTitle}&#13;{i18n>buildNo}"/>
+                </contentMiddle>
+                <contentRight>
+                </contentRight>
 
-                </Bar>
-            </customHeader>
+            </Bar>
+        </customHeader>
+        <subHeader>
+            <Toolbar id="ActiveTourToolbarId" >
+                <Button id="bUp" type="Emphasized" icon="sap-icon://navigation-up-arrow" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>up}"/>
+                <Button id="bDown" type="Emphasized" icon="sap-icon://navigation-down-arrow" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>down}"/>
+                <ToolbarSpacer id="ToolbarSpacer_0"/>
+                <Button id="bStart" type="Emphasized" icon="sap-icon://back-to-top" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>start}"/>
+                <Button id="bEnd" type="Emphasized" icon="sap-icon://download" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>end}"/>
+                <ToolbarSpacer id="ToolbarSpacer_1"/>
+                <Button id="btnReverse" type="Emphasized" icon="sap-icon://synchronize" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>reverse}"/>
+                <Button id="btnCustomOrder" type="Emphasized" icon="sap-icon://grid" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>reverse}"/>
+            </Toolbar>
+        </subHeader>
+                    
         <content>
+            <List id="stopSelectionList" items="{StopModel>/results}" noDataText="{i18n>noDataAvailable}" growing="true" growingThreshold="10" busyIndicatorDelay="500" 
+                rememberSelections="false" mode="MultiSelect" sticky="HeaderToolbar">
+                <headerToolbar>
+                    <OverflowToolbar id="OvtbTourselect">
+                        <Title id="ueberschrift" text="{i18n>activeTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" level="H1"/>
+                        <ToolbarSpacer/>
+                    </OverflowToolbar>
+                </headerToolbar>
+                
+                <CustomListItem press="checkIfStoppAlreadyDealtWith" type="Active">
+                    <Bar class="sapUiTinyMarginBottom">
+                        <contentLeft>
+                            <Title level="H5"
+                                text="{= 
+                                        ${StopModel>sequence} >= 100 ? ${StopModel>sequence} + '-' + ${StopModel>addressName1}  :
+                                        ${StopModel>sequence} >= 10 ? '0' + ${StopModel>sequence} + '-' + ${StopModel>addressName1} :
+                                        '00' + ${StopModel>sequence} + '-' + ${StopModel>addressName1}}"/>
+                        </contentLeft>
+                        <contentRight>
+                            <Text text="{= ${StopModel>orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
+                        </contentRight>
+                    </Bar>
+                    <HBox >
+                        <VBox width="93%" >
+                            <Label text="{StopModel>street} {StopModel>streetNumber}" class="sapUiSmallMarginBegin"/>
+                            <Label text="{StopModel>country} {StopModel>zipCode} {StopModel>city}" class="sapUiSmallMarginBegin"/>
+                        </VBox>
+                        <VBox width="7%">
+                            <core:Icon src="sap-icon://signature" class="sapUiTinyMarginTop" color="{= ${StopModel>stopStatus} === '70' ? 'Positive' : 'Negative'}"/>
+                            <core:Icon src="sap-icon://navigation-right-arrow" class="sapUiTinyMarginTop"/>
+                        </VBox>
+                    </HBox>
+                </CustomListItem>
+            </List>
+
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
-                    <Toolbar id="ActiveTourToolbarId" >
-                        <Button id="bUp" type="Emphasized" icon="sap-icon://navigation-up-arrow" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>up}"/>
-                        <Button id="bDown" type="Emphasized" icon="sap-icon://navigation-down-arrow" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>down}"/>
-                        <ToolbarSpacer id="ToolbarSpacer_0"/>
-                        <Button id="bStart" type="Emphasized" icon="sap-icon://back-to-top" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>start}"/>
-                        <Button id="bEnd" type="Emphasized" icon="sap-icon://download" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>end}"/>
-                        <ToolbarSpacer id="ToolbarSpacer_1"/>
-                        <Button id="btnReverse" type="Emphasized" icon="sap-icon://synchronize" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>reverse}"/>
-                        <Button id="btnCustomOrder" type="Emphasized" icon="sap-icon://grid" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>reverse}"/>
-                    </Toolbar>
-                    <List id="stopSelectionList" items="{StopModel>/results}" noDataText="{i18n>noDataAvailable}" growing="true" growingThreshold="10" busyIndicatorDelay="500" 
-                        rememberSelections="false" mode="MultiSelect">
-                        <headerToolbar>
-                            <OverflowToolbar id="OvtbTourselect">
-                                <Title id="ueberschrift" text="{i18n>activeTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" level="H1"/>
-                                <ToolbarSpacer/>
-                            </OverflowToolbar>
-                        </headerToolbar>
-                        
-                        <CustomListItem press="checkIfStoppAlreadyDealtWith" type="Active">
-                            <Bar class="sapUiTinyMarginBottom">
-                                <contentLeft>
-                                    <Title level="H5"
-                                        text="{= 
-                                                ${StopModel>sequence} >= 100 ? ${StopModel>sequence} + '-' + ${StopModel>addressName1}  :
-                                                ${StopModel>sequence} >= 10 ? '0' + ${StopModel>sequence} + '-' + ${StopModel>addressName1} :
-                                                '00' + ${StopModel>sequence} + '-' + ${StopModel>addressName1}}"/>
-                                </contentLeft>
-                                <contentRight>
-                                    <Text text="{= ${StopModel>orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
-                                </contentRight>
-                            </Bar>
-                            <HBox >
-                                <VBox width="93%" >
-                                    <Label text="{StopModel>street} {StopModel>streetNumber}" class="sapUiSmallMarginBegin"/>
-                                    <Label text="{StopModel>country} {StopModel>zipCode} {StopModel>city}" class="sapUiSmallMarginBegin"/>
-                                </VBox>
-                                <VBox width="7%">
-                                    <core:Icon src="sap-icon://signature" class="sapUiTinyMarginTop" color="{= ${StopModel>stopStatus} === '70' ? 'Positive' : 'Negative'}"/>
-                                    <core:Icon src="sap-icon://navigation-right-arrow" class="sapUiTinyMarginTop"/>
-                                </VBox>
-                            </HBox>
-                            
-                        </CustomListItem>
-                    </List>
+                    <!--Leer, weil Liste aus der Form herausgezogen wurde.-->
+                    <!--Das geschieht, damit die 'sticky' Eigenschaft der Liste funktioniert.-->
                 </form:content>
             </form:SimpleForm>
         </content>
+
+        <footer>
+            <Bar>
+                <contentLeft>
+                </contentLeft>
+                <contentMiddle>
+                </contentMiddle>
+                <contentRight>
+                    <Button text="{i18n>save}" icon="sap-icon://sys-enter" press="saveStopOrderChanges" visible="{settings>/bStopOrderChanged}" />
+                </contentRight>
+            </Bar>
+        </footer>
     </Page>
 </mvc:View>

@@ -1,9 +1,10 @@
 sap.ui.define([
         "sap/ui/core/UIComponent",
         "sap/ui/Device",
-        "podprojekt/model/models"
+        "podprojekt/model/models",
+		"sap/ui/core/Fragment"
     ],
-    function (UIComponent, Device, models) {
+    function (UIComponent, Device, models, Fragment) {
         "use strict";
 
         return UIComponent.extend("podprojekt.Component", {

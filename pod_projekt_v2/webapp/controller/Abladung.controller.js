@@ -17,6 +17,89 @@ sap.ui.define(
 				this._oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			},
 
+			simulateBackendCallForLoadingNVEs: function (bTestCase) {
+				//this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten.
+				//Methoden und Filter koennen hier erstellt werden.
+			
+				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+				let oODataModel = this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
+				//let oFilter1 = new Filter(); //Filter Attribut 1
+				//let oFilter2 = new Filter(); //Filter Attribut 2
+				//let oFilter3 = new Filter(); //Filter Attribut 3
+				//let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+			
+				/*
+				oODataModel.read(sPath, {
+				filters: aFilters,
+			
+				success: (oData) => {
+					this.busyDialogClose();
+					StatusSounds.playBeepSuccess();
+					
+			
+				},
+				error: (oError) => {
+					this.busyDialogClose();
+					//Bisher keine Funktion
+				}
+				});
+				*/
+				return new Promise((resolve, reject) => { // Promise erstellen
+					setTimeout(() => { // Asynchrone Verzögerung simulieren
+						//this.closeBusyDialog();
+						if (bTestCase) {
+							//Success-Fall simulieren
+							this.showSavingSuccessfullMessage();
+							return resolve();
+						} else {
+							//Error-Fall simulieren
+							return reject("Fehler beim Verladen der NVEs.")
+						}
+					}, 500);
+				});
+			},
+
+			simulateBackendCallForClearingNVEs: function (bTestCase) {
+				//this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten.
+				//Methoden und Filter koennen hier erstellt werden.
+			
+				let sPath = "/ABAP_FUNKTIONSBAUSTEIN"; //Pfad zu OData-EntitySet
+				let oODataModel = this.getOwnerComponent().getModel("ABC"); //O-Data Model aus der View
+				//let oFilter1 = new Filter(); //Filter Attribut 1
+				//let oFilter2 = new Filter(); //Filter Attribut 2
+				//let oFilter3 = new Filter(); //Filter Attribut 3
+				//let aFilters = [oFilter1, oFilter2, oFilter3]; //Array an Filtern, die an das Backend uebergeben werden
+			
+				/*
+				oODataModel.read(sPath, {
+				filters: aFilters,
+			
+				success: (oData) => {
+					this.busyDialogClose();
+					StatusSounds.playBeepSuccess();
+			
+				},
+				error: (oError) => {
+					this.busyDialogClose();
+					//Bisher keine Funktion
+				}
+				});
+				*/
+				return new Promise((resolve, reject) => { // Promise erstellen
+					setTimeout(() => { // Asynchrone Verzögerung simulieren
+						//this.closeBusyDialog();
+						if (bTestCase) {
+							//Success-Fall simulieren
+							this.showSavingSuccessfullMessage();
+							return resolve(); // Erfolgreicher Call
+						} else {
+							//Error-Fall simulieren
+							return reject("Fehler beim Klären der NVEs");
+						}
+					}, 500);
+				});
+			},
+
 			updateModelBindings:function(sModelName){
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
@@ -98,7 +181,7 @@ sap.ui.define(
 				this._openNveClearingDialog();
 			},
 
-			checkForRemainingNves: function () { //Prüfen ob noch Nves zu quittieren sind
+			checkForRemainingNves: function () { //Pruefen ob noch Nves zu quittieren sind
 				StatusSounds.playBeepSuccess();
 				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
 				let aRemainingNves = oDeliveryNoteModel.getProperty("/note/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
@@ -113,7 +196,7 @@ sap.ui.define(
 			_processRemainingNves: function (aRemainingNves) { //NVEs werden alle quittiert
 				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
 				let aLoadingNvesTemp = oDeliveryNoteModel.getProperty("/note/aTempLoadedNVEs"); //verladene Nves
-				let aUpdatedLoadingNvesTemp = [...aLoadingNvesTemp, ...aRemainingNves]; // zusammenführen der Nves
+				let aUpdatedLoadingNvesTemp = [...aLoadingNvesTemp, ...aRemainingNves]; // zusammenfuehren der Nves
 
 				oDeliveryNoteModel.setProperty("/note/aTempLoadedNVEs", aUpdatedLoadingNvesTemp); //Model der Temp verladenen Nves fuellen
 				oDeliveryNoteModel.setProperty("/note/aUnprocessedNumberedDispatchUnits", []); //Model der noch zu bearbeitenden Nves leeren
@@ -127,7 +210,7 @@ sap.ui.define(
 				if (aClearingNvesTemp.length > 0 || aLoadingNvesTemp.length > 0) { //Mindestens eine Nve wurde entweder verladen oder geklaert
 					this.driverNveReceiptDescisionBox(); //Abfragen ob diese Gespeichert werden soll
 				} else {
-					this.navBackToQuittierung(); //Zurück zur vorherigen Seite
+					this.navBackToQuittierung(); //Zurueck zur vorherigen Seite
 				}
 			},
 
@@ -139,10 +222,7 @@ sap.ui.define(
 					emphasizedAction: MessageBox.Action.YES,
 					onClose: (oAction) => {
 						if (oAction === "YES") { //Speichern
-							this.showSavingSuccessfullMessage();
-							this._saveAllTempStoredNVEs();
-							this.updateModelBindings("StopModel");
-							this.navBackToQuittierung();
+							this.checkWhatBackendCallsAreNeccessary(true);
 						} else { //Abbrechen
 							this.AbortCurrentLoadedAndClearedNves();
 						}
@@ -211,10 +291,37 @@ sap.ui.define(
 						width: "15em",
 					});
 				} else {
-					this.showSavingSuccessfullMessage();
+					this.checkWhatBackendCallsAreNeccessary(false);
+				}
+			},
+
+			checkWhatBackendCallsAreNeccessary:function(bNavBackToQuittierung){ // Pruefen in welchen Arrays temporaere NVEs vorhanden sind und backend-Call entsprechend ausführen.
+				this.openBusyDialog();
+				let aPromises = [];
+				
+				if(this.checkIfNvesWhereLoaded()){
+					aPromises.push(this.simulateBackendCallForLoadingNVEs(true));
+				}
+
+				if(this.checkIfNvesWhereCleared()){
+					aPromises.push(this.simulateBackendCallForClearingNVEs(true));
+				}
+
+				Promise.all(aPromises)
+				.then(() => { // Wenn alle Versprechen eingehalten wurden
+					this.closeBusyDialog();
 					this._saveAllTempStoredNVEs();
 					this.updateModelBindings("StopModel");
-				}
+
+					if (bNavBackToQuittierung) {
+						this.navBackToQuittierung();
+					}
+				})
+				.catch((error) => {
+					console.error("Error during backend calls:", error);
+					// Optional: Fehlerhandling einbauen
+				});	
+				
 			},
 
 			_saveAllTempStoredNVEs: function () {
@@ -222,7 +329,7 @@ sap.ui.define(
 				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
 
 				this._mergeAndSaveNves(oDeliveryNoteModel, "aTempLoadedNVEs", "aTotalLoadedNVEs");
-				this._mergeAndSaveNves(oDeliveryNoteModel, "aTempClearedNVEs", "aTotalClearedNves");
+				this._mergeAndSaveNves(oDeliveryNoteModel, "aTempClearedNVEs", "aTotalClearedNVEs");
 				this._emptyTempModels();
 			},
 
@@ -242,7 +349,7 @@ sap.ui.define(
 				oDeliveryNoteModel.setProperty("/note/aTempLoadedNVEs", []);
 			},
 
-			nveClearingDialogConfirm: function (oEvent) { //Platz fuer zusaetzliche Funktionen, die gemacht werden können
+			nveClearingDialogConfirm: function (oEvent) { //Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
 				this.chekIfAtLeastOneErrorReasonIsSelected(oEvent);
 			},
 
@@ -259,7 +366,7 @@ sap.ui.define(
 			},
 
 			checkIfOnlyOneErrorReasonIsSelected: function (aQuantityOfSelectedReasons, oEvent) {
-				//Hier kann das Intervall beschränkt werden!
+				//Hier kann das Intervall beschraenkt werden!
 				//Bisher >0 --> untere Schranke gegeben
 				//Hier >1 --> obere Schranke wird festgelegt
 				if (aQuantityOfSelectedReasons.length > 1) {
@@ -294,7 +401,7 @@ sap.ui.define(
 				//this.findClearingNve();
 			},
 
-			nveClearingDialogReject: function () { //Platz fuer zusaetzliche Funktionen, die gemacht werden können
+			nveClearingDialogReject: function () { //Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
 				this.nveClearingDialogClose();
 			},
 
@@ -333,9 +440,9 @@ sap.ui.define(
 			differenciateNveProcessingType: function (oDiffNve, oEvent) { //unterscheiden ob manuelles klaeren oder verladen verwendet wurde
 				let sButtonId = oEvent.getSource().getId().split("-").pop();
 
-				if (sButtonId === "clearNVEOkBtn") { // Klär-Dialog
+				if (sButtonId === "clearNVEOkBtn") { // Klaer-Dialog
 					this.saveTempNve(oDiffNve, "Clearing"); 
-				} else { // Hand-Klärung
+				} else { // Hand-Klaerung
 					this.saveTempNve(oDiffNve, "Loading"); 
 				}
 			},
@@ -370,7 +477,7 @@ sap.ui.define(
 			},
 
 			onNveClearingDialogCallbackReject: function () { //Abbrechen im Dialog fuer manuelles verladen geklickt
-				//Platz fuer zusaetzliche Funktionen, die gemacht werden können
+				//Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
 				this.onManualNveInputFragmentClose();
 			},
 
@@ -390,9 +497,9 @@ sap.ui.define(
 				this.getOwnerComponent().getRouter().navTo("Quittierung");
 			},
 
-			addCameraPlayerToCameraDialog: function () { //Erstellen des VideoPlayers für den CameraStream und diesen in den Dialog setzen
+			addCameraPlayerToCameraDialog: function () { //Erstellen des VideoPlayers fuer den CameraStream und diesen in den Dialog setzen
 				let oVideoContainer = this.byId("photoDialogClearingVideoFeedContainer");
-				oVideoContainer.setContent("<video id='clearingVideoPlayer' width='100%' autoplay></video>"); //an das HTML Element in der XML view einen videoplayer für die Kamera anheften
+				oVideoContainer.setContent("<video id='clearingVideoPlayer' width='100%' autoplay></video>"); //an das HTML Element in der XML view einen videoplayer fuer die Kamera anheften
 				this.enableVideoStream();
 			},
 
@@ -409,10 +516,10 @@ sap.ui.define(
 				oMediaStream?.getTracks().forEach((track) => track.stop());
 			},
 
-			checkIfPhotoNeedsToBeCleared: function () { //Prüfen ob bereits ein Foto angezeigt wird und ggf. entfernen
+			checkIfPhotoNeedsToBeCleared: function () { //Pruefen ob bereits ein Foto angezeigt wird und ggf. entfernen
 				let oSavedPhoto = this.getOwnerComponent().getModel("LatestPhotoModel").getProperty("/photo");
 
-				if (Object.keys(oSavedPhoto).length !== 0) { //Wenn Objekt Attribute enthält, vermeindliches Foto loeschen
+				if (Object.keys(oSavedPhoto).length !== 0) { //Wenn Objekt Attribute enthaelt, vermeindliches Foto loeschen
 					this.clearPhotoModel();
 				}
 				this.onSnappPicture();
@@ -427,14 +534,14 @@ sap.ui.define(
 				let oDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "dd.MM.YYYY HH:mm:ss",
 				}).format(new Date()); //Datum inklusive Uhrzeit
-				// Zugriff auf ausgewähltes Element und Modell
+				// Zugriff auf ausgewaehltes Element und Modell
 				let oSelectedItem = this.getView().byId("ClearingList").getSelectedItem()?.getId();
 				let oCurrentSittingClearingNvesModel = this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel")?.getProperty("/results") || [];
 				let aListItems = this.getView().byId("ClearingList").getItems();
 				// Finden des Listenelements und Modell-Objekt
 				let oListObject = aListItems.find((item) => item.getId() === oSelectedItemId);
 				let oSelectedModelItem = oListObject ? oCurrentSittingClearingNvesModel[aListItems.indexOf(oListObject)] : null;
-				// Canvas Größe an Video-Feed anpassen und Bild zeichnen
+				// Canvas Groeße an Video-Feed anpassen und Bild zeichnen
 				canvas.width = oVideoFeed.videoWidth;
 				canvas.height = oVideoFeed.videoHeight;
 				context.drawImage(oVideoFeed, 0, 0, canvas.width, canvas.height);
@@ -446,7 +553,7 @@ sap.ui.define(
 					width: "100%",
 					height: "auto",
 					dateAndTime: oDateAndTime,
-					photoType: oSelectedModelItem.Description || "Unknown", // Default-Wert hinzufügen
+					photoType: oSelectedModelItem.Description || "Unknown", // Default-Wert hinzufuegen
 					fileName: `${oDateAndTime.replace(/:/g, "-")}.png`, // ":" im Dateinamen vermeiden
 					mediaType: "image/png",
 					uploadState: "Ready",
@@ -490,8 +597,8 @@ sap.ui.define(
 				//TODO: Hier wuerde Foto fuer den Klaergrund an die NVE gehaengt werden anstatt an das normale Model!
 				let oTakenPhoto = this.getOwnerComponent().getModel("LatestPhotoModel").getProperty("/photo"); //'Geschossenes' Foto
 
-				//Muss geprüft werden weil Model-Inhalt leeres Objekt ist
-				if (Object.keys(oTakenPhoto).length !== 0) { //Wenn Objekt Attribute enthält, exisitert ein Foto
+				//Muss geprueft werden weil Model-Inhalt leeres Objekt ist
+				if (Object.keys(oTakenPhoto).length !== 0) { //Wenn Objekt Attribute enthaelt, exisitert ein Foto
 					let aPhotos = this.getOwnerComponent().getModel("TourClearingModel").getProperty("/aPhotos");
 
 					if (aPhotos.length < MAX_PHOTOS_ALLOWED) {
@@ -516,6 +623,30 @@ sap.ui.define(
 					duration: 1000,
 					width: "15em",
 				});
+			},
+
+			openBusyDialog: async function () {
+				//Lade-Dialog oeffnen
+				if (!this.oBusyDialog) {
+					try {
+						// Lade das Fragment, wenn es noch nicht geladen wurde
+						this.oBusyDialog = await this.loadFragment({
+							name: "podprojekt.view.fragments.BusyDialog",
+						});
+					} catch (error) {
+						// Fehlerbehandlung bei Problemen beim Laden des Fragments
+						console.error("Fehler beim Laden des BusyDialogs:", error);
+						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
+						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
+					}
+				}
+
+				// Öffne das Dialog, wenn es erfolgreich geladen wurde
+				this.oBusyDialog.open();
+			},
+			
+			closeBusyDialog: function () {
+				this.byId("BusyDialog").close();
 			},
 
 			_openNveClearingDialog: function () { //Oeffnen des Klaer-Dialoges
@@ -543,7 +674,7 @@ sap.ui.define(
 					}
 				}
 
-				// Öffne das Dialog, wenn es erfolgreich geladen wurde
+				// Oeffne das Dialog, wenn es erfolgreich geladen wurde
 				this.oManualNveInputDialog.open();
 			},
 

@@ -37,11 +37,13 @@
                             <Text id="NVEText" text="{= ${i18n>nvesToDeliveryNote} + ' ' + ${DeliveryNoteModel>/note/shipmentNumber}}"/>
                             <ToolbarSpacer/>
                             <ToolbarSpacer/>
-                            <Text id="txtNVEAnzahl" text="{= ${DeliveryNoteModel>/note/aTempClearedNVEs}.length + ${DeliveryNoteModel>/note/aTotalClearedNves}.length + ${DeliveryNoteModel>/note/aTempLoadedNVEs}.length + ${DeliveryNoteModel>/note/aTotalLoadedNVEs}.length}  / 
-                                {= ${DeliveryNoteModel>/note/aTempClearedNVEs}.length + ${DeliveryNoteModel>/note/aTotalClearedNves}.length + ${DeliveryNoteModel>/note/aTempLoadedNVEs}.length + ${DeliveryNoteModel>/note/aTotalLoadedNVEs}.length + ${DeliveryNoteModel>/note/aUnprocessedNumberedDispatchUnits}.length}"/>
+                            <Text id="txtNVEAnzahl" text="{= ${DeliveryNoteModel>/note/aTempClearedNVEs}.length + ${DeliveryNoteModel>/note/aTotalClearedNVEs}.length + ${DeliveryNoteModel>/note/aTempLoadedNVEs}.length + ${DeliveryNoteModel>/note/aTotalLoadedNVEs}.length}  / 
+                                {= ${DeliveryNoteModel>/note/aTempClearedNVEs}.length + ${DeliveryNoteModel>/note/aTotalClearedNVEs}.length + ${DeliveryNoteModel>/note/aTempLoadedNVEs}.length + ${DeliveryNoteModel>/note/aTotalLoadedNVEs}.length + ${DeliveryNoteModel>/note/aUnprocessedNumberedDispatchUnits}.length}"/>
                         </content>
                     </OverflowToolbar>
-                    <Tree id="NVETree" items="{DeliveryNoteModel>/note/aUnprocessedNumberedDispatchUnits}" >
+                    <!-- Tree fuer aUnprocessedNumberedDispatchUnits -->
+                    <Tree id="unprocessedNVETree" visible="{= ${settings>/bViewerMode} === true ? false : true }"
+                        items="{DeliveryNoteModel>/note/aUnprocessedNumberedDispatchUnits}" >
                         <CustomTreeItem type="Active">
                             <content>
                                 <HBox>
@@ -51,15 +53,27 @@
                             </content>
                         </CustomTreeItem>
                     </Tree>
-                    <Button id="handeingabebtn" icon="sap-icon://simulate" text="{i18n>manualInputTitle}" press="onManualNveInputFragmentOpen"/>
-                    <Button id="btnAllesQuittieren" text="{i18n>loadAllOpenNves}" icon="sap-icon://accept" press="checkForRemainingNves"/>
+
+                    <!-- Liste fuer aTotalClearedNVEs im Viewer-Mode -->
+                    <List id="clearedNveList" headerText="{i18n>clearedNves}" items="{DeliveryNoteModel>/note/aTotalClearedNVEs}" visible="{settings>/bViewerMode}" noDataText="{i18n>noClearedNves}">
+                        <StandardListItem title="{DeliveryNoteModel>accurateDescription}" />
+                    </List>
+
+                    <!-- Liste fuer aTotalLoadedNVEs im Viewer-Mode -->
+                    <List id="loadedNveList" headerText="{i18n>loadedNves}" items="{DeliveryNoteModel>/note/aTotalLoadedNVEs}" visible="{settings>/bViewerMode}" noDataText="{i18n>noLoadedNves}">
+                        <StandardListItem title="{DeliveryNoteModel>accurateDescription}" />
+                    </List>
+
+
+                    <Button id="handeingabebtn" enabled="{= ${settings>/bViewerMode} === true ? false : true }" visible="{= ${settings>/bViewerMode} === true ? false : true }" icon="sap-icon://simulate" text="{i18n>manualInputTitle}" press="onManualNveInputFragmentOpen"/>
+                    <Button id="btnAllesQuittieren" enabled="{= ${settings>/bViewerMode} === true ? false : true }" visible="{= ${settings>/bViewerMode} === true ? false : true }" text="{i18n>loadAllOpenNves}" icon="sap-icon://accept" press="checkForRemainingNves"/>
                 </form:content>
             </form:SimpleForm>
         </content>
         <footer>
             <Bar>
                 <contentLeft>
-                    <Button text="{i18n>save}" id="savebtn" press="checkIfSavingIsNesseccary"/>
+                    <Button text="{i18n>save}" id="savebtn" press="checkIfSavingIsNesseccary" visible="{= ${settings>/bViewerMode} === true ? false : true }"/>
                 </contentLeft>
                 <contentMiddle>
                 </contentMiddle>
