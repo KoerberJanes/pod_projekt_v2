@@ -134,12 +134,28 @@ sap.ui.define(
 				});
 			},
 
+			getCurrentTour:function(){
+				let oCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
+
+				return oCurrentTour;
+			},
+
+			getCurrentStopOfTour:function(){
+				let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour"); //Infos ueber derzeitigen Stopp
+
+				return oCurrentStop;
+			},
+
+			getStopsOfCurrentTour:function(){
+				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Tour mit allen Stopps und Infos vorhanden
+
+				return aStopsOfCurrentTour;
+			},
+
 			setCurrentStopAsFinished: function () {
 				//!Statuscodes muessen abgesprochen werden
-				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel"); //Infos ueber derzeitigen Stopp
-				let oCurrentStop = oStopInformationModel.getProperty("/tour"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
-				let oTourStartModel = this.getOwnerComponent().getModel("TourStartFragmentModel"); //Tour mit allen Stopps und Infos vorhanden
-				let aStopsOfCurrentTour = oTourStartModel.getProperty("/tour/stops"); //'addressName1' bei der deepEntity gleich wie beim Stopp --> Vergleichsoperator
+				let oCurrentStop = this.getCurrentStopOfTour(); 
+				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); 
 				let oFoundTour = aStopsOfCurrentTour.find((element) => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
 
 				if (oFoundTour) {
@@ -150,7 +166,7 @@ sap.ui.define(
 
 			checkIfAllStopsAreCompleted: function () { //Pruefen ob es nicht abgeschlossene Stops ( '90' abgeschlossene Stops '70' ) gibt
 				//!Statuscodes muessen abgesprochen werden
-				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Tour mit allen Stopps und Infos vorhanden
+				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); //Tour mit allen Stopps und Infos vorhanden
 				let bAllStoppsProcessed = aStopsOfCurrentTour.every((element) => element.stopStatus === "70");
 
 				if (!bAllStoppsProcessed) { //Pruefen ob es mindestens einen Stopp gibt, der nicht den Status 70 hat
@@ -166,20 +182,17 @@ sap.ui.define(
 
 				oStopInformationModel.setProperty("/tour/orders/0/loadingUnits", aRemainingNves);
 
-				this.setCurrentStopStatus();
+				this.finishCurrentStop();
 			},
 
-			setCurrentStopStatus:function(){
-				//let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				//let oCurrentStop = oStopInformationModel.getProperty("/tour");
-
+			finishCurrentStop:function(){ //Stopp wurde beendet, alles wird wieder bereitgestellt und die Uebersicht der Stopps wird angezeigt
 				this.resetUserInput();
 				this.resetUserPhotos();
 				this.onNavToActiveTour(); 
 			},
 
 			setTourStatusProcessed: function () { //!Statuscodes muessen abgesprochen werden
-				let oCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
+				let oCurrentTour = this.getCurrentTour();;
 
 				oCurrentTour.routeStatus = "10";
 				this.onNavToOverview(); 

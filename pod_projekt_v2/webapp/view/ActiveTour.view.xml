@@ -28,7 +28,7 @@
                 <Button id="bEnd" type="Emphasized" icon="sap-icon://download" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>end}"/>
                 <ToolbarSpacer id="ToolbarSpacer_1"/>
                 <Button id="btnReverse" type="Emphasized" icon="sap-icon://synchronize" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>reverse}"/>
-                <Button id="btnCustomOrder" type="Emphasized" icon="sap-icon://grid" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>reverse}"/>
+                <Button id="btnCustomOrder" type="Emphasized" icon="sap-icon://grid" press="onCheckIfStopOrderChangeableForButtons" tooltip="{i18n>custom}"/>
             </Toolbar>
         </subHeader>
                     

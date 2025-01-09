@@ -3,7 +3,9 @@
     xmlns:core="sap.ui.core" 
     xmlns="sap.m"
     xmlns:form="sap.ui.layout.form" 
-    xmlns:upload="sap.m.upload" displayBlock="true">
+    xmlns:upload="sap.m.upload" 
+    xmlns:plugins="sap.m.plugins"
+    displayBlock="true">
     <Page id="confirmationPage" title="{i18n>confirmationTitle}&#13;{i18n>buildNo}">
         <customHeader>
             <Bar>
@@ -94,7 +96,9 @@
                     <Label id="photoItems" text="{i18n>showPhotos}"/>
                     <ToggleButton id="photoItemsToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{settings>/photoListVisible}"/>
                     <Label/>
-                    <upload:UploadSet id="photoItemsList" uploadEnabled="{= ${settings>/bViewerMode} === true ? false : true }" visible="{settings>/photoListVisible}" fileTypes="png, image/*" instantUpload="false"
+                    <!--UploadSet sei veraltet (Seit kurzem, muss erneuert werden)-->
+                
+                    <upload:UploadSet id="photoItemsList" uploadEnabled="{= ${settings>/bViewerMode} === true ? false : true }" visible="{settings>/photoListVisible}" fileTypes="png, image/*" instantUpload="false" 
                         items="{path:'PhotoModel>/photos', 
                             sorter: {path:'photoType', descending: false, 
                                 group: true}}"> 
@@ -129,6 +133,123 @@
                             </upload:UploadSetItem>
                         </upload:items>
                     </upload:UploadSet>
+                    
+                    <Label/>
+                
+                    <Table 
+                    id="table-uploadSet"
+                    sticky="ColumnHeaders,HeaderToolbar"
+                    width="auto"
+                    mode="SingleSelectLeft"
+                    fixedLayout="false"
+                    inset="true"
+                    autoPopinMode="true"
+                    hiddenInPopin="None"
+                    items="{path: 'PhotoModel>/photos', templateShareable: false}"
+                    selectionChange="onSelectionChange"
+                    visible="{settings>/photoListVisible}">
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title text="Documents ({= ${PhotoModel>/photos}.length})" level="H2"/>
+
+                            <!--
+                                <SearchField id="SearchField_Id" width="20%" liveChange="onSearch">
+                                    <layoutData>
+                                        <OverflowToolbarLayoutData priority="NeverOverflow"/>
+                                    </layoutData>
+                                </SearchField>
+                            -->
+
+                                <ToolbarSpacer />
+                                <upload:ActionsPlaceholder id="uploadButton" placeholderFor="UploadButtonPlaceholder" />
+                                <Button id="downloadSelectedButton_test" text="Download" enabled="false" press="onDownloadFiles"/>
+
+                            </OverflowToolbar>
+                        </headerToolbar>
+
+
+                        <dependents>
+                            <plugins.UploadSetwithTable
+                                uploadUrl="/uploadFiles"
+                                multiple="true"
+                                beforeUploadStarts="onBeforeUploadStarts"
+                                itemRenamed="onDocumentRenamedSuccess"
+                                uploadCompleted="onUploadCompleted"
+                                onActivated="onPluginActivated"
+                                cloudFilePickerEnabled="true"
+                                actions="uploadButton">
+                                <rowConfiguration>
+                                    <upload.UploadItemConfiguration
+                                        fileNamePath="fileName"
+                                        mediaTypePath="mediaType"
+                                        urlPath="url"
+                                        previewablePath="previewable"
+                                        fileSizePath="fileSize"
+                                        isTrustedSourcePath="trustedSource"
+                                    />
+                                </rowConfiguration>
+                            </plugins.UploadSetwithTable>
+                        </dependents>
+
+
+                        <columns>
+                            <Column id="fileName" importance="High">
+                                <header>
+                                    <Label text="File Name" />
+                                </header>
+                            </Column>
+                            <!--
+                            <Column id="dateAndTime">
+                                <header>
+                                    <Label text="Date and Time" />
+                                </header>
+                            </Column>
+                            -->
+                            <Column id="status">
+                                <header>
+                                    <Label text="Status" />
+                                </header>
+                            </Column>
+                            <Column id="fileSize">
+                                <header>
+                                    <Label text="File Size" />
+                                </header>
+                            </Column>
+                            <Column id="lastModified">
+                                <header>
+                                    <Label text="Last Modified" />
+                                </header>
+                            </Column>
+                            <Column id="actionButton" importance="High">
+                                <header>
+                                    <Label text="Actions" />
+                                </header>
+                            </Column>
+                        </columns>
+
+                        <items >
+                            <ColumnListItem>
+                                <cells>
+                                    <HBox>
+                                        <Image src="{PhotoModel>src}" class="sapMUSTItemImage sapMUSTItemIcon" visible="{= ${PhotoModel>src} !== undefined}"/>
+                                        <VBox>
+                                            <Link text="{PhotoModel>fileName}" press="onOpenFilePreview"/>
+                                            <Text text="{PhotoModel>photoType}" />
+                                        </VBox>
+                                    </HBox>
+                                    <Text text="{PhotoModel>uploadState}" />
+                                    <Text text="TestFileSize"/>
+                                    <Text text="TestLastModified" />
+                                    <HBox>
+                                        <Button icon="sap-icon://edit" press="onEditFile" type="Transparent" />
+                                        <Button icon="sap-icon://delete" press="onRemoveFile" type="Transparent" />
+                                    </HBox>
+                                    
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                    
                     <Label />
 
                     <HBox justifyContent="SpaceAround">

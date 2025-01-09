@@ -311,9 +311,8 @@ sap.ui.define(
 				this.getOwnerComponent().getModel("TourStartFragmentModel").setProperty("/mileage", "");
 			},
 
-			onMileageInputChange: function (oEvent) {
-				//Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
-				//! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
+			onMileageInputChange: function (oEvent) { //Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
+				//! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet, ergebnis steht aus)
 				let oInput = oEvent.getSource();
 				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
 				oTourStartFragmentModel.setProperty("/mileage", oInput.getValue());
@@ -342,7 +341,7 @@ sap.ui.define(
 			},
 
 			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
-				let sTourStartFragmentInput = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/mileage"); // User-Eingabe
+				let sTourStartFragmentInput = this.getUserTourDistanceInput(); // User-Eingabe
 
 				if (REGEX_TOUR_MILEAGE.test(sTourStartFragmentInput)) { //Eingabe-Parameter passen
 					this.checkIfEnteredValueInRange();
@@ -351,11 +350,28 @@ sap.ui.define(
 				}
 			},
 
+			getUserTourDistanceInput:function(){
+				let iTourStartFragmentInput = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/mileage"); //User-Eingabe
+
+				return iTourStartFragmentInput;
+			},
+
+			getTourTolerance:function(){
+				let iRespectiveTourMileageTolerance = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/mileageTolerance"); //Aktuelle tolleranz fuer Tour-Mileage
+
+				return iRespectiveTourMileageTolerance;
+			},
+
+			getCurrentTourMileage:function(){
+				let iRespectiveTourMileageTolerance = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/mileage"); //Aktuelle tolleranz fuer Tour-Mileage
+
+				return iRespectiveTourMileageTolerance;
+			},
+
 			checkIfEnteredValueInRange: function () { //Pruefen ob Tolleranz eingehalten wurde
-				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel"); //Ausgewaehlte Tour-Infos
-				let iTourStartFragmentInput = oTourStartFragmentModel.getProperty("/mileage"); //User-Eingabe
-				let iRespectiveTourMileage = oTourStartFragmentModel.getProperty("/tour/mileage"); //Aktuelle Tour-Mileage
-				let iRespectiveTourMileageTolerance = oTourStartFragmentModel.getProperty("/tour/mileageTolerance"); //Aktuelle tolleranz fuer Tour-Mileage
+				let iTourStartFragmentInput = this.getUserTourDistanceInput(); //User-Eingabe
+				let iRespectiveTourMileage = this.getCurrentTourMileage(); //Aktuelle Tour-Mileage
+				let iRespectiveTourMileageTolerance = this.getTourTolerance(); //Aktuelle tolleranz fuer Tour-Mileage
 
 				// Berechnung der Toleranzgrenzen
 				const iMinRange = iRespectiveTourMileage - iRespectiveTourMileageTolerance;
@@ -383,11 +399,16 @@ sap.ui.define(
 				this.resetMileageUserInput(); //Bei akzeptierter Eingabe das Feld leeren
 			},
 
+			getTourstartStops:function(){
+				let aRespectiveTourStops = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Array an Stops der ausgewaehlten Tour
+
+				return aRespectiveTourStops;
+			},
+
 			setStopInformationModelData: function () { //Tolleranz eingehalten und Stops der Tour in entsprechendes Model setzen
 				//TODO: Anzeigen wie viele Stopps selektiert (moeglichst)
-				let oStopModel = this.getOwnerComponent().getModel("StopModel"); 
-				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel"); 
-				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); //Array an Stops der ausgewaehlten Tour
+				let oStopModel = this.getOwnerComponent().getModel("StopModel");
+				let aRespectiveTourStops = this.getTourstartStops(); //Array an Stops der ausgewaehlten Tour
 
 				let aDescendingStopOrder = this.sortStopsDescending(aRespectiveTourStops);
 				oStopModel.setProperty("/results", aDescendingStopOrder); //Setzen der Stops
@@ -466,9 +487,7 @@ sap.ui.define(
 			},
 
 			createDeliveryNotes: function () {
-
-				let oTourStartFragmentModel = this.getOwnerComponent().getModel("TourStartFragmentModel");
-				let aRespectiveTourStops = oTourStartFragmentModel.getProperty("/tour/stops"); // Array an Stops der ausgewaehlten Tour
+				let aRespectiveTourStops = this.getTourstartStops(); // Array an Stops der ausgewaehlten Tour
 
 				aRespectiveTourStops.forEach((stop) => {
 					let {orders} = stop;
@@ -570,8 +589,8 @@ sap.ui.define(
 			},
 
 			MapTourStatisticsForDiagram:function(){
-				const oModel = this.getView().getModel("TourModel");
-				const aResults = oModel.getProperty("/results");
+				const oTourModel = this.getView().getModel("TourModel");
+				const aResults = oTourModel.getProperty("/results");
 
 				// Status zaehlen
 				const oStatusCount = {};
@@ -615,7 +634,7 @@ sap.ui.define(
 					};
 				});
 
-				oModel.setProperty("/resultsForDiagram", aMappedResults);
+				oTourModel.setProperty("/resultsForDiagram", aMappedResults);
 
 				// Farben setzen im VizFrame
 				const aColors = aMappedResults.map(item => item.Farbe);
@@ -666,23 +685,21 @@ sap.ui.define(
 				let oSelectedItem = oEvent.getParameter("data"); //Das ausgewaehlte Diagrammelement
 			},
 
-			onCloseTourStartFragment: function () {
-				//Tourstart Fragment schließen
+			onCloseTourStartFragment: function () { //Tourstart Fragment schließen
 				this.resetMileageUserInput();
 				this.byId("TourstartDialog").close();
 			},
 
-			onNavToActiveTour: function () {
+			onNavToActiveTour: function () { //Navigation zu den Stops der derzeitgen Tour
 				this.updateModelBindings("StopModel");
-				//Navigation zu den Stops der derzeitgen Tour
+				
 				StatusSounds.playBeepSuccess();
 				let oRouter = this.getOwnerComponent().getRouter();
 
 				oRouter.navTo("ActiveTour");
 			},
 
-			onNavToLogin: function () {
-				//Navigation zur Login Seite
+			onNavToLogin: function () { //Navigation zur Login Seite
 				StatusSounds.playBeepSuccess();
 				let oRouter = this.getOwnerComponent().getRouter();
 

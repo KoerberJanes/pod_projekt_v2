@@ -13,8 +13,14 @@ sap.ui.define(
 
 			onPressBtnAvisNr: function (oEvent) {
 				//Natives anrufen der Telefonnummer
-				let sPhoneAvis = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/orders/0/phoneAvis");
+				let sPhoneAvis = this.getPhoneAvis();
 				sap.m.URLHelper.triggerTel(sPhoneAvis);
+			},
+
+			getPhoneAvis:function(){
+				let sPhoneAvis = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/orders/0/phoneAvis");
+				
+				return sPhoneAvis;
 			},
 
 			onNavToMap: function () { //Navigation zur GeoMap View

@@ -8,6 +8,8 @@ sap.ui.define(
 
 		const MAX_PHOTOS_ALLOWED = 5;
 		const REGEX_NVE_USER_INPUT = /^[0-9]{5}$/; //es sind nur Ziffern erlaubt mit genau 5 Zeichen laenge
+		const MIN_SELECTED_ERROR_REASONS = 1;
+		const MAX_SELECTED_ERROR_REASONS = 2;
 
 		return Controller.extend("podprojekt.controller.Abladung", {
 			onInit: function () {},
@@ -181,10 +183,15 @@ sap.ui.define(
 				this._openNveClearingDialog();
 			},
 
+			getPossiblyRemainingNves:function(){
+				let aRemainingNves = this.getOwnerComponent().getModel("DeliveryNoteModel").getProperty("/note/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+
+				return aRemainingNves;
+			},
+
 			checkForRemainingNves: function () { //Pruefen ob noch Nves zu quittieren sind
 				StatusSounds.playBeepSuccess();
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let aRemainingNves = oDeliveryNoteModel.getProperty("/note/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+				let aRemainingNves = this.getPossiblyRemainingNves(); //Noch nicht quittierte Nves
 
 				if (aRemainingNves.length > 0) { //Wenn mehr als eine NVE zu quittieren ist
 					this._processRemainingNves(aRemainingNves); //onLoadAllRemainingNves
@@ -202,10 +209,21 @@ sap.ui.define(
 				oDeliveryNoteModel.setProperty("/note/aUnprocessedNumberedDispatchUnits", []); //Model der noch zu bearbeitenden Nves leeren
 			},
 
+			getUnsavedClearedNves:function(){
+				let aClearingNvesTemp = this.getOwnerComponent().getModel("DeliveryNoteModel").getProperty("/note/aTempClearedNVEs"); //geklaerte Nves
+
+				return aClearingNvesTemp;
+			},
+
+			getUnsavedLoadedNves:function(){
+				let aLoadingNvesTemp = this.getOwnerComponent().getModel("DeliveryNoteModel").getProperty("/note/aTempLoadedNVEs"); //verladene Nves
+
+				return aLoadingNvesTemp;
+			},
+
 			checkForUnsavedNves: function () {
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let aClearingNvesTemp = oDeliveryNoteModel.getProperty("/note/aTempClearedNVEs"); //geklaerte Nves
-				let aLoadingNvesTemp = oDeliveryNoteModel.getProperty("/note/aTempLoadedNVEs"); //verladene Nves
+				let aClearingNvesTemp = this.getUnsavedClearedNves(); //geklaerte Nves
+				let aLoadingNvesTemp = this.getUnsavedLoadedNves(); //verladene Nves
 
 				if (aClearingNvesTemp.length > 0 || aLoadingNvesTemp.length > 0) { //Mindestens eine Nve wurde entweder verladen oder geklaert
 					this.driverNveReceiptDescisionBox(); //Abfragen ob diese Gespeichert werden soll
@@ -249,9 +267,9 @@ sap.ui.define(
 
 			AbortCurrentLoadedAndClearedNves: function () {
 				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let aClearingNvesTemp = oDeliveryNoteModel.getProperty("/note/aTempClearedNVEs"); //geklaerte Nves
-				let aLoadingNvesTemp = oDeliveryNoteModel.getProperty("/note/aTempLoadedNVEs"); //verladene Nves
-				let aLoadingUnits = oDeliveryNoteModel.getProperty("/note/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+				let aClearingNvesTemp = this.getUnsavedClearedNves(); //geklaerte Nves
+				let aLoadingNvesTemp = this.getUnsavedLoadedNves(); //verladene Nves
+				let aLoadingUnits = this.getPossiblyRemainingNves(); //Noch nicht quittierte Nves
 
 				// Temp verladen und geklaerte Nves zusammenfassen und mit den unbearbeiteten zusammenfassen
 				let aUpdatedLoadingUnits = [...aLoadingUnits, ...aClearingNvesTemp, ...aLoadingNvesTemp];
@@ -263,8 +281,7 @@ sap.ui.define(
 
 			checkIfNvesWhereLoaded: function () { //Helper Methode, die zurueckgibt ob temporaer verladene NVEs existieren
 				let bTempLoadedNves = false;
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let aLoadingNvesTemp = oDeliveryNoteModel.getProperty("/note/aTempLoadedNVEs"); //verladene Nves
+				let aLoadingNvesTemp = this.getUnsavedLoadedNves(); //verladene Nves
 
 				if (aLoadingNvesTemp.length > 0) {
 					bTempLoadedNves = true;
@@ -274,8 +291,7 @@ sap.ui.define(
 
 			checkIfNvesWhereCleared: function () { //Helper Methode, die zurueckgibt ob temporaer geklaerte NVEs existieren
 				let bTempClearedNves = false;
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let aClearingNvesTemp = oDeliveryNoteModel.getProperty("/note/aTempClearedNVEs"); //geklaerte Nves
+				let aClearingNvesTemp = this.getUnsavedClearedNves(); //geklaerte Nves
 
 				if (aClearingNvesTemp.length > 0) {
 					bTempClearedNves = true;
@@ -351,38 +367,43 @@ sap.ui.define(
 			},
 
 			nveClearingDialogConfirm: function (oEvent) { //Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
-				this.chekIfAtLeastOneErrorReasonIsSelected(oEvent);
+				this.checkIfMinErrorReasonsSelected(oEvent);
 			},
 
-			chekIfAtLeastOneErrorReasonIsSelected: function (oEvent) {
-				let oCurrentSittingClearingNvesModel = this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel"); //Model fier alle geklaeten NVEs
-				let aCurrentClearingReasons = oCurrentSittingClearingNvesModel.getProperty("/results");
+			getCurrentClearingReasons:function(){
+				let aCurrentClearingReasons = this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel")?.getProperty("/results") || [];
+
+				return aCurrentClearingReasons;
+			},
+
+			checkIfMinErrorReasonsSelected: function (oEvent) {
+				let aCurrentClearingReasons = this.getCurrentClearingReasons();
 				let aQuantityOfSelectedReasons = aCurrentClearingReasons.filter((element) => element.value === true);
 
-				if (aQuantityOfSelectedReasons.length > 0) { //Mindestens 1 Klaergrund wurde ausgewaehlt
-					this.checkIfOnlyOneErrorReasonIsSelected(aQuantityOfSelectedReasons, oEvent);
+				if (aQuantityOfSelectedReasons.length >= MIN_SELECTED_ERROR_REASONS) { //Mindestanzahl Klaergruende wurde bestaetigt
+					this.checkIfMaxErrorReasonsSelected(aQuantityOfSelectedReasons, oEvent);
 				} else { //kein Klaergrund wurde ausgewaehlt
 					this._showErrorMessageBox("noSelectedItem", () => {});
 				}
 			},
 
-			checkIfOnlyOneErrorReasonIsSelected: function (aQuantityOfSelectedReasons, oEvent) {
-				//Hier kann das Intervall beschraenkt werden!
-				//Bisher >0 --> untere Schranke gegeben
-				//Hier >1 --> obere Schranke wird festgelegt
-				if (aQuantityOfSelectedReasons.length > 1) {
-					//Mindestens 1 Klaergrund wurde ausgewaehlt
-					this._showErrorMessageBox("tooManyClearingResonsSelected", () => {});
-				} else {
-					//ein Klaergrund wurde ausgewaehlt
+			checkIfMaxErrorReasonsSelected: function (aQuantityOfSelectedReasons, oEvent) {
+				if (aQuantityOfSelectedReasons.length <= MAX_SELECTED_ERROR_REASONS) { //Maximalanzahl Klaergruende wurde bestaetigt
 					this.setClearingResonInNve(aQuantityOfSelectedReasons, oEvent); //Einzelner Reason
 					//this.setClearingResonsInNve(aQuantityOfSelectedReasons); //!Mehrere Klaergruende, nicht entfernen!
+				} else { //Maximalzahl ueberschritten
+					this._showErrorMessageBox("tooManyClearingResonsSelected", () => {});
 				}
 			},
 
+			getClearingReasonNve:function(){
+				let oClearingNve = this.getOwnerComponent().getModel("nveClearingDialogModel").getProperty("/clearingNve");
+
+				return oClearingNve;
+			},
+
 			setClearingResonInNve: function (aQuantityOfSelectedReasons, oEvent) {
-				let oClearingNveModel = this.getOwnerComponent().getModel("nveClearingDialogModel");
-				let oClearingNve = oClearingNveModel.getProperty("/clearingNve");
+				let oClearingNve = this.getClearingReasonNve();
 
 				let oClearingReason = aQuantityOfSelectedReasons[0]; //da nur ein Klaergrund mitgegeben werden kann
 				oClearingNve.clearingReasonDescription = oClearingReason.Description; //Beschreibung des Klaergrundes setzen
@@ -391,8 +412,7 @@ sap.ui.define(
 			},
 
 			setClearingResonsInNve: function (aQuantityOfSelectedReasons) { //!Mehrere Klaergruende, nicht entfernen!
-				let oClearingNveModel = this.getOwnerComponent().getModel("nveClearingDialogModel");
-				let oClearingNve = oClearingNveModel.getProperty("/clearingNve");
+				let oClearingNve = this.getClearingReasonNve();
 
 				oClearingNve.aClearingReasons = {}; //Neues Attribut fuer die Nve erstellen
 				oClearingNve.aClearingReasons = aQuantityOfSelectedReasons; //Attribut mit Infos fuellen
@@ -407,13 +427,18 @@ sap.ui.define(
 			},
 
 			findClearingNve: function (oEvent) { //Klaer-Objekt finden
-				//Ganantiert ein Klaer-Objekt vorhanden durch vorherige zwischenschritte
-				let oClearingNve = this.getOwnerComponent().getModel("nveClearingDialogModel").getProperty("/clearingNve"); //Model der zu klaerenden Nve
+				let oClearingNve = this.getClearingReasonNve(); //Model der zu klaerenden Nve
 				this.differenciateNveProcessingType(oClearingNve, oEvent); //Schnittstelle von Klaer- und Verlade-Nves
 			},
 
-			checkIfInputConstraintsComply: function (oEvent) {
+			getUserInputForNve:function(){
 				let sManualNveUserInput = this.getOwnerComponent().getModel("manualNveInputModel").getProperty("/manualInput"); //UserInput aus Feld auslesen
+
+				return sManualNveUserInput;
+			},
+
+			checkIfInputConstraintsComply: function (oEvent) {
+				let sManualNveUserInput = thisgetUserInputForNve; //UserInput aus Feld auslesen
 
 				if (REGEX_NVE_USER_INPUT.test(sManualNveUserInput)) {
 					this.findLoadingNve(oEvent);
@@ -423,10 +448,8 @@ sap.ui.define(
 			},
 
 			findLoadingNve: function (oEvent) { //Verlade-Objekt finden
-				let oManualNveInputModel = this.getOwnerComponent().getModel("manualNveInputModel");
-				let sManualNveUserInput = oManualNveInputModel.getProperty("/manualInput"); //UserInput aus Feld auslesen
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let aLoadingUnits = oDeliveryNoteModel.getProperty("/note/aUnprocessedNumberedDispatchUnits");
+				let sManualNveUserInput = this.getUserInputForNve(); //UserInput aus Feld auslesen
+				let aLoadingUnits = this.getPossiblyRemainingNves();
 
 				let oLoadingNve = aLoadingUnits.find((element) => element.label1 === sManualNveUserInput);
 
@@ -461,7 +484,7 @@ sap.ui.define(
 
 			removeProcessedNve: function (oDiffNve) { //Bearbeitete NVE aus Array fuer unbearbeitete NVEs entfernen
 				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let aRemainingNves = oDeliveryNoteModel.getProperty("/note/aUnprocessedNumberedDispatchUnits");
+				let aRemainingNves = this.getPossiblyRemainingNves();
 				let aNewFilteredNves = aRemainingNves.filter((oCurrentNve) => oCurrentNve !== oDiffNve);
 
 				oDeliveryNoteModel.setProperty("/note/aUnprocessedNumberedDispatchUnits", aNewFilteredNves);
@@ -518,7 +541,7 @@ sap.ui.define(
 			},
 
 			checkIfPhotoNeedsToBeCleared: function () { //Pruefen ob bereits ein Foto angezeigt wird und ggf. entfernen
-				let oSavedPhoto = this.getOwnerComponent().getModel("LatestPhotoModel").getProperty("/photo");
+				let oSavedPhoto = this.getNewestImage();
 
 				if (Object.keys(oSavedPhoto).length !== 0) { //Wenn Objekt Attribute enthaelt, vermeindliches Foto loeschen
 					this.clearPhotoModel();
@@ -537,7 +560,7 @@ sap.ui.define(
 				}).format(new Date()); //Datum inklusive Uhrzeit
 				// Zugriff auf ausgewaehltes Element und Modell
 				let oSelectedItem = this.getView().byId("ClearingList").getSelectedItem()?.getId();
-				let oCurrentSittingClearingNvesModel = this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel")?.getProperty("/results") || [];
+				let oCurrentSittingClearingNvesModel = this.getCurrentClearingReasons();
 				let aListItems = this.getView().byId("ClearingList").getItems();
 				// Finden des Listenelements und Modell-Objekt
 				let oListObject = aListItems.find((item) => item.getId() === oSelectedItemId);
@@ -565,6 +588,12 @@ sap.ui.define(
 
 			saveNewImage: function (oImage) { //Speichern von zu letzt geschossenem Foto
 				this.getOwnerComponent().getModel("LatestPhotoModel").setProperty("/photo", oImage);
+			},
+
+			getNewestImage:function(){
+				let oImage = this.getOwnerComponent().getModel("LatestPhotoModel").getProperty("/photo");
+
+				return oImage;
 			},
 
 			clearPhotoModel: function () { //entfernen von letztem Foto
@@ -596,11 +625,11 @@ sap.ui.define(
 
 			oTakenPhoto: function () { //Derzeit nicht benutzt weil fotos in der Abladung oder Quittierung geklaert werden sollten
 				//TODO: Hier wuerde Foto fuer den Klaergrund an die NVE gehaengt werden anstatt an das normale Model!
-				let oTakenPhoto = this.getOwnerComponent().getModel("LatestPhotoModel").getProperty("/photo"); //'Geschossenes' Foto
+				let oTakenPhoto = this.getNewestImage(); //'Geschossenes' Foto
 
 				//Muss geprueft werden weil Model-Inhalt leeres Objekt ist
 				if (Object.keys(oTakenPhoto).length !== 0) { //Wenn Objekt Attribute enthaelt, exisitert ein Foto
-					let aPhotos = this.getOwnerComponent().getModel("TourClearingModel").getProperty("/aPhotos");
+					let aPhotos = this.getClearingPhotos();
 
 					if (aPhotos.length < MAX_PHOTOS_ALLOWED) {
 						this.pushClearingPhotoToPhotosModel(oTakenPhoto);
@@ -611,9 +640,14 @@ sap.ui.define(
 				this.onPhotoDialogClearingClose();
 			},
 
+			getClearingPhotos:function(){
+				let aPhotos = this.getOwnerComponent().getModel("TourClearingModel").getProperty("/aPhotos");
+
+				return aPhotos;
+			},
+
 			pushClearingPhotoToPhotosModel(oTakenPhoto) { //Derzeit nicht benutzt weil fotos in der Abladung oder Qzittierung geklaert werden sollten
-				let oTourClearingModel = this.getOwnerComponent().getModel("TourClearingModel");
-				let aPhotos = oTourClearingModel.getProperty("/aPhotos");
+				let aPhotos = this.getClearingPhotos();
 
 				aPhotos.push(oTakenPhoto);
 				oTourClearingModel.setProperty("/aPhotos", aPhotos);

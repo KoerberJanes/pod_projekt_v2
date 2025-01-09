@@ -1,0 +1,36 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+>
+
+<Dialog id="photoEditDialog"  title="{i18n>buildNo}" afterOpen="">
+    <customHeader>
+        <Bar >
+            <contentLeft>
+                <Title id="photoEditDialogTitle" text="{i18n>customPositionDialogTitle} &#13;{i18n>buildNo}"/>
+            </contentLeft>
+            <contentRight>
+            </contentRight>
+        </Bar>
+    </customHeader>
+    <content>
+        <form:SimpleForm id="photoEditForm">
+            <form:content>
+               <Image src=""></Image>
+               <Label text="fileName"/>
+               <Input value="Datum Test"/>
+               <Label text="Process"/>
+               <Input value="Zum Stopp Test"/>
+            </form:content>
+        </form:SimpleForm>
+    </content>
+    <beginButton>
+        <Button id="photoEditButtonConfirm" text="{i18n>ok}" type="Emphasized" press="onPhotoEditAccept"/>
+    </beginButton>
+    <endButton>
+        <Button id="photoEditButtonAbort" text="{i18n>abort}" type="Emphasized" press="onPhotoEditReject"/>
+    </endButton>		
+</Dialog>
+
+</c:FragmentDefinition>

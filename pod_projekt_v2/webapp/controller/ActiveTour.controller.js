@@ -146,10 +146,15 @@ sap.ui.define(
 				}
 			},
 
+			getModelStops:function(){
+				let aStops = this.getOwnerComponent().getModel("StopModel").getProperty("/results");
+
+				return aStops;
+			},
+
 			getIfNvesAreUnprocessed:function(){ //Erhalten des Wertes ob NVEs unberarbeitet sind
 				let bNvesAreUnprocessed = true;
-				let oStopModel = this.getOwnerComponent().getModel("StopModel");
-				let aStops = oStopModel.getProperty("/results");
+				let aStops = this.getModelStops();
 
 				// Pruefen, ob alle NVEs verarbeitet wurden
 				bNvesAreUnprocessed = aStops.every(stop => //geht jeden Stopp durch
@@ -225,8 +230,7 @@ sap.ui.define(
 			},
 
 			checkIfEnteredValueInRange:function(){
-				let oStopModel = this.getOwnerComponent().getModel("StopModel");
-				let aStops = oStopModel.getProperty("/results");
+				let aStops = this.getModelStops();
 				let oCustomPositionModel = this.getOwnerComponent().getModel("customStopPositionModel");
 				let iCustomPosition = oCustomPositionModel.getProperty("/position");
 				let iMaxSequenceNumber = this.getMaxSequence(aStops);
@@ -241,8 +245,7 @@ sap.ui.define(
 
 			moveSelectedStopsToCustomPosition:function(iCustomPosition){
 				let aSelectedStopModelItems = this.getSelectedStops();
-				let oStopModel = this.getOwnerComponent().getModel("StopModel");
-    			let aStops = oStopModel.getProperty("/results");
+    			let aStops = this.getModelStops();
 
 				// Alle ausgewaehlten Items aus der aktuellen Liste entfernen
 				aSelectedStopModelItems.forEach(item => {
@@ -287,16 +290,15 @@ sap.ui.define(
 			},
 
 			differanciateStopOrderChangeEvents:function(oPressedEventId, aSelectedStopModelItems){
-				let oStopModel = this.getOwnerComponent().getModel("StopModel");
-				let aModelStops = oStopModel.getProperty("/results");
+				let aStops = this.getModelStops();
 
 				switch (oPressedEventId) {
 					case "bUp":
 						// Elemente eins nach oben verschieben
 						aSelectedStopModelItems.forEach(item => {
-							let index = aModelStops.indexOf(item);
-							if (index > 0 && !aSelectedStopModelItems.includes(aModelStops[index - 1])) {
-								[aModelStops[index - 1], aModelStops[index]] = [aModelStops[index], aModelStops[index - 1]];
+							let index = aStops.indexOf(item);
+							if (index > 0 && !aSelectedStopModelItems.includes(aStops[index - 1])) {
+								[aStops[index - 1], aStops[index]] = [aStops[index], aStops[index - 1]];
 							}
 						});
 						
@@ -305,9 +307,9 @@ sap.ui.define(
 						// Elemente eins nach unten verschieben
 						for (let i = aSelectedStopModelItems.length - 1; i >= 0; i--) {
 							let item = aSelectedStopModelItems[i];
-							let index = aModelStops.indexOf(item);
-							if (index < aModelStops.length - 1 && !aSelectedStopModelItems.includes(aModelStops[index + 1])) {
-								[aModelStops[index], aModelStops[index + 1]] = [aModelStops[index + 1], aModelStops[index]];
+							let index = aStops.indexOf(item);
+							if (index < aStops.length - 1 && !aSelectedStopModelItems.includes(aStops[index + 1])) {
+								[aStops[index], aStops[index + 1]] = [aStops[index + 1], aStops[index]];
 							}
 						}
 
@@ -315,31 +317,31 @@ sap.ui.define(
 					case "bStart":
 						// Hinzufuegen der Elemente (erste Position)
 						aSelectedStopModelItems.forEach(item => {
-							let index = aModelStops.indexOf(item);
+							let index = aStops.indexOf(item);
 							if (index > -1) {
-								aModelStops.splice(index, 1); // Item entfernen
+								aStops.splice(index, 1); // Item entfernen
 							}
 						});
 						// Hinzufuegen der Elemente in richtiger Reihenfolge
-    					aModelStops.unshift(...aSelectedStopModelItems);
+    					aStops.unshift(...aSelectedStopModelItems);
 						
 						break;
 					case "bEnd":
 						// Elemente an das Ende schieben (letzte Position)
 						for (let i = aSelectedStopModelItems.length - 1; i >= 0; i--) {
 							let item = aSelectedStopModelItems[i];
-							let index = aModelStops.indexOf(item);
+							let index = aStops.indexOf(item);
 							if (index > -1) {
-								aModelStops.splice(index, 1); // Item entfernen
+								aStops.splice(index, 1); // Item entfernen
 							}
 						}
 						// Hinzufuegen der Elemente in richtiger Reihenfolge
-    					aModelStops.push(...aSelectedStopModelItems);
+    					aStops.push(...aSelectedStopModelItems);
 
 						break;
 					case "btnReverse":
 						// Listenreihenfolge umdrehen
-						aModelStops.reverse();
+						aStops.reverse();
 						break;
 				
 					default:
@@ -348,7 +350,7 @@ sap.ui.define(
 
 				this.setStopOrderChangedToTrue();
 				
-				this.adjustStopSequence(aModelStops); // Stoppreihenfolge Nummern werden angepasst
+				this.adjustStopSequence(aStops); // Stoppreihenfolge Nummern werden angepasst
 
 				// Hier update notwendig, da sonst Model-referenz der Elemente fuer erneute Auswahl nicht stimmt
 				this.updateModelBindings("StopModel");
@@ -372,13 +374,13 @@ sap.ui.define(
 				}
 			},
 
-			adjustStopSequence: function(aModelStops) { // Stopp-sequence anpassen
-				let sequenceValues = aModelStops.map(item => item.sequence); // Extrahiere die sequence-Werte der Stopps
+			adjustStopSequence: function(aStops) { // Stopp-sequence anpassen
+				let sequenceValues = aStops.map(item => item.sequence); // Extrahiere die sequence-Werte der Stopps
 
 				sequenceValues.sort((a, b) => b - a); // Sortiere die sequence-Werte in absteigender Reihenfolge
 			
 				// Weise die sortierten sequence-Werte den Stopps in der neuen Reihenfolge zu
-				aModelStops.forEach((item, index) => {
+				aStops.forEach((item, index) => {
 					item.sequence = sequenceValues[index];
 				});
 			},
@@ -417,10 +419,15 @@ sap.ui.define(
 				});
 			},
 
+			getIfStopOrderChanged:function(){
+				let bStopOrderChanged = this.getOwnerComponent().getModel("settings").getProperty("/bStopOrderChanged");
+
+				return bStopOrderChanged;
+			},
+
 			checkIfStopOrderChanged:function(oPressedModelObject){ //Objekt muss fuer NVEs mitgegeben werden.
 				let aPromises = [];
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				let bStopOrderChanged = oSettingsModel.getProperty("/bStopOrderChanged");
+				let bStopOrderChanged = this.getIfStopOrderChanged();
 
 				if(bStopOrderChanged){
 					this.showStopOrderChangedMessage(oPressedModelObject);

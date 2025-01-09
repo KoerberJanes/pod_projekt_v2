@@ -9,6 +9,11 @@ sap.ui.define(
 		// Definierte Konstanten
 		const ROUTE_QUITTIERUNG = "Quittierung";
 		const REGEX_CUSTOMER_NAME = /^[a-zA-ZäöüßÄÖÜ\-]{2,15}$/; //nur Buchstaben mit mindestlaenge 2, maxlaenge 15 und Sonderzeichen '-'
+		const PHOTO_LIMITS = {
+			"Zum Stopp": 5,
+			"Zur Beanstandung": 3,
+			"Test": 0
+		};
 
 		return Controller.extend("podprojekt.controller.Quittierung", {
 			onInit: function () {
@@ -28,8 +33,7 @@ sap.ui.define(
 				this._setFocus();
 			},
 
-			_setFocus: function () {
-				//Tatsaechliches setzen des Fokus
+			_setFocus: function () { //Tatsaechliches setzen des Fokus
 				// Verzoegertes Setzen des Fokus, um sicherzustellen, dass das Element vollstaendig gerendert ist
 				const oInput = this.getView()?.byId("recipientNameInp");
 
@@ -42,8 +46,11 @@ sap.ui.define(
 				//Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
 				//! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
 				let oInput = oEvent.getSource();
-				let oCustomerModel = this.getView().getModel("CustomerModel");
-				oCustomerModel.setProperty("/customerName", oInput.getValue());
+				this.setCustomerName(oInput.getValue());
+			},
+
+			setCustomerName:function(sCustomerInput){
+				this.getView().getModel("CustomerModel").setProperty("/customerName", sCustomerInput);
 			},
 
 			onCustomerNameInputLiveChange: function (oEvent) { //Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
@@ -73,7 +80,6 @@ sap.ui.define(
 
 				setTimeout(() => {
 					this.onNavToActiveTour();
-					//this.onNavToOverview();
 				}, 2000);
 			},
 
@@ -150,9 +156,14 @@ sap.ui.define(
 				this.checkIfInputConstraintsComply();
 			},
 
+			getCustomerName:function(){
+				let sCustomerModelInput = this.getView().getModel("CustomerModel").getProperty("/customerName");
+
+				return sCustomerModelInput;
+			},
+
 			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
-				let oCustomerModel = this.getView().getModel("CustomerModel");
-				let sCustomerModelInput = oCustomerModel.getProperty("/customerName");
+				let sCustomerModelInput = this.getCustomerName();
 
 				if (REGEX_CUSTOMER_NAME.test(sCustomerModelInput)) { //Eingabe-Parameter passen
 					this.checkIfNvesAreProcessed();
@@ -187,9 +198,14 @@ sap.ui.define(
 				this.byId("FotoMachenDialog").close();
 			},
 
+			getLatestPhoto:function(){
+				let oSavedPhoto = this.getOwnerComponent().getModel("LatestPhotoModel").getProperty("/photo"); //Zuletzt aufgenommenes Foto
+
+				return oSavedPhoto;
+			},
+
 			checkIfPhotoNeedsToBeCleared: function () { //Prüfen ob bereits ein Foto angezeigt wird
-				let oPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
-				let oSavedPhoto = oPhotoModel.getProperty("/photo"); //Zuletzt aufgenommenes Foto
+				let oSavedPhoto = this.getLatestPhoto(); //Zuletzt aufgenommenes Foto
 
 				if (Object.keys(oSavedPhoto).length !== 0) { //Wenn Objekt Attribute enthaelt, vermeindliches Foto loeschen
 					this.clearPhotoModel();
@@ -204,6 +220,12 @@ sap.ui.define(
 				oPhotoModel.setProperty("/photo", {});
 			},
 
+			getSelectedPhotoTypeDescription:function(){
+				let sSelectedType = this.getOwnerComponent().getModel("PhotoTypeSelectedModel").getProperty("/type/photoTyp"); //Selektierter Foto-Typ
+
+				return sSelectedType;
+			},
+
 			onSnappPicture: function () { //(neues) Foto machen
 				let oVideoFeed = document.getElementById("player"); //VideoStream
 				let canvas = document.createElement("canvas");
@@ -212,8 +234,7 @@ sap.ui.define(
 					pattern: "dd.MM.YYYY HH:mm:ss",
 				}).format(new Date()); //Datum inklusive Uhrzeit
 
-				let oPhotoTypeSelectedModel = this.getOwnerComponent().getModel("PhotoTypeSelectedModel"); //Model mit gespeichertem Foto-Typ
-				let sSelectedType = oPhotoTypeSelectedModel.getProperty("/type/photoTyp"); //Selektierter Foto-Typ
+				let sSelectedType = this.getSelectedPhotoTypeDescription(); //Selektierter Foto-Typ
 
 				canvas.width = oVideoFeed.videoWidth;
 				canvas.height = oVideoFeed.videoHeight;
@@ -232,7 +253,7 @@ sap.ui.define(
 					uploadState: "Ready",
 				}; //Objekt wirde erzeugt und ist bereit als Image in der View interpretiert zu werden
 
-				this.saveNewImage(oImage);
+				this.setNewImage(oImage);
 			},
 
 			onPhotoTypesSelectChange: function () {
@@ -247,48 +268,46 @@ sap.ui.define(
 				oPhotoTypeSelectedModel.setProperty("/type", oSelectedType);
 			},
 
+			getSelectedPhotoCount:function(){
+				let iCurrentPhotoCount = this.getOwnerComponent().getModel("PhotoTypeSelectedModel").getProperty("/type/photo").length; // Erhalte die Anzahl der aktuellen Fotos
+
+				return iCurrentPhotoCount;
+			},
+
 			checkPhotoLimit: function (sPhotoType) { //Wirft eine Fehlermeldung, wenn Menge an Fotos überschritten wird
-				
-				// Definiere die erlaubten Foto-Grenzen für verschiedene Typen
-				let PHOTO_LIMITS = {
-					"Zum Stopp": 5,
-					"Zur Beanstandung": 3,
-					"Test": 0
-				};
 
 				let iAllowedPhotos = PHOTO_LIMITS[sPhotoType] || 0; // Hole das erlaubte Limit basierend auf dem Foto-Typ
-				let oPhotoTypeSelectedModel = this.getOwnerComponent().getModel("PhotoTypeSelectedModel");
-				let iCurrentPhotoCount = oPhotoTypeSelectedModel.getProperty("/type/photo").length; // Erhalte die Anzahl der aktuellen Fotos
+				let iCurrentPhotoCount = this.getSelectedPhotoCount(); // Erhalte die Anzahl der aktuellen Fotos
 
 				return iCurrentPhotoCount < iAllowedPhotos; // Überprüfe, ob noch Platz für weitere Fotos ist
 			},
 
 			onCheckIfPhotoTaken: function () { //Pruefen ob bereits ein Foto geschossen wurde und das 'alte' geloescht werden muss
-				let oLatestPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
-				let oTakenPhoto = oLatestPhotoModel.getProperty("/photo"); //'Geschossenes' Foto
+				let oTakenPhoto =this.getLatestPhoto(); //'Geschossenes' Foto
 
 				if (Object.keys(oTakenPhoto).length !== 0) {//Wenn Objekt Attribute enthaelt, exisitert ein Foto
 					this.confirmFoto();
 				} else {
-					MessageToast.show("Es wurde kein Foto geschossen!", {
+					MessageToast.show(this._oBundle.getText("noPhotoTaken"), {
 						duration: 1000,
 						width: "15em",
 					});
 				}
 			},
 
-			confirmFoto: function () { //Foto bestaetigen und übernehmen
-				let oLatestPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
-				let oTakenPhoto = oLatestPhotoModel.getProperty("/photo"); //Geschossenes Foto
+			getSelectedPhotoType:function(){
+				let oSelectedType = this.getOwnerComponent().getModel("PhotoTypeSelectedModel").getProperty("/type"); //Selektierter Foto-Typ
+				
+				return oSelectedType;
+			},
 
-				let oPhotoTypeSelectedModel = this.getOwnerComponent().getModel("PhotoTypeSelectedModel"); //Model mit gespeichertem Foto-Typ
-				let oSelectedType = oPhotoTypeSelectedModel.getProperty("/type"); //Selektierter Foto-Typ
+			confirmFoto: function () { //Foto bestaetigen und übernehmen
+				let oTakenPhoto = this.getLatestPhoto(); //Geschossenes Foto
+				let oSelectedType = this.getSelectedPhotoType(); //Selektierter Foto-Typ
 				let bEnoughSpace = this.checkPhotoLimit(oSelectedType.photoTyp); //Platz für weitere Fotos?
 
 				if (bEnoughSpace) {
-					let aUpdatedPhotos = [...oSelectedType.photo, oTakenPhoto]; // Erstellen eines Arrays mit alten Fotos und neuem Foto darin
-					oPhotoTypeSelectedModel.setProperty("/type/photo", aUpdatedPhotos); // Setzen der neuen Fotos in das Model
-					oPhotoTypeSelectedModel.refresh(true); // Erzwinge binding refresh fuer dialog Titel
+					this.setNewPhotoForType(oSelectedType, oTakenPhoto);
 					this.setNewPhotoInPhotoList(oTakenPhoto); //Uebernehmen in der Allgemeinen Liste
 				} else {
 					this._showErrorMessageBox("notEnoughSpace", () => {});
@@ -296,14 +315,22 @@ sap.ui.define(
 				this.clearPhotoModel();
 			},
 
+			setNewPhotoForType:function(oSelectedPhotoType, oTakenPhoto){
+				let oPhotoTypeSelectedModel = this.getOwnerComponent().getModel("PhotoTypeSelectedModel"); //Model mit gespeichertem Foto-Typ
+				let aUpdatedPhotos = [...oSelectedPhotoType.photo, oTakenPhoto]; // Erstellen eines Arrays mit alten Fotos und neuem Foto darin
+
+				oPhotoTypeSelectedModel.setProperty("/type/photo", aUpdatedPhotos); // Setzen der neuen Fotos in das Model
+				oPhotoTypeSelectedModel.refresh(true); // Erzwinge binding refresh fuer dialog Titel
+			},
+
 			onUploadSelectedButton: function () {
-				MessageToast.show("Hier werden dann die Selektierten Fotos hochgeladen!", {
+				MessageToast.show(this._oBundle.getText("demoUpload"), {
 					duration: 2500,
 					width: "15em",
 				});
 			},
 
-			saveNewImage: function (oImage) { //Speichern von zu letzt geschossenem Foto
+			setNewImage: function (oImage) { //Speichern von zu letzt geschossenem Foto
 				let oPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
 				oPhotoModel.setProperty("/photo", oImage);
 				oPhotoModel.refresh();
@@ -315,6 +342,83 @@ sap.ui.define(
 				let aUpdatedPhotos = [...aPhotoListItems, oImage];
 
 				oPhotoListModel.setProperty("/photos", aUpdatedPhotos);
+			},
+
+			onRemoveFile:function(oEvent){
+				let oPressedPhoto = oEvent.getSource().getBindingContext("PhotoModel").getObject(); 
+				this.removeItemMessage(oPressedPhoto);
+			},
+
+			removeItemMessage: function(oPressedPhoto) {
+				MessageBox.warning(
+					"Are you sure you want to remove the document" + " " + oPressedPhoto.fileName + " " + "?",
+					{
+						icon: MessageBox.Icon.WARNING,
+						actions: ["Remove", MessageBox.Action.CANCEL],
+						emphasizedAction: "Remove",
+						styleClass: "sapMUSTRemovePopoverContainer",
+						initialFocus: MessageBox.Action.CANCEL,
+						onClose: (oAction) => {
+							if (oAction === "Remove") {
+								let aPhotos=this.getPhotos();
+								let iPhotoIndex = aPhotos.findIndex(photo => photo.src = oPressedPhoto.src);
+								aPhotos.splice(iPhotoIndex, 1); //Pruefung nicht notwendig, kann ja nur stimmen
+								this.updateModelBindings("PhotoModel");
+							}
+							else{
+								return;
+							}
+						}
+					}
+				);
+			},
+
+			getPhotoFromButton:function(oEvent){
+				let oPressedPhoto = oEvent.getSource().getBindingContext("PhotoModel").getObject(); 
+
+				return oPressedPhoto;
+			},
+
+			onEditFile:function(oEvent){
+				let oPressedPhoto = this.getPhotoFromButton(oEvent);
+				this.editPhotoDialogOpen();
+			},
+
+			onRenameDocument:function(oEvent){
+				let oPressedPhoto = this.getPhotoFromButton(oEvent);
+				//Methode zum Setzen der Infos 
+				//Methode für das Umbenennen bzw oeffnen von Dialog.
+				this.editPhotoDialogOpen();
+			},
+
+			onPhotoEditReject:function(){
+				this.editPhotoDialogClose();
+			},
+
+			editPhotoDialogClose:function(){
+				this.byId("photoEditDialog").close();
+			},
+
+			editPhotoDialogOpen: async function(){
+				if (!this.oEditPhotoDialog) {
+					try { // Lade das Fragment, wenn es noch nicht geladen wurde
+						this.oEditPhotoDialog = await this.loadFragment({
+							name: "podprojekt.view.fragments.editPhoto",
+						});
+					} catch (error) { // Fehlerbehandlung bei Problemen beim Laden des Fragments
+						MessageBox.error(this._oBundle.getText("errorLoadingEditPhotoDialog"));
+						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
+					}
+				}
+
+				// oeffne das Dialog, wenn es erfolgreich geladen wurde
+				this.oEditPhotoDialog.open();
+			},
+
+			getPhotos:function(){
+				let aPhotos = this.getOwnerComponent().getModel("PhotoModel").getProperty("/photos");
+
+				return aPhotos;
 			},
 
 			clearCustomerInput:function(){
@@ -332,14 +436,11 @@ sap.ui.define(
 
 			onFotoabfrageDialogOpen: async function () { // Oeffnen Fotoabfrage fragment
 				if (!this.oFotoabfrageDialog) {
-					try {
-						// Lade das Fragment, wenn es noch nicht geladen wurde
+					try { // Lade das Fragment, wenn es noch nicht geladen wurde
 						this.oFotoabfrageDialog = await this.loadFragment({
 							name: "podprojekt.view.fragments.fotoabfrage",
 						});
-					} catch (error) {
-						// Fehlerbehandlung bei Problemen beim Laden des Fragments
-						console.error("Fehler beim Laden des FotoabfrageDialogs:", error);
+					} catch (error) { // Fehlerbehandlung bei Problemen beim Laden des Fragments
 						MessageBox.error(this._oBundle.getText("errorLoadingFotoabfrageDialog"));
 						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
 					}
