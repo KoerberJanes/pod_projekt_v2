@@ -59,213 +59,113 @@
           "bundleName": "podprojekt.i18n.i18n"
         }
       },
-      "settings": {
+
+
+      "ConfigModel":{
         "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "recipientFound": true,
-          "complaintsSwitch": false,
-          "remarksSwitch": false,
-          "deliveryItemsVisible": true,
-          "loadingDevicesVisible": false,
-          "photoListVisible": false,
-          "photoListClearingVisible": false,
-          "bStoppSequenceChangeable": true,
-          "bViewerMode": false,
-          "bStopOrderChanged": false
-        }
-      },
-      "CustomerModel":{
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "role": "",
-          "dateAndTime": "",
-          "driverId": "",
-          "driverName": "Test Driver",
-          "customerName": ""
-        }
-      },
-      "TourModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "localService/mockdata/Routes.json"
-      },
-      "StopModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "StopInformationModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "tour": {}
-        }
-      },
-      "TourStartFragmentModel":{
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "tour": {},
-          "mileage":"380000"
-        }
-      }, 
-      "customStopPositionModel":{
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "position":""
-        }
-      }, 
-      "RecipientNameModel":{
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "recipient": {
+        "settings":{
+          "generalSettings":{
+            "recipientFound": true,
+            "complaintsSwitch": false,
+            "remarksSwitch": false,
+            "bDeliveryItemsVisible": true,
+            "bLoadingDevicesVisible": false,
+            "bPhotoListVisible": false,
+            "bPhotoListClearingVisible": false,
+            "bStoppSequenceChangeable": true,
+            "bViewerMode": false,
+            "bStopOrderChanged": false
+          },
+          "customerInformation":{
+            "role": "",
+            "dateAndTime": "",
+            "driverId": "",
+            "driverName": "Test Driver",
+            "customerName": ""
+          },
+          "recipientOfDelivery": {
             "name": ""
           }
         }
       },
+
+      "TourAndStopModel":{
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "aAllToursOfDriver": [],
+          "oCurrentTour": {},
+          "oCurrentStop":{},
+          "oDeliveryNote": {
+            "note": {}
+          },
+          "oStop":{
+            "aResults":[],
+            "sCustomPosition": ""
+          },
+          "oTourStartUserInput":{
+            "sMileage": ""
+          },
+          "nveInputOfCustomer":{
+            "manualInput": ""
+          },
+          "GeoMapSpots": {
+            "spots": []
+          }
+        }
+      },
+
+      "ClearingAndDialogModels": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "oClearingNve": {},
+          "aClearingReasons": {
+            "results": [
+              { "Description": "notFound", "value": false },
+              { "Description": "malfunction", "value": false },
+              { "Description": "partiallyMalfunctioning", "value": false },
+              { "Description": "notAccepted", "value": false },
+              { "Description": "noMoney", "value": false },
+              { "Description": "laterShipping", "value": false }
+            ],
+            "remarks": "Test Remarks"
+          }
+        }
+      },
+
+      "PhotoManagementModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "photos": {
+            "allPhotos": [],
+            "unloadingPhotos": [],
+            "latestPhoto": {},
+            "selectedType": {
+              "photoTyp": "Zum Stopp",
+              "photo": []
+            },
+            "editingPhoto":{},
+            "types": [
+              { "photoTyp": "Zum Stopp", "photo": [] },
+              { "photoTyp": "Zur Beanstandung", "photo": [] },
+              { "photoTyp": "Test", "photo": [] }
+            ]
+          }
+        }
+      },
+
       "ComplaintsModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
-          "results": [{
-            "complaintText": "Abladen nicht möglich - Annahmeverweigerung"
-          },
-          {
-            "complaintText": "Abladen nicht möglich - Kunde nicht angetroffen"
-          },
-          {
-            "complaintText": "Abladen nicht möglich - Sonstiges"
-          },
-          {
-            "complaintText": "Beschädigung (gesamte Sendung)"
-          }]
-        }
-      },
-      "PhotoTypeSelectedModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "type": {
-            "photoTyp": "Zum Stopp",
-            "photo": []
-          }
-        }
-      },
-      "LatestPhotoModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "photo": {}
-        }
-      },
-      "PhotoModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "photos": []
-        }
-      },
-      "PhotoModelUnloading": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "results": []
-        }
-      },
-      "PhotoTypeModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "photoTypes": [{
-            "photoTyp": "Zum Stopp",
-            "photo": []
-          },{
-            "photoTyp": "Zur Beanstandung",
-            "photo": []
-          },
-          {
-            "photoTyp": "Test",
-            "photo": []
-          }]
-        }
-      },
-      "LoadingDeviceModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "localService/mockdata/LoadingUnits.json"
-      },
-      "CurrentSittingClearingNvesModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
           "results": [
-            {
-              "Description" : "notFound",
-              "value": false
-            },
-            {
-              "Description" : "malfunction",
-              "value": false
-            },
-            {
-              "Description" : "partiallyMalfunctioning",
-              "value": false
-            },
-            {
-              "Description" : "notAccepted",
-              "value": false
-            },
-            {
-              "Description" : "noMoney",
-              "value": false
-            },
-            {
-              "Description" : "laterShipping",
-              "value": false
-            }
-          ],
-          "remarks": "Test Remarks"
+            { "complaintText": "Abladen nicht möglich - Annahmeverweigerung" },
+            { "complaintText": "Abladen nicht möglich - Kunde nicht angetroffen" },
+            { "complaintText": "Abladen nicht möglich - Sonstiges" },
+            { "complaintText": "Beschädigung (gesamte Sendung)" }
+          ]
         }
       },
-      "nveClearingDialogModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "stats": {}
-        }
-      },
-      "manualNveInputModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "manualInput": ""
-        }
-      },
-      "SpotModel": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "spot": []
-        }
-      },
-      "GeoMapProvider": {
-        "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "mapConfig": {
-            "MapProvider": [{
-                "name": "OSM",
-                "type": "",
-                "description": "",
-                "tileX": "256",
-                "tileY": "256",
-                "minLOD" : "1",
-                "maxLOD": "20",
-                "copyright": "Tiles Courtesy of OpenStreetMap",
-                "Source": [{
-                    "id": "s1",
-                    "url": "https://a.tile.openstreetmap.org/{LOD}/{X}/{Y}.png"
-                }]
-            }],
-            "MapLayerStacks": [{
-                "name": "Default",
-                "MapLayer": [{
-                    "name": "Default",
-                    "refMapProvider": "OSM",
-                    "opacity": "1.0",
-                    "colBkgnd": "RGB(255,255,255)"
-                }]
-            }]
-          }
-        }
-      },
-      "filtersModel": {
+
+      "FiltersModel": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "routeStatuses": [
@@ -276,10 +176,43 @@
           ]
         }
       },
-      "DeliveryNoteModel": {
+
+      "GeoMapProvider": {
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
-          "note": {}
+          "mapConfig": {
+            "MapProvider": [
+              {
+                "name": "OSM",
+                "type": "",
+                "description": "",
+                "tileX": "256",
+                "tileY": "256",
+                "minLOD": "1",
+                "maxLOD": "20",
+                "copyright": "Tiles Courtesy of OpenStreetMap",
+                "Source": [
+                  { "id": "s1", "url": "https://a.tile.openstreetmap.org/{LOD}/{X}/{Y}.png" }
+                ],
+                "canvasSettings":{
+                  "willReadFrequently": true
+                }
+              }
+            ],
+            "MapLayerStacks": [
+              {
+                "name": "Default",
+                "MapLayer": [
+                  {
+                    "name": "Default",
+                    "refMapProvider": "OSM",
+                    "opacity": "1.0",
+                    "colBkgnd": "RGB(255,255,255)"
+                  }
+                ]
+              }
+            ]
+          }
         }
       }
 

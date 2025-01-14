@@ -18,7 +18,7 @@
                     <Label id="barcodeLabel" text="{i18n>barcode}" required="true"/>
                     <Input id="barcodeInput" liveChange="onManualInputInputLiveChange" valueLiveUpdate="true" placeholder="{i18n>manualInputBarcodePlaceholder}" change="onManualInputChange" submit="onCloseInputDialog" showClearIcon="true"
                         value="{
-                            path: 'manualNveInputModel>/manualInput',
+                            path: 'TourAndStopModel>/nveInputOfCustomer/manualInput',
                             type: 'sap.ui.model.type.String',
                             constraints: {
                                 minLength: 2,

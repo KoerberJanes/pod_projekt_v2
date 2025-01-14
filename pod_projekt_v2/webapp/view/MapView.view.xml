@@ -19,9 +19,9 @@
     <content>
       <vbm:GeoMap id="GeoMap" width="100%" height="30em" centerPosition="7.46;51.5643" initialZoom="12" mapConfiguration="{GeoMapProvider>/mapConfig}">
         <vbm:vos>
-            <vbm:Spots scaleChangeable="false" items="{SpotModel>/spot}"> <!--click="onClickGeoMapSpot" -->
+            <vbm:Spots scaleChangeable="false" items="{TourAndStopModel>/GeoMapSpots/spots}"> <!--click="onClickGeoMapSpot" -->
               <vbm:items>
-                <vbm:Spot id="Spot" position="{SpotModel>pos}" icon="{= ${SpotModel>bTarget}===true ? 'sap-icon://target-group' : 'sap-icon://locate-me'}" tooltip="{SpotModel>tooltip}" type="{SpotModel>type}" click="onClickGeoMapSpot"/>
+                <vbm:Spot id="Spot" position="{TourAndStopModel>pos}" icon="{= ${TourAndStopModel>bTarget}===true ? 'sap-icon://target-group' : 'sap-icon://locate-me'}" tooltip="{TourAndStopModel>tooltip}" type="{TourAndStopModel>type}" click="onClickGeoMapSpot"/>
               </vbm:items>
             </vbm:Spots>
         </vbm:vos>

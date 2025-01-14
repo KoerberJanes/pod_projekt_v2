@@ -17,11 +17,15 @@
     <content>
         <form:SimpleForm id="photoEditForm">
             <form:content>
-               <Image src=""></Image>
-               <Label text="fileName"/>
-               <Input value="Datum Test"/>
-               <Label text="Process"/>
-               <Input value="Zum Stopp Test"/>
+                <Image src="{PhotoManagementModel>/photos/editingPhoto/src}"></Image>
+                <Label text="Name"/>
+                <Input value="" placeholder="{PhotoManagementModel>/photos/editingPhoto/fileName}"/>
+                <Label text="Prozess"/>
+                <Input value="{PhotoManagementModel>/photos/editingPhoto/photoType}" editable="false"/>
+                <Label text="FileSize"/>
+                <Input value="TestSize" editable="false"/>
+                <Label text="LastModified"/>
+                <Input value="TestDate" editable="false"/>
             </form:content>
         </form:SimpleForm>
     </content>

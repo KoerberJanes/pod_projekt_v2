@@ -110,8 +110,8 @@ sap.ui.define(
 				//Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
 				//! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
 				let oInput = oEvent.getSource();
-				let oTourStartFragmentModel = this.getOwnerComponent().getModel("customStopPositionModel");
-				oTourStartFragmentModel.setProperty("/position", oInput.getValue());
+				let oTourAndStopModel = this.getOwnerComponent().getModel("oTourAndStopModel");
+				oTourAndStopModel.setProperty("/oStop/sCustomPosition", oInput.getValue());
 			},
 
 			onCutomPositionInputLiveChange: function (oEvent) { //Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
@@ -147,7 +147,7 @@ sap.ui.define(
 			},
 
 			getModelStops:function(){
-				let aStops = this.getOwnerComponent().getModel("StopModel").getProperty("/results");
+				let aStops = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/stops");
 
 				return aStops;
 			},
@@ -208,7 +208,7 @@ sap.ui.define(
 				let aSelectedItems = this.getView().byId("stopSelectionList").getSelectedItems();
 
 				let aSelectedStopModelItems = aSelectedItems.map(oItem => {
-					let oContext = oItem.getBindingContext("StopModel");
+					let oContext = oItem.getBindingContext("TourAndStopModel");
 					return oContext ? oContext.getObject() : null;
 				}).filter(oData => oData !== null);
 
@@ -220,7 +220,7 @@ sap.ui.define(
 			},
 
 			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
-				let iCustomPositionInput = this.getOwnerComponent().getModel("customStopPositionModel").getProperty("/position"); // User-Eingabe
+				let iCustomPositionInput = this.getOwnerComponent().getModel("oTourAndStopModel").getProperty("/position"); // User-Eingabe
 
 				if (REGEX_CUSTOM_POSITION.test(iCustomPositionInput)) { //Eingabe-Parameter passen
 					this.checkIfEnteredValueInRange();
@@ -231,8 +231,8 @@ sap.ui.define(
 
 			checkIfEnteredValueInRange:function(){
 				let aStops = this.getModelStops();
-				let oCustomPositionModel = this.getOwnerComponent().getModel("customStopPositionModel");
-				let iCustomPosition = oCustomPositionModel.getProperty("/position");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("oTourAndStopModel");
+				let iCustomPosition = oTourAndStopModel.getProperty("/position");
 				let iMaxSequenceNumber = this.getMaxSequence(aStops);
 				let iMinSequenceNumber = this.getMinSequence(aStops);
 
@@ -282,7 +282,7 @@ sap.ui.define(
 			},
 
 			getCustomPosition:function(){ //Rueckgabe des position-Wertes als Integer
-				return this.getOwnerComponent().getModel("customStopPositionModel").getProperty("/position");
+				return this.getOwnerComponent().getModel("oTourAndStopModel").getProperty("/position");
 			},
 
 			onCustomStopPositionReject:function(){
@@ -353,7 +353,7 @@ sap.ui.define(
 				this.adjustStopSequence(aStops); // Stoppreihenfolge Nummern werden angepasst
 
 				// Hier update notwendig, da sonst Model-referenz der Elemente fuer erneute Auswahl nicht stimmt
-				this.updateModelBindings("StopModel");
+				this.updateModelBindings("TourAndStopModel");
 
 				this.selectSameItemsAgain(aSelectedStopModelItems);
 			},
@@ -364,7 +364,7 @@ sap.ui.define(
 				if (oList && oList.getItems()) {
 					oList.removeSelections(true); // Vorherige Selektionen loeschen
 					oList.getItems().forEach(oItem => {
-						let oContext = oItem.getBindingContext("StopModel");
+						let oContext = oItem.getBindingContext("TourAndStopModel");
 						let oObject = oContext.getObject();
 			
 						if (aSelectedStopModelItems.includes(oObject)) {
@@ -386,11 +386,11 @@ sap.ui.define(
 			},
 
 			getStoppSequenceChangeable:function(){ //Erhalten des Wertes fuer Aenderbarkeit der Stoppreihenfolge
-				return this.getOwnerComponent().getModel("settings").getProperty("/bStoppSequenceChangeable");
+				return this.getOwnerComponent().getModel("ConfigModel").getProperty("/generalSettings/bStoppSequenceChangeable");
 			},
 
 			checkIfStoppAlreadyDealtWith: function (oEvent) { //!Statuscodes muessen abgesprochen werden
-				let oPressedModelObject = oEvent.getSource().getBindingContext("StopModel").getObject();
+				let oPressedModelObject = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
 				let iNumberOfUnprocessedNves = oPressedModelObject.orders[0].loadingUnits.length;
 				let sStopStatus = oPressedModelObject.stopStatus; //in Kombination mit der Methode: 'setCurrentStopAsFinished'
 
@@ -420,7 +420,7 @@ sap.ui.define(
 			},
 
 			getIfStopOrderChanged:function(){
-				let bStopOrderChanged = this.getOwnerComponent().getModel("settings").getProperty("/bStopOrderChanged");
+				let bStopOrderChanged = this.getOwnerComponent().getModel("ConfigModel").getProperty("/generalSettings/bStopOrderChanged");
 
 				return bStopOrderChanged;
 			},
@@ -481,12 +481,12 @@ sap.ui.define(
 			},
 
 			onSetStoppInformation: function (oPressedModelObject) { //Setzen des Stopps fuer weitere Verarbeitung
-				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 
-				oStopInformationModel.setProperty("/tour", oPressedModelObject);
+				oTourAndStopModel.setProperty("/oCurrentStop", oPressedModelObject);
 				this.createLoadingUnitsDetailedDescription(oPressedModelObject.orders[0]);
 
-				this.updateModelBindings("StopInformationModel");
+				this.updateModelBindings("TourAndStopModel");
 			},
 
 			createLoadingUnitsDetailedDescription: function (oPressedModelObjectDetails) {
@@ -505,8 +505,8 @@ sap.ui.define(
 			},
 
 			emptyCustomInputPosition:function(){
-				let oCustomPositionModel = this.getOwnerComponent().getModel("customStopPositionModel");
-				oCustomPositionModel.setProperty("/position", 0);
+				let oTourAndStopModel = this.getOwnerComponent().getModel("oTourAndStopModel");
+				oTourAndStopModel.setProperty("/position", 0);
 			},
 
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
@@ -522,23 +522,23 @@ sap.ui.define(
 			},
 
 			setUserViewerSettingToTrue:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				oSettingsModel.setProperty("/bViewerMode", true);
+				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
+				oSettingsModel.setProperty("/generalSettings/bViewerMode", true);
 			},
 
 			setUserViewerSettingToFalse:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				oSettingsModel.setProperty("/bViewerMode", false);
+				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
+				oSettingsModel.setProperty("/generalSettings/bViewerMode", false);
 			},
 
 			setStopOrderChangedToTrue:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				oSettingsModel.setProperty("/bStopOrderChanged", true);
+				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
+				oSettingsModel.setProperty("/generalSettings/bStopOrderChanged", true);
 			},
 
 			setStopOrderChangedToFalse:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				oSettingsModel.setProperty("/bStopOrderChanged", false);
+				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
+				oSettingsModel.setProperty("/generalSettings/bStopOrderChanged", false);
 				this.showStopOrderSavingSuccessfullMessage();
 			},
 

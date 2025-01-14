@@ -50,7 +50,7 @@ sap.ui.define(
 			},
 
 			setCustomerName:function(sCustomerInput){
-				this.getView().getModel("CustomerModel").setProperty("/customerName", sCustomerInput);
+				this.getView().getModel("ConfigModel").setProperty("/recipientOfDelivery/name", sCustomerInput);
 			},
 
 			onCustomerNameInputLiveChange: function (oEvent) { //Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
@@ -91,13 +91,13 @@ sap.ui.define(
 			},
 
 			onDeliveryNotePressed: function (oEvent) { //Infos fuer deliveryNote in Model setzen
-				let oPressedDeliveryNote=oEvent.getSource().getBindingContext("StopInformationModel").getObject(); //Fuer den Fall, dass es mal mehrere DeliveryNotes geben sollte
+				let oPressedDeliveryNote=oEvent.getSource().getBindingContext("TourAndStopModel").getObject(); //Fuer den Fall, dass es mal mehrere DeliveryNotes geben sollte
 				this.setPressedDeliveryNoteModel(oPressedDeliveryNote);
 			},
 
 			setPressedDeliveryNoteModel:function(oPressedDeliveryNote){
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				oDeliveryNoteModel.setProperty("/note", oPressedDeliveryNote);
+				let oDeliveryNoteModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				oDeliveryNoteModel.setProperty("/oDeliveryNote/note", oPressedDeliveryNote);
 				this.onNavToAbladung();
 			},
 
@@ -123,7 +123,7 @@ sap.ui.define(
 						oMediaStream.getTracks().forEach((track) => track.stop());
 					}
 				}
-				this.clearPhotoModel();
+				this.clearLatestPhotoFromPhotoModel();
 			},
 
 			onOpenPhotoDialog: function () { //Dialog für das aufnehmen eines Fotos oeffnen
@@ -157,15 +157,15 @@ sap.ui.define(
 			},
 
 			getCustomerName:function(){
-				let sCustomerModelInput = this.getView().getModel("CustomerModel").getProperty("/customerName");
+				let sConfigModelInput = this.getView().getModel("ConfigModel").getProperty("/recipientOfDelivery/name");
 
-				return sCustomerModelInput;
+				return sConfigModelInput;
 			},
 
 			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
-				let sCustomerModelInput = this.getCustomerName();
+				let sConfigModelInput = this.getCustomerName();
 
-				if (REGEX_CUSTOMER_NAME.test(sCustomerModelInput)) { //Eingabe-Parameter passen
+				if (REGEX_CUSTOMER_NAME.test(sConfigModelInput)) { //Eingabe-Parameter passen
 					this.checkIfNvesAreProcessed();
 				} else { //Eingabe-Parameter passen nicht
 					this._showErrorMessageBox("nameNotMatchingRegex", () => this.scrollToInputAfterError());
@@ -173,8 +173,8 @@ sap.ui.define(
 			},
 
 			checkIfNvesAreProcessed: function () { //Prüfen ob noch nicht bearbeitete Nves existieren
-				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aRemainingNves = oTourAndStopModel.getProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
 				if (aRemainingNves.length > 0) { //Es sind noch Nves zu bearbeiten
 					this._showErrorMessageBox("notPermitedToSignTour", () => this.scrollToDeliveryNotesAfterError());
@@ -184,11 +184,11 @@ sap.ui.define(
 			},
 
 			setSigningDateAndTime: function () { //Erstellen des Datums und der Uhrzeit fuer die Unterschrift-Seite
-				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
 				let sDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "dd.MM.YYYY HH:mm:ss",
 				}).format(new Date()); //Datum inklusive Uhrzeit
-				oCustomerModel.setProperty("/dateAndTime", sDateAndTime);
+				oConfigModel.setProperty("/customerInformation/dateAndTime", sDateAndTime);
 
 				this.onNavToUnterschrift();
 			},
@@ -199,7 +199,7 @@ sap.ui.define(
 			},
 
 			getLatestPhoto:function(){
-				let oSavedPhoto = this.getOwnerComponent().getModel("LatestPhotoModel").getProperty("/photo"); //Zuletzt aufgenommenes Foto
+				let oSavedPhoto = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/latestPhoto"); //Zuletzt aufgenommenes Foto
 
 				return oSavedPhoto;
 			},
@@ -208,20 +208,20 @@ sap.ui.define(
 				let oSavedPhoto = this.getLatestPhoto(); //Zuletzt aufgenommenes Foto
 
 				if (Object.keys(oSavedPhoto).length !== 0) { //Wenn Objekt Attribute enthaelt, vermeindliches Foto loeschen
-					this.clearPhotoModel();
+					this.clearLatestPhotoFromPhotoModel();
 				}
 
 				this.onSnappPicture();
 			},
 
-			clearPhotoModel: function () {
-				let oPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel"); //Model in dem das geschossene Foto gespeichert wird
+			clearLatestPhotoFromPhotoModel: function () {
+				let oPhotoModel = this.getOwnerComponent().getModel("PhotoManagementModel"); //Model in dem das geschossene Foto gespeichert wird
 
-				oPhotoModel.setProperty("/photo", {});
+				oPhotoModel.setProperty("/photos/latestPhoto", {});
 			},
 
 			getSelectedPhotoTypeDescription:function(){
-				let sSelectedType = this.getOwnerComponent().getModel("PhotoTypeSelectedModel").getProperty("/type/photoTyp"); //Selektierter Foto-Typ
+				let sSelectedType = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/selectedType/photoTyp"); //Selektierter Foto-Typ
 
 				return sSelectedType;
 			},
@@ -258,18 +258,18 @@ sap.ui.define(
 
 			onPhotoTypesSelectChange: function () {
 				let oSelectedPhotoType = this.getView().byId("photoTypeSelect").getSelectedItem();
-				let oSelectedType = oSelectedPhotoType.getBindingContext("PhotoTypeModel").getObject();
-				this.setPhotoTypeSelectedModel(oSelectedType);
+				let oSelectedType = oSelectedPhotoType.getBindingContext("PhotoManagementModel").getObject();
+				this.setPhotoManagementModel(oSelectedType);
 			},
 
-			setPhotoTypeSelectedModel: function (oSelectedType) {
-				let oPhotoTypeSelectedModel = this.getOwnerComponent().getModel("PhotoTypeSelectedModel");
+			setPhotoManagementModel: function (oSelectedType) {
+				let oPhotoManagementModel = this.getOwnerComponent().getModel("PhotoManagementModel");
 
-				oPhotoTypeSelectedModel.setProperty("/type", oSelectedType);
+				oPhotoManagementModel.setProperty("/photos/selectedType", oSelectedType);
 			},
 
 			getSelectedPhotoCount:function(){
-				let iCurrentPhotoCount = this.getOwnerComponent().getModel("PhotoTypeSelectedModel").getProperty("/type/photo").length; // Erhalte die Anzahl der aktuellen Fotos
+				let iCurrentPhotoCount = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/selectedType/photo").length; // Erhalte die Anzahl der aktuellen Fotos
 
 				return iCurrentPhotoCount;
 			},
@@ -296,7 +296,7 @@ sap.ui.define(
 			},
 
 			getSelectedPhotoType:function(){
-				let oSelectedType = this.getOwnerComponent().getModel("PhotoTypeSelectedModel").getProperty("/type"); //Selektierter Foto-Typ
+				let oSelectedType = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/selectedType"); //Selektierter Foto-Typ
 				
 				return oSelectedType;
 			},
@@ -312,15 +312,15 @@ sap.ui.define(
 				} else {
 					this._showErrorMessageBox("notEnoughSpace", () => {});
 				}
-				this.clearPhotoModel();
+				this.clearLatestPhotoFromPhotoModel();
 			},
 
 			setNewPhotoForType:function(oSelectedPhotoType, oTakenPhoto){
-				let oPhotoTypeSelectedModel = this.getOwnerComponent().getModel("PhotoTypeSelectedModel"); //Model mit gespeichertem Foto-Typ
+				let oPhotoManagementModel = this.getOwnerComponent().getModel("PhotoManagementModel"); //Model mit gespeichertem Foto-Typ
 				let aUpdatedPhotos = [...oSelectedPhotoType.photo, oTakenPhoto]; // Erstellen eines Arrays mit alten Fotos und neuem Foto darin
 
-				oPhotoTypeSelectedModel.setProperty("/type/photo", aUpdatedPhotos); // Setzen der neuen Fotos in das Model
-				oPhotoTypeSelectedModel.refresh(true); // Erzwinge binding refresh fuer dialog Titel
+				oPhotoManagementModel.setProperty("/photos/selectedType/photo", aUpdatedPhotos); // Setzen der neuen Fotos in das Model
+				oPhotoManagementModel.refresh(true); // Erzwinge binding refresh fuer dialog Titel
 			},
 
 			onUploadSelectedButton: function () {
@@ -331,21 +331,21 @@ sap.ui.define(
 			},
 
 			setNewImage: function (oImage) { //Speichern von zu letzt geschossenem Foto
-				let oPhotoModel = this.getOwnerComponent().getModel("LatestPhotoModel");
-				oPhotoModel.setProperty("/photo", oImage);
+				let oPhotoModel = this.getOwnerComponent().getModel("PhotoManagementModel");
+				oPhotoModel.setProperty("/photos/latestPhoto", oImage);
 				oPhotoModel.refresh();
 			},
 
 			setNewPhotoInPhotoList: function (oImage) {
-				let oPhotoListModel = this.getOwnerComponent().getModel("PhotoModel");
-				let aPhotoListItems = oPhotoListModel.getProperty("/photos");
+				let oPhotoListModel = this.getOwnerComponent().getModel("PhotoManagementModel");
+				let aPhotoListItems = oPhotoListModel.getProperty("/photos/allPhotos");
 				let aUpdatedPhotos = [...aPhotoListItems, oImage];
 
-				oPhotoListModel.setProperty("/photos", aUpdatedPhotos);
+				oPhotoListModel.setProperty("/photos/allPhotos", aUpdatedPhotos);
 			},
 
-			onRemoveFile:function(oEvent){
-				let oPressedPhoto = oEvent.getSource().getBindingContext("PhotoModel").getObject(); 
+			onRemoveFilePressed:function(oEvent){
+				let oPressedPhoto = oEvent.getSource().getBindingContext("PhotoManagementModel").getObject(); 
 				this.removeItemMessage(oPressedPhoto);
 			},
 
@@ -360,10 +360,9 @@ sap.ui.define(
 						initialFocus: MessageBox.Action.CANCEL,
 						onClose: (oAction) => {
 							if (oAction === "Remove") {
-								let aPhotos=this.getPhotos();
-								let iPhotoIndex = aPhotos.findIndex(photo => photo.src = oPressedPhoto.src);
-								aPhotos.splice(iPhotoIndex, 1); //Pruefung nicht notwendig, kann ja nur stimmen
-								this.updateModelBindings("PhotoModel");
+								//Sofern die Bilder nicht zu 100% identisch sind, stellt die Abfrage kein Problem dar
+								this.removePictureFromPhotoType(oPressedPhoto);
+								this.removePictureFromDispplay(oPressedPhoto);
 							}
 							else{
 								return;
@@ -373,15 +372,39 @@ sap.ui.define(
 				);
 			},
 
+			removePictureFromPhotoType:function(oPressedPhoto){
+				let getPhotoTypePhotos = oPressedPhoto.photoType;
+				let aSelectedPhotoTypePhotos = this.getPhotoTypePhotos(getPhotoTypePhotos);
+				let iPhotoIndex = aSelectedPhotoTypePhotos.findIndex(photo => photo.src = oPressedPhoto.src);
+
+				aSelectedPhotoTypePhotos.splice(iPhotoIndex, 1);
+				this.updateModelBindings("PhotoManagementModel");
+			},
+
+			removePictureFromDispplay:function(oPressedPhoto){
+				let aPhotos=this.getAllPhotos();
+				let iPhotoIndex = aPhotos.findIndex(photo => photo.src = oPressedPhoto.src);
+				aPhotos.splice(iPhotoIndex, 1); //Pruefung nicht notwendig, kann ja nur stimmen
+				this.updateModelBindings("PhotoManagementModel");
+			},
+
+
 			getPhotoFromButton:function(oEvent){
-				let oPressedPhoto = oEvent.getSource().getBindingContext("PhotoModel").getObject(); 
+				let oPressedPhoto = oEvent.getSource().getBindingContext("PhotoManagementModel").getObject(); 
 
 				return oPressedPhoto;
 			},
 
 			onEditFile:function(oEvent){
 				let oPressedPhoto = this.getPhotoFromButton(oEvent);
+				this.setEditingPhoto(oPressedPhoto);
 				this.editPhotoDialogOpen();
+			},
+
+			setEditingPhoto:function(oPressedPhoto){
+				let oPhotoManagementModel = this.getOwnerComponent().getModel("PhotoManagementModel");
+
+				oPhotoManagementModel.setProperty("/photos/editingPhoto", oPressedPhoto);
 			},
 
 			onRenameDocument:function(oEvent){
@@ -415,16 +438,23 @@ sap.ui.define(
 				this.oEditPhotoDialog.open();
 			},
 
-			getPhotos:function(){
-				let aPhotos = this.getOwnerComponent().getModel("PhotoModel").getProperty("/photos");
+			getAllPhotos:function(){
+				let aPhotos = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/allPhotos");
 
 				return aPhotos;
 			},
 
-			clearCustomerInput:function(){
-				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
+			getPhotoTypePhotos:function(sPhotoTyp){
+				let aPhotoTypes = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/types");
+				let oType = aPhotoTypes.find(type => type.photoTyp = sPhotoTyp);
 
-				oCustomerModel.setProperty("/customerName", "");
+				return oType.photo;
+			},
+
+			clearCustomerInput:function(){
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel"); //Angabe zum Namen des Kunden
+
+				oConfigModel.setProperty("/customerName", "");
 			},
 
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {

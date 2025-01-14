@@ -23,11 +23,11 @@
         <content>
             <form:SimpleForm id="currentTourInfoForm">
                 <form:content>
-                    <Text id="driverInfo" text="{CustomerModel>/driverName}&#10;"/>
-                    <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourStartFragmentModel>/tour/routeCaption}" wrapping="true" level="H2"/>
+                    <Text id="driverInfo" text="{ConfigModel>/customerInformation/driverName}&#10;"/>
+                    <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourAndStopModel>/oCurrentTour/routeCaption}" wrapping="true" level="H2"/>
                         <HBox justifyContent="SpaceAround">
                             <Label text="{i18n>adress}"/>
-                            <Text text="{StopInformationModel>/tour/addressName1}&#13;&#10;{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country} {StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}" width="100%"/>
+                            <Text text="{TourAndStopModel>/oCurrentStop/addressName1}&#13;&#10;{TourAndStopModel>/oCurrentStop/street}{TourAndStopModel>/oCurrentStop/streetNumber}&#13;&#10;{TourAndStopModel>/oCurrentStop/country} {TourAndStopModel>/oCurrentStop/zipCode} {TourAndStopModel>/oCurrentStop/city}" width="100%"/>
                         </HBox>
                 </form:content>
             </form:SimpleForm>
@@ -35,12 +35,12 @@
             <form:SimpleForm id="DelivererInputForm">
                 <form:content>
                     <Label id="recipientFoundControl" text="{i18n>recipientFound}"/>
-                    <Switch id="recipientFoundSwitch" type="AcceptReject" state="{settings>/recipientFound}" enabled="{= ${settings>/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
+                    <Switch id="recipientFoundSwitch" type="AcceptReject" state="{ConfigModel>/generalSettings/recipientFound}" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
 
-                    <Label id="recipientName" labelFor="recipientNameInp" text="{i18n>recipientName}" visible="{= ${settings>/recipientFound} }" required="true"/>
-                    <Input id="recipientNameInp" valueLiveUpdate="true" editable="{= ${settings>/bViewerMode} === true ? false : true }" visible="{= ${settings>/recipientFound}}" liveChange="onCustomerNameInputLiveChange" change="onCustomerNameInputChange" showClearIcon="true"
+                    <Label id="recipientName" labelFor="recipientNameInp" text="{i18n>recipientName}" visible="{= ${ConfigModel>/generalSettings/recipientFound} }" required="true"/>
+                    <Input id="recipientNameInp" valueLiveUpdate="true" editable="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }" visible="{= ${ConfigModel>/generalSettings/recipientFound}}" liveChange="onCustomerNameInputLiveChange" change="onCustomerNameInputChange" showClearIcon="true"
                         value="{
-                            path: 'CustomerModel>/customerName',
+                            path: 'ConfigModel>/recipientOfDelivery/name',
                             type: 'sap.ui.model.type.String',
                             constraints: {
                                 minLength: 2,
@@ -50,9 +50,9 @@
                                 formatOptions: {showMeasure: false}}"/>
 
                     <Label text="{i18n>showDeliveryItems}"/>
-                    <ToggleButton id="deliveryItemsToggleButton" icon="{=${settings>/deliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{settings>/deliveryItemsVisible}"/>
+                    <ToggleButton id="deliveryItemsToggleButton" icon="{=${ConfigModel>/generalSettings/bDeliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{ConfigModel>/generalSettings/bDeliveryItemsVisible}"/>
                     <Label ></Label>
-                    <List  id="deliveryNoteList" includeItemInSelection="true" items="{StopInformationModel>/tour/orders/0/aDeliveryNotes}" visible="{= ${settings>/deliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
+                    <List  id="deliveryNoteList" includeItemInSelection="true" items="{TourAndStopModel>/oCurrentStop/orders/0/aDeliveryNotes}" visible="{= ${ConfigModel>/generalSettings/bDeliveryItemsVisible}}" noDataText="{i18n>noDeliveryNotes}"> 
                        <headerToolbar>
                             <Toolbar>
                                 <Title text="{i18n>deliveryItems}"/>
@@ -60,23 +60,23 @@
                         </headerToolbar>
                         <items>
                             <StandardListItem
-                                title="{StopInformationModel>shipmentNumber}"
-                                icon="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'sap-icon://high-priority' : 'sap-icon://approvals'}"
-                                info="{= ${StopInformationModel>tour/orders/0/loadingUnits/0/isReturning} === true ? ${i18n>returning} : ${i18n>unloading}}"
-                                infoState="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'Success'}"
+                                title="{TourAndStopModel>shipmentNumber}"
+                                icon="{= ${TourAndStopModel>/oCurrentStop/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'sap-icon://high-priority' : 'sap-icon://approvals'}"
+                                info="{= ${TourAndStopModel>oCurrentStop/orders/0/loadingUnits/0/isReturning} === true ? ${i18n>returning} : ${i18n>unloading}}"
+                                infoState="{= ${TourAndStopModel>/oCurrentStop/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'Success'}"
                                 type="Navigation"
                                 press="onDeliveryNotePressed"/>
                         </items>
                     </List>
                     <MessageStrip id="messageStripDeliveryItemList" 
-                        visible="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? true : false}" 
+                        visible="{= ${TourAndStopModel>/oCurrentStop/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? true : false}" 
                         text="{i18n>notALlNvesProcessed}" 
-                        type="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'None'}" />
+                        type="{= ${TourAndStopModel>/oCurrentStop/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'None'}" />
 
                     <Label id="complaints" text="{i18n>complaints}"/>
-                    <Switch id="complaintsSwitch" type="AcceptReject" state="{settings>/complaintsSwitch}" enabled="{= ${settings>/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
+                    <Switch id="complaintsSwitch" type="AcceptReject" state="{ConfigModel>/generalSettings/complaintsSwitch}" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
                     <Label />
-                    <List id="complaintsList" mode="MultiSelect" includeItemInSelection="true" items="{ComplaintsModel>/results}" visible="{= ${settings>/complaintsSwitch}}">
+                    <List id="complaintsList" mode="MultiSelect" includeItemInSelection="true" items="{ComplaintsModel>/results}" visible="{= ${ConfigModel>/generalSettings/complaintsSwitch}}">
                         <items>
                             <StandardListItem
                                 title="{ComplaintsModel>complaintText}"/>
@@ -89,33 +89,34 @@
                     </List>
 
                     <Label id="remarks" text="{i18n>remarks}"/>
-                    <Switch id="remarksSwitch" type="AcceptReject" state="{settings>/remarksSwitch}" enabled="{= ${settings>/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
+                    <Switch id="remarksSwitch" type="AcceptReject" state="{ConfigModel>/generalSettings/remarksSwitch}" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
                     <Label />
-                    <TextArea id="idTextarea" visible="{settings>/remarksSwitch}"/>
+                    <TextArea id="idTextarea" visible="{ConfigModel>/generalSettings/remarksSwitch}"/>
 
                     <Label id="photoItems" text="{i18n>showPhotos}"/>
-                    <ToggleButton id="photoItemsToggleButton" icon="{=${settings>/photoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{settings>/photoListVisible}"/>
+                    <ToggleButton id="photoItemsToggleButton" icon="{=${ConfigModel>/generalSettings/bPhotoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{ConfigModel>/generalSettings/bPhotoListVisible}"/>
                     <Label/>
                     <!--UploadSet sei veraltet (Seit kurzem, muss erneuert werden)-->
                 
-                    <upload:UploadSet id="photoItemsList" uploadEnabled="{= ${settings>/bViewerMode} === true ? false : true }" visible="{settings>/photoListVisible}" fileTypes="png, image/*" instantUpload="false" 
-                        items="{path:'PhotoModel>/photos', 
+                <!--
+                    <upload:UploadSet id="photoItemsList" uploadEnabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }" visible="{ConfigModel>/generalSettings/bPhotoListVisible}" fileTypes="png, image/*" instantUpload="false" 
+                        items="{path:'PhotoManagementModel>/photos/allPhotos', 
                             sorter: {path:'photoType', descending: false, 
                                 group: true}}"> 
                         <upload:toolbar>
                             <OverflowToolbar >
                                 <ToolbarSpacer/>
-                                <Button id="uploadSelectedButton" text="Upload selected" press="onUploadSelectedButton" enabled="{= ${settings>/bViewerMode} === true ? false : true }"/>
-                                <Button id="downloadSelectedButton" text="Download selected" press="onDownloadSelectedButton" enabled="{= ${settings>/bViewerMode} === true ? false : true }"/>
+                                <Button id="uploadSelectedButton" text="Upload selected" press="onUploadSelectedButton" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/>
+                                <Button id="downloadSelectedButton" text="Download selected" press="onDownloadSelectedButton" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/>
                                 <upload:UploadSetToolbarPlaceholder  />
                             </OverflowToolbar>
                         </upload:toolbar>
                         <upload:items >
                             <upload:UploadSetItem
-                                    fileName="{PhotoModel>fileName}"
-                                    url="{PhotoModel>url}"
+                                    fileName="{PhotoManagementModel>fileName}"
+                                    url="{PhotoManagementModel>url}"
                                     mediaType="{mediaType}"
-                                    thumbnailUrl="{PhotoModel>src}"
+                                    thumbnailUrl="{PhotoManagementModel>src}"
                                     uploadState="{uploadState}">
                                 <upload:markers>
                                     <ObjectMarker
@@ -124,7 +125,7 @@
                                 </upload:markers>
                                 <upload:statuses>
                                     <ObjectStatus
-                                            title="{PhotoModel>photoType}"
+                                            title="{PhotoManagementModel>photoType}"
                                             text="{text}"
                                             state="{state}"
                                             icon="{icon}"
@@ -133,6 +134,7 @@
                             </upload:UploadSetItem>
                         </upload:items>
                     </upload:UploadSet>
+                -->
                     
                     <Label/>
                 
@@ -145,12 +147,11 @@
                     inset="true"
                     autoPopinMode="true"
                     hiddenInPopin="None"
-                    items="{path: 'PhotoModel>/photos', templateShareable: false}"
-                    selectionChange="onSelectionChange"
-                    visible="{settings>/photoListVisible}">
+                    items="{path: 'PhotoManagementModel>/photos/allPhotos', templateShareable: false}"
+                    visible="{ConfigModel>/generalSettings/bPhotoListVisible}">
                         <headerToolbar>
                             <OverflowToolbar>
-                                <Title text="Documents ({= ${PhotoModel>/photos}.length})" level="H2"/>
+                                <Title text="Aufnahmen ({= ${PhotoManagementModel>/photos/allPhotos}.length})" level="H2"/>
 
                             <!--
                                 <SearchField id="SearchField_Id" width="20%" liveChange="onSearch">
@@ -231,18 +232,18 @@
                             <ColumnListItem>
                                 <cells>
                                     <HBox>
-                                        <Image src="{PhotoModel>src}" class="sapMUSTItemImage sapMUSTItemIcon" visible="{= ${PhotoModel>src} !== undefined}"/>
+                                        <Image src="{PhotoManagementModel>src}" class="sapMUSTItemImage sapMUSTItemIcon" visible="{= ${PhotoManagementModel>src} !== undefined}"/>
                                         <VBox>
-                                            <Link text="{PhotoModel>fileName}" press="onOpenFilePreview"/>
-                                            <Text text="{PhotoModel>photoType}" />
+                                            <Link text="{PhotoManagementModel>fileName}" press="onOpenFilePreview"/>
+                                            <Text text="{PhotoManagementModel>photoType}" />
                                         </VBox>
                                     </HBox>
-                                    <Text text="{PhotoModel>uploadState}" />
+                                    <Text text="{PhotoManagementModel>uploadState}" />
                                     <Text text="TestFileSize"/>
                                     <Text text="TestLastModified" />
                                     <HBox>
                                         <Button icon="sap-icon://edit" press="onEditFile" type="Transparent" />
-                                        <Button icon="sap-icon://delete" press="onRemoveFile" type="Transparent" />
+                                        <Button icon="sap-icon://delete" press="onRemoveFilePressed" type="Transparent" />
                                     </HBox>
                                     
                                 </cells>
@@ -253,24 +254,24 @@
                     <Label />
 
                     <HBox justifyContent="SpaceAround">
-                        <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="onOpenPhotoDialog" enabled="{= ${settings>/bViewerMode} === true ? false : true }"/> 
-                        <Select id="photoTypeSelect" enabled="{= ${settings>/bViewerMode} === true ? false : true }" items="{
-                                path:'PhotoTypeModel>/photoTypes'}" change="onPhotoTypesSelectChange">
-                                <core:ListItem text="{PhotoTypeModel>photoTyp}" key="{PhotoTypeModel>photoTyp}"/>
+                        <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="onOpenPhotoDialog" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> 
+                        <Select id="photoTypeSelect" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }" items="{
+                                path:'PhotoManagementModel>/photos/types'}" change="onPhotoTypesSelectChange">
+                                <core:ListItem text="{PhotoManagementModel>photoTyp}" key="{PhotoManagementModel>photoTyp}"/>
                         </Select>
                     </HBox>
 
                     <Label id="loadingDevices" text="{i18n>loadingDevices}"/>
-                    <ToggleButton id="loadingDevicesToggleButton" text="{i18n>loadingDevices}" pressed="{settings>/loadingDevicesVisible}"/>
+                    <ToggleButton id="loadingDevicesToggleButton" text="{i18n>loadingDevices}" pressed="{ConfigModel>/generalSettings/bLoadingDevicesVisible}"/>
                     <Label/>
-                    <Table id="loadingDevicesTable" items="{LoadingDeviceModel>/items}" visible="{settings>/loadingDevicesVisible}">
+                    <Table id="loadingDevicesTable" items="{LoadingDeviceModel>/items}" visible="{ConfigModel>/generalSettings/bLoadingDevicesVisible}">
                         <items>
                             <ColumnListItem>
                                 <cells>
                                     <Text text="{LoadingDeviceModel>lodingDeviceTypeCaption}"/>
                                     <Text text="{LoadingDeviceModel>amount}"/>
-                                    <Input type="Number" value="" editable="{= ${settings>/bViewerMode} === true ? false : true }"/>
-                                    <Input type="Number" value="" editable="{= ${settings>/bViewerMode} === true ? false : true }"/>
+                                    <Input type="Number" value="" editable="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/>
+                                    <Input type="Number" value="" editable="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/>
                                 </cells>
                             </ColumnListItem>
                         </items>
@@ -311,13 +312,13 @@
                 </contentMiddle>
                 <contentRight>
                     <Button id="viewerModeUnterschriftButton" icon="sap-icon://open-command-field" text="{i18n>viewStoppStats}" press="onViewerModeUnterschrift" type="Neutral"
-                        visible="{settings>/bViewerMode}"/>
+                        visible="{ConfigModel>/generalSettings/bViewerMode}"/>
                     <Button id="signBtn" icon="sap-icon://signature" text="{i18n>sign}" press="checkSignConditions" type="Accept" 
-                        visible="{= ${settings>/bViewerMode} === true ? false : 
-                        ${settings>/recipientFound} === true ? true: false}" />
+                        visible="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : 
+                        ${ConfigModel>/generalSettings/recipientFound} === true ? true: false}" />
                     <Button id="btnAbschliessen" icon="sap-icon://decline" text="{i18n>notEncountered}" press="onRecipientNotFound" type="Reject" 
-                        visible="{= ${settings>/bViewerMode} === true ? false : 
-                        ${settings>/recipientFound} === true ? false: true}" />
+                        visible="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : 
+                        ${ConfigModel>/generalSettings/recipientFound} === true ? false: true}" />
                 </contentRight>
             </Bar>
         </footer>

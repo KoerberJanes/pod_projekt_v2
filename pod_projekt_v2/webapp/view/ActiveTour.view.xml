@@ -33,7 +33,7 @@
         </subHeader>
                     
         <content>
-            <List id="stopSelectionList" items="{StopModel>/results}" noDataText="{i18n>noDataAvailable}" growing="true" growingThreshold="10" busyIndicatorDelay="500" 
+            <List id="stopSelectionList" items="{TourAndStopModel>/oCurrentTour/stops}" noDataText="{i18n>noDataAvailable}" growing="true" growingThreshold="10" busyIndicatorDelay="500" 
                 rememberSelections="false" mode="MultiSelect" sticky="HeaderToolbar">
                 <headerToolbar>
                     <OverflowToolbar id="OvtbTourselect">
@@ -47,21 +47,21 @@
                         <contentLeft>
                             <Title level="H5"
                                 text="{= 
-                                        ${StopModel>sequence} >= 100 ? ${StopModel>sequence} + '-' + ${StopModel>addressName1}  :
-                                        ${StopModel>sequence} >= 10 ? '0' + ${StopModel>sequence} + '-' + ${StopModel>addressName1} :
-                                        '00' + ${StopModel>sequence} + '-' + ${StopModel>addressName1}}"/>
+                                        ${TourAndStopModel>sequence} >= 100 ? ${TourAndStopModel>sequence} + '-' + ${TourAndStopModel>addressName1}  :
+                                        ${TourAndStopModel>sequence} >= 10 ? '0' + ${TourAndStopModel>sequence} + '-' + ${TourAndStopModel>addressName1} :
+                                        '00' + ${TourAndStopModel>sequence} + '-' + ${TourAndStopModel>addressName1}}"/>
                         </contentLeft>
                         <contentRight>
-                            <Text text="{= ${StopModel>orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
+                            <Text text="{= ${TourAndStopModel>orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length}"/>
                         </contentRight>
                     </Bar>
                     <HBox >
                         <VBox width="93%" >
-                            <Label text="{StopModel>street} {StopModel>streetNumber}" class="sapUiSmallMarginBegin"/>
-                            <Label text="{StopModel>country} {StopModel>zipCode} {StopModel>city}" class="sapUiSmallMarginBegin"/>
+                            <Label text="{TourAndStopModel>street} {TourAndStopModel>streetNumber}" class="sapUiSmallMarginBegin"/>
+                            <Label text="{TourAndStopModel>country} {TourAndStopModel>zipCode} {TourAndStopModel>city}" class="sapUiSmallMarginBegin"/>
                         </VBox>
                         <VBox width="7%">
-                            <core:Icon src="sap-icon://signature" class="sapUiTinyMarginTop" color="{= ${StopModel>stopStatus} === '70' ? 'Positive' : 'Negative'}"/>
+                            <core:Icon src="sap-icon://signature" class="sapUiTinyMarginTop" color="{= ${TourAndStopModel>stopStatus} === '70' ? 'Positive' : 'Negative'}"/>
                             <core:Icon src="sap-icon://navigation-right-arrow" class="sapUiTinyMarginTop"/>
                         </VBox>
                     </HBox>

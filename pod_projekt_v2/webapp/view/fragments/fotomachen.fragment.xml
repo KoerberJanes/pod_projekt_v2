@@ -6,7 +6,7 @@
         <customHeader>
             <Bar >
                 <contentLeft>
-                    <Title id="FotoMachenDialogeTitle" text="{= ${PhotoTypeSelectedModel>/type}.photoTyp} ({= ${PhotoTypeSelectedModel>/type}.photo.length}) &#13;{i18n>buildNo}"/>
+                    <Title id="FotoMachenDialogeTitle" text="{= ${PhotoManagementModel>/photos/selectedType}.photoTyp} ({= ${PhotoManagementModel>/photos/selectedType}.photo.length}) &#13;{i18n>buildNo}"/>
                 </contentLeft>
                 <contentRight>
                     <Button icon="sap-icon://decline" press="onAddFotoDialogClose"/>
@@ -17,11 +17,15 @@
             <core:HTML id="videoFeedContainer"/>
             <form:SimpleForm id="sfFoto">
                 <form:content>
-                    <Button icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="checkIfPhotoNeedsToBeCleared"/>
-                    <Image src="{= ${LatestPhotoModel>/photo}.src}" width="{= ${LatestPhotoModel>/photo}.width}" height="{= ${LatestPhotoModel>/photo}.heigth}"/>
-                    <Button icon="sap-icon://action" text="{i18n>usePhoto}" press="onCheckIfPhotoTaken"/>
+                    <Image src="{= ${PhotoManagementModel>/photos/latestPhoto}.src}" width="{= ${PhotoManagementModel>/photos/latestPhoto}.width}" height="{= ${PhotoManagementModel>/photos/latestPhoto}.heigth}"/>
                 </form:content>
             </form:SimpleForm>
 		</content>
+        <beginButton>
+            <Button icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="checkIfPhotoNeedsToBeCleared"/>
+        </beginButton>
+        <endButton>
+            <Button icon="sap-icon://action" text="{i18n>usePhoto}" press="onCheckIfPhotoTaken"/>
+        </endButton>
 	</Dialog>
 </core:FragmentDefinition>

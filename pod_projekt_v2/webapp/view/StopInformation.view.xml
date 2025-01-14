@@ -29,17 +29,17 @@
                     <Label text="{i18n>stopp}"></Label>
                     <Input id="stopp" editable="false" 
                         value="{= 
-                            ${StopInformationModel>/tour/sequence} >= 100 ? ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1}  :
-                            ${StopInformationModel>/tour/sequence} >= 10 ? '0' + ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1} :
-                            '00' + ${StopInformationModel>/tour/sequence} + '-' + ${StopInformationModel>/tour/addressName1}}" /><!--Wenn hier nur die '2' wie im Original angezeit werden soll, wird der Parameter 'sequence' Verwendet-->
+                            ${TourAndStopModel>/oCurrentStop/sequence} >= 100 ? ${TourAndStopModel>/oCurrentStop/sequence} + '-' + ${TourAndStopModel>/oCurrentStop/addressName1}  :
+                            ${TourAndStopModel>/oCurrentStop/sequence} >= 10 ? '0' + ${TourAndStopModel>/oCurrentStop/sequence} + '-' + ${TourAndStopModel>/oCurrentStop/addressName1} :
+                            '00' + ${TourAndStopModel>/oCurrentStop/sequence} + '-' + ${TourAndStopModel>/oCurrentStop/addressName1}}" /><!--Wenn hier nur die '2' wie im Original angezeit werden soll, wird der Parameter 'sequence' Verwendet-->
                     <Label text="{i18n>adress}"></Label>
-                    <TextArea editable="false" growing="true" value="{StopInformationModel>/tour/street}{StopInformationModel>/tour/streetNumber}&#13;&#10;{StopInformationModel>/tour/country}&#13;{StopInformationModel>/tour/zipCode} {StopInformationModel>/tour/city}"/>
+                    <TextArea editable="false" growing="true" value="{TourAndStopModel>/oCurrentStop/street}{TourAndStopModel>/oCurrentStop/streetNumber}&#13;&#10;{TourAndStopModel>/oCurrentStop/country}&#13;{TourAndStopModel>/oCurrentStop/zipCode} {TourAndStopModel>/oCurrentStop/city}"/>
                     <Label/>
                     <Button id="btnKarte" press="onNavToMap" icon="sap-icon://locate-me-2" text="{i18n>mapTitle}"/>
                     <Label text="{i18n>note}"></Label>
-                    <TextArea id="taHinweis" value="{StopInformationModel>/tour/orders/0/comment}" growing="true" editable="false"></TextArea> <!--{StopInformationModel>/tour/shipmentConditionCaption}" ?-->
+                    <TextArea id="taHinweis" value="{TourAndStopModel>/oCurrentStop/orders/0/comment}" growing="true" editable="false"/> <!--{TourAndStopModel>/oCurrentStop/shipmentConditionCaption}" ?-->
                     <Label text="{i18n>avisNumber}"></Label>
-                    <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{StopInformationModel>/tour/orders/0/phoneAvis}"/>
+                    <Button id="btnAvisNr" type="Emphasized" press="onPressBtnAvisNr" icon="sap-icon://call" text="{TourAndStopModel>/oCurrentStop/orders/0/phoneAvis}"/>
                     
                 </form:content>
             </form:SimpleForm>

@@ -173,18 +173,18 @@ sap.ui.define(
 			},
 
 			_handleClearingButtonPress: function (oEvent) {// Das gedrueckte Element im Model erfassen
-				let oTreeModelParent = oEvent.getSource().getBindingContext("DeliveryNoteModel").getObject();
+				let oTreeModelParent = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
 
 				this._setClearingNveModel(oTreeModelParent);
 			},
 
 			_setClearingNveModel: function (oTreeModelParent) { //Uebergeordnete Struktur in das Klaer-Model setzen
-				this.getOwnerComponent().getModel("nveClearingDialogModel").setProperty("/clearingNve", oTreeModelParent);
+				this.getOwnerComponent().getModel("ClearingAndDialogModels").setProperty("/oClearingNve", oTreeModelParent);
 				this._openNveClearingDialog();
 			},
 
 			getPossiblyRemainingNves:function(){
-				let aRemainingNves = this.getOwnerComponent().getModel("DeliveryNoteModel").getProperty("/note/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+				let aRemainingNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
 
 				return aRemainingNves;
 			},
@@ -201,22 +201,22 @@ sap.ui.define(
 			},
 
 			_processRemainingNves: function (aRemainingNves) { //NVEs werden alle quittiert
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let aLoadingNvesTemp = oDeliveryNoteModel.getProperty("/note/aTempLoadedNVEs"); //verladene Nves
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aLoadingNvesTemp = oTourAndStopModel.getProperty("/oDeliveryNote/note/aTempLoadedNVEs"); //verladene Nves
 				let aUpdatedLoadingNvesTemp = [...aLoadingNvesTemp, ...aRemainingNves]; // zusammenfuehren der Nves
 
-				oDeliveryNoteModel.setProperty("/note/aTempLoadedNVEs", aUpdatedLoadingNvesTemp); //Model der Temp verladenen Nves fuellen
-				oDeliveryNoteModel.setProperty("/note/aUnprocessedNumberedDispatchUnits", []); //Model der noch zu bearbeitenden Nves leeren
+				oTourAndStopModel.setProperty("/oDeliveryNote/note/aTempLoadedNVEs", aUpdatedLoadingNvesTemp); //Model der Temp verladenen Nves fuellen
+				oTourAndStopModel.setProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits", []); //Model der noch zu bearbeitenden Nves leeren
 			},
 
 			getUnsavedClearedNves:function(){
-				let aClearingNvesTemp = this.getOwnerComponent().getModel("DeliveryNoteModel").getProperty("/note/aTempClearedNVEs"); //geklaerte Nves
+				let aClearingNvesTemp = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aTempClearedNVEs"); //geklaerte Nves
 
 				return aClearingNvesTemp;
 			},
 
 			getUnsavedLoadedNves:function(){
-				let aLoadingNvesTemp = this.getOwnerComponent().getModel("DeliveryNoteModel").getProperty("/note/aTempLoadedNVEs"); //verladene Nves
+				let aLoadingNvesTemp = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aTempLoadedNVEs"); //verladene Nves
 
 				return aLoadingNvesTemp;
 			},
@@ -266,7 +266,7 @@ sap.ui.define(
 			},
 
 			AbortCurrentLoadedAndClearedNves: function () {
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let aClearingNvesTemp = this.getUnsavedClearedNves(); //geklaerte Nves
 				let aLoadingNvesTemp = this.getUnsavedLoadedNves(); //verladene Nves
 				let aLoadingUnits = this.getPossiblyRemainingNves(); //Noch nicht quittierte Nves
@@ -274,7 +274,7 @@ sap.ui.define(
 				// Temp verladen und geklaerte Nves zusammenfassen und mit den unbearbeiteten zusammenfassen
 				let aUpdatedLoadingUnits = [...aLoadingUnits, ...aClearingNvesTemp, ...aLoadingNvesTemp];
 
-				oDeliveryNoteModel.setProperty("/note/aUnprocessedNumberedDispatchUnits", aUpdatedLoadingUnits);
+				oTourAndStopModel.setProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits", aUpdatedLoadingUnits);
 				this._emptyTempModels();
 				this.navBackToQuittierung();
 			},
@@ -327,7 +327,7 @@ sap.ui.define(
 				.then(() => { // Wenn alle Versprechen eingehalten wurden
 					this.closeBusyDialog();
 					this._saveAllTempStoredNVEs();
-					this.updateModelBindings("StopModel");
+					this.updateModelBindings("TourAndStopModel");
 
 					if (bNavBackToQuittierung) {
 						this.navBackToQuittierung();
@@ -343,27 +343,27 @@ sap.ui.define(
 
 			_saveAllTempStoredNVEs: function () {
 				StatusSounds.playBeepSuccess();
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 
-				this._mergeAndSaveNves(oDeliveryNoteModel, "aTempLoadedNVEs", "aTotalLoadedNVEs");
-				this._mergeAndSaveNves(oDeliveryNoteModel, "aTempClearedNVEs", "aTotalClearedNVEs");
+				this._mergeAndSaveNves(oTourAndStopModel, "aTempLoadedNVEs", "aTotalLoadedNVEs");
+				this._mergeAndSaveNves(oTourAndStopModel, "aTempClearedNVEs", "aTotalClearedNVEs");
 				this._emptyTempModels();
 			},
 
 			_mergeAndSaveNves: function (oModel, sTempProperty, sTotalProperty) { //Zusammenfuehren von temp und abgeschlossenen NVEs aus dem klaerungs bzw. verladungs-Model
-				let aTempNves = oModel.getProperty("/note/" + sTempProperty);
-				let aTotalNves = oModel.getProperty("/note/" + sTotalProperty);
+				let aTempNves = oModel.getProperty("/oDeliveryNote/note/" + sTempProperty);
+				let aTotalNves = oModel.getProperty("/oDeliveryNote/note/" + sTotalProperty);
 
 				if (aTempNves.length > 0) {
 					let aUpdatedTotalNves = [...aTotalNves, ...aTempNves];
-					oModel.setProperty("/note/" + sTotalProperty, aUpdatedTotalNves);
+					oModel.setProperty("/oDeliveryNote/note/" + sTotalProperty, aUpdatedTotalNves);
 				}
 			},
 
 			_emptyTempModels: function () { //Leeren der temporaeren Arrays
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				oDeliveryNoteModel.setProperty("/note/aTempClearedNVEs", []);
-				oDeliveryNoteModel.setProperty("/note/aTempLoadedNVEs", []);
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				oTourAndStopModel.setProperty("/oDeliveryNote/note/aTempClearedNVEs", []);
+				oTourAndStopModel.setProperty("/oDeliveryNote/note/aTempLoadedNVEs", []);
 			},
 
 			nveClearingDialogConfirm: function (oEvent) { //Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
@@ -371,74 +371,72 @@ sap.ui.define(
 			},
 
 			getCurrentClearingReasons:function(){
-				let aCurrentClearingReasons = this.getOwnerComponent().getModel("CurrentSittingClearingNvesModel")?.getProperty("/results") || [];
+				let aCurrentClearingReasons = this.getOwnerComponent().getModel("ClearingAndDialogModels")?.getProperty("/aClearingReasons/results") || [];
 
 				return aCurrentClearingReasons;
 			},
 
 			checkIfMinErrorReasonsSelected: function (oEvent) {
 				let aCurrentClearingReasons = this.getCurrentClearingReasons();
-				let aQuantityOfSelectedReasons = aCurrentClearingReasons.filter((element) => element.value === true);
+				let aCollectionOfSelectedReasons = aCurrentClearingReasons.filter((element) => element.value === true);
 
-				if (aQuantityOfSelectedReasons.length >= MIN_SELECTED_ERROR_REASONS) { //Mindestanzahl Klaergruende wurde bestaetigt
-					this.checkIfMaxErrorReasonsSelected(aQuantityOfSelectedReasons, oEvent);
+				if (aCollectionOfSelectedReasons.length >= MIN_SELECTED_ERROR_REASONS) { //Mindestanzahl Klaergruende wurde bestaetigt
+					this.checkIfMaxErrorReasonsSelected(aCollectionOfSelectedReasons, oEvent);
 				} else { //kein Klaergrund wurde ausgewaehlt
 					this._showErrorMessageBox("noSelectedItem", () => {});
 				}
 			},
 
-			checkIfMaxErrorReasonsSelected: function (aQuantityOfSelectedReasons, oEvent) {
-				if (aQuantityOfSelectedReasons.length <= MAX_SELECTED_ERROR_REASONS) { //Maximalanzahl Klaergruende wurde bestaetigt
-					this.setClearingResonInNve(aQuantityOfSelectedReasons, oEvent); //Einzelner Reason
-					//this.setClearingResonsInNve(aQuantityOfSelectedReasons); //!Mehrere Klaergruende, nicht entfernen!
+			checkIfMaxErrorReasonsSelected: function (aCollectionOfSelectedReasons, oEvent) {
+				if (aCollectionOfSelectedReasons.length <= MAX_SELECTED_ERROR_REASONS) { //Maximalanzahl Klaergruende wurde bestaetigt
+					this.setClearingResonInNve(aCollectionOfSelectedReasons, oEvent); //Einzelner Reason
+					//this.setClearingResonsInNve(aCollectionOfSelectedReasons); //!Mehrere Klaergruende, nicht entfernen!
 				} else { //Maximalzahl ueberschritten
 					this._showErrorMessageBox("tooManyClearingResonsSelected", () => {});
 				}
 			},
 
-			getClearingReasonNve:function(){
-				let oClearingNve = this.getOwnerComponent().getModel("nveClearingDialogModel").getProperty("/clearingNve");
+			getClearingNve:function(){
+				let oClearingNve = this.getOwnerComponent().getModel("ClearingAndDialogModels").getProperty("/oClearingNve");
 
 				return oClearingNve;
 			},
 
-			setClearingResonInNve: function (aQuantityOfSelectedReasons, oEvent) {
-				let oClearingNve = this.getClearingReasonNve();
+			setClearingResonInNve: function (aCollectionOfSelectedReasons, oEvent) {
+				let oClearingNve = this.getClearingNve();
 
-				let oClearingReason = aQuantityOfSelectedReasons[0]; //da nur ein Klaergrund mitgegeben werden kann
+				let oClearingReason = aCollectionOfSelectedReasons[0]; //da nur ein Klaergrund mitgegeben werden kann
 				oClearingNve.clearingReasonDescription = oClearingReason.Description; //Beschreibung des Klaergrundes setzen
 
-				this.findClearingNve(oEvent);
+				this.differenciateNveProcessingType(oClearingNve, oEvent); //Schnittstelle von Klaer- und Verlade-Nves
 			},
 
-			setClearingResonsInNve: function (aQuantityOfSelectedReasons) { //!Mehrere Klaergruende, nicht entfernen!
-				let oClearingNve = this.getClearingReasonNve();
+			setClearingResonsInNve: function (aCollectionOfSelectedReasons) { //!Mehrere Klaergruende, nicht entfernen!
+				let oClearingNve = this.getClearingNve();
 
 				oClearingNve.aClearingReasons = {}; //Neues Attribut fuer die Nve erstellen
-				oClearingNve.aClearingReasons = aQuantityOfSelectedReasons; //Attribut mit Infos fuellen
-
-				//Nur einkommentieren, wenn die setClearingReasonInNve-Methode nicht verwendet wird.
-				//Diese Methode wird nur nicht verwendet, wenn mehrere Klaergruende fuer eine Nve verwendet werden koennen
-				//this.findClearingNve();
+				oClearingNve.aClearingReasons = aCollectionOfSelectedReasons; //Attribut mit Infos fuellen
+				//TODO: undefined muss geaendert werden
+				this.differenciateNveProcessingType(oClearingNve, undefined); //Schnittstelle von Klaer- und Verlade-Nves
 			},
 
 			nveClearingDialogReject: function () { //Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
 				this.nveClearingDialogClose();
 			},
-
+			/*
 			findClearingNve: function (oEvent) { //Klaer-Objekt finden
-				let oClearingNve = this.getClearingReasonNve(); //Model der zu klaerenden Nve
+				let oClearingNve = this.getClearingNve(); //Model der zu klaerenden Nve
 				this.differenciateNveProcessingType(oClearingNve, oEvent); //Schnittstelle von Klaer- und Verlade-Nves
 			},
-
+			*/
 			getUserInputForNve:function(){
-				let sManualNveUserInput = this.getOwnerComponent().getModel("manualNveInputModel").getProperty("/manualInput"); //UserInput aus Feld auslesen
+				let sManualNveUserInput = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/nveInputOfCustomer/manualInput"); //UserInput aus Feld auslesen
 
 				return sManualNveUserInput;
 			},
 
 			checkIfInputConstraintsComply: function (oEvent) {
-				let sManualNveUserInput = thisgetUserInputForNve; //UserInput aus Feld auslesen
+				let sManualNveUserInput = this.getUserInputForNve(); //UserInput aus Feld auslesen
 
 				if (REGEX_NVE_USER_INPUT.test(sManualNveUserInput)) {
 					this.findLoadingNve(oEvent);
@@ -462,32 +460,32 @@ sap.ui.define(
 			},
 
 			differenciateNveProcessingType: function (oDiffNve, oEvent) { //unterscheiden ob manuelles klaeren oder verladen verwendet wurde
-				let sButtonId = oEvent.getSource().getId().split("-").pop();
+				let sDialogId = oEvent.getSource().getParent().getId().split("-").pop();
 
-				if (sButtonId === "clearNVEOkBtn") { // Klaer-Dialog
+				if (sDialogId === "clearDialog") { // Klaer-Dialog
 					this.saveTempNve(oDiffNve, "Clearing"); 
 				} else { // Hand-Klaerung
 					this.saveTempNve(oDiffNve, "Loading"); 
 				}
 			},
 
-			saveTempNve(oNve, type) { //Bearbeitete NVE in temporaerem equivalent sichern
+			saveTempNve(oNve, sType) { //Bearbeitete NVE in temporaerem equivalent sichern
 				StatusSounds.playBeepSuccess();
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
-				let tempNvesKey = type === "Clearing" ? "/note/aTempClearedNVEs" : "/note/aTempLoadedNVEs";
-				let aTempNves = oDeliveryNoteModel.getProperty(tempNvesKey);
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let tempNvesKey = sType === "Clearing" ? "/oDeliveryNote/note/aTempClearedNVEs" : "/oDeliveryNote/note/aTempLoadedNVEs";
+				let aTempNves = oTourAndStopModel.getProperty(tempNvesKey);
 				let aUpdatedTempNves = [...aTempNves, oNve];
 
-				oDeliveryNoteModel.setProperty(tempNvesKey, aUpdatedTempNves);
+				oTourAndStopModel.setProperty(tempNvesKey, aUpdatedTempNves);
 				this.removeProcessedNve(oNve);
 			},
 
 			removeProcessedNve: function (oDiffNve) { //Bearbeitete NVE aus Array fuer unbearbeitete NVEs entfernen
-				let oDeliveryNoteModel = this.getOwnerComponent().getModel("DeliveryNoteModel");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let aRemainingNves = this.getPossiblyRemainingNves();
 				let aNewFilteredNves = aRemainingNves.filter((oCurrentNve) => oCurrentNve !== oDiffNve);
 
-				oDeliveryNoteModel.setProperty("/note/aUnprocessedNumberedDispatchUnits", aNewFilteredNves);
+				oTourAndStopModel.setProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits", aNewFilteredNves);
 
 				this.decideWichDialogShouldBeClosed();
 			},
@@ -517,7 +515,7 @@ sap.ui.define(
 			},
 
 			navBackToQuittierung: function () {
-				this.updateModelBindings("StopInformationModel"); //Update, damit DeliveryNotes in der View als abgeschlossen zaehlen koennen
+				this.updateModelBindings("TourAndStopModel"); //Update, damit DeliveryNotes in der View als abgeschlossen zaehlen koennen
 				this.getOwnerComponent().getRouter().navTo("Quittierung");
 			},
 

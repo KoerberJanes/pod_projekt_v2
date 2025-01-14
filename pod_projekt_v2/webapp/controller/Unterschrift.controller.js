@@ -53,7 +53,7 @@ sap.ui.define(
 							//Error-Fall simulieren
 							return reject("Fehler beim senden des Stopps.");
 						}
-					}, 1000);
+					}, 50);
 				});
 				
 			},
@@ -107,8 +107,8 @@ sap.ui.define(
 			},
 
 			setSignatureOfStopp:function(sSignatureAsPng){
-				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				oStopInformationModel.setProperty("/tour/finishedSignature", sSignatureAsPng)
+				let oStopInformationModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				oStopInformationModel.setProperty("/oCurrentStop/finishedSignature", sSignatureAsPng);
 			},
 
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
@@ -119,11 +119,11 @@ sap.ui.define(
 			},
 
 			onRefreshDateAndTime: function () {
-				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel");
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
 				let sDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "dd.MM.YYYY HH:mm:ss",
 				}).format(new Date()); //Datum inklusive Uhrzeit
-				oCustomerModel.setProperty("/dateAndTime", sDateAndTime);
+				oConfigModel.setProperty("/dateAndTime", sDateAndTime);
 			},
 
 			showBackendConfirmMessage: function () {
@@ -141,13 +141,13 @@ sap.ui.define(
 			},
 
 			getCurrentStopOfTour:function(){
-				let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour"); //Infos ueber derzeitigen Stopp
+				let oCurrentStop = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentStop"); //Infos ueber derzeitigen Stopp
 
 				return oCurrentStop;
 			},
 
 			getStopsOfCurrentTour:function(){
-				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour/stops"); //Tour mit allen Stopps und Infos vorhanden
+				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/stops"); //Tour mit allen Stopps und Infos vorhanden
 
 				return aStopsOfCurrentTour;
 			},
@@ -199,10 +199,10 @@ sap.ui.define(
 			},
 
 			resetUserInput: function () {
-				let oCustomerModel = this.getOwnerComponent().getModel("CustomerModel"); //Angabe zum Namen des Kunden
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel"); //Angabe zum Namen des Kunden
 				//let oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
 
-				oCustomerModel.setProperty("/customerName", "");
+				oConfigModel.setProperty("/customerName", "");
 			},
 
 			resetUserPhotos: function () {
@@ -271,7 +271,7 @@ sap.ui.define(
 			onNavToOverview: function () { //Alle Stopps beendet, navigation zur Touruebersicht
 				//Models ueber Statusaenderung der Tour informieren
 				this.updateModelBindings("StopModel");
-				this.updateModelBindings("TourModel");
+				this.updateModelBindings("TourAndStopModel");
 				this.resetUserInput();
 
 				let oRouter = this.getOwnerComponent().getRouter();

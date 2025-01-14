@@ -20,12 +20,12 @@
             </customHeader>
         <content>
             <!-- FilterBar -->
-            <fb:FilterBar id="filterBar" search="onFilterSearch" filterBarExpanded="false" visible="{= ${CustomerModel>/role} === 'dispo' ? true : false}">
+            <fb:FilterBar id="filterBar" search="onFilterSearch" filterBarExpanded="false" visible="{= ${ConfigModel>/customerInformation/role} === 'dispo' ? true : false}">
                 <fb:filterGroupItems>
                     <fb:FilterGroupItem name="RouteStatus" label="{i18n>routeStatusLabel}" groupName="StatusFilter" visibleInFilterBar="true" > <!--visibleInFilterBar="true" notwendig, sonst keine Filter sichtbar-->
                         <fb:control>
-                            <MultiComboBox name="RouteStatus" selectionChange="onSelectionChange" items="{filtersModel>/routeStatuses}">
-                                <core:Item key="{filtersModel>key}" text="{filtersModel>status}" />
+                            <MultiComboBox name="RouteStatus" selectionChange="onSelectionChange" items="{FiltersModel>/routeStatuses}">
+                                <core:Item key="{FiltersModel>key}" text="{FiltersModel>status}" />
                             </MultiComboBox>
                         </fb:control>
                      </fb:FilterGroupItem>
@@ -34,29 +34,29 @@
             
             <form:SimpleForm id="sContent1" editable="true" title="" breakpointXL="2000" layout="ResponsiveGridLayout" breakpointM="2000">
                 <form:content>
-                    <List id="tourSelectionList" items="{TourModel>/results}" noDataText="{i18n>noDataAvailable}" busy="{TourModel>/busy}"
+                    <List id="tourSelectionList" items="{TourAndStopModel>/aAllToursOfDriver}" noDataText="{i18n>noDataAvailable}" busy="{TourAndStopModel>/busy}"
                         growing="true" growingThreshold="10" busyIndicatorDelay="500">
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
-                                <Label id="assignedToursLabel" text="{i18n>assignedTours}&#10;{CustomerModel>/driverName}"/>
+                                <Label id="assignedToursLabel" text="{i18n>assignedTours}&#10;{ConfigModel>/driverName}"/>
                                 <ToolbarSpacer/>
                                 <Button id="diagramBtn" press="TourStatisticsDialogOpen" icon="sap-icon://filter-analytics" type="Emphasized"/>
                                 <Button id="refreshBtn" press="onRefreshTours" icon="sap-icon://refresh" type="Emphasized"/>
                             </OverflowToolbar>
                         </headerToolbar>
                         <!--Abfrage geht nur bis Status 70 weil, bei gleichbleibender Auswahl dann die default Loesung gewaehlt wird (Success) -->
-                        <StandardListItem title="{TourModel>routeCaption}" description="{TourModel>externalId}" wrapping="true" 
-                            info="{= ${TourModel>routeStatus} === '10' ? ${i18n>invoiceStatusApproved} : 
-                                    ${TourModel>routeStatus} === '50' ? ${i18n>invoiceStatusLoaded} :
-                                        ${TourModel>routeStatus} === '70' ? ${i18n>invoiceStatusFinished} : ${i18n>invoiceStatusCompleted}}"
+                        <StandardListItem title="{TourAndStopModel>routeCaption}" description="{TourAndStopModel>externalId}" wrapping="true" 
+                            info="{= ${TourAndStopModel>routeStatus} === '10' ? ${i18n>invoiceStatusApproved} : 
+                                    ${TourAndStopModel>routeStatus} === '50' ? ${i18n>invoiceStatusLoaded} :
+                                        ${TourAndStopModel>routeStatus} === '70' ? ${i18n>invoiceStatusFinished} : ${i18n>invoiceStatusCompleted}}"
 
-                            infoState="{= ${TourModel>routeStatus} === '10' ? ${i18n>success} : 
-                                            ${TourModel>routeStatus} === '50' ? ${i18n>error} :
-                                                ${TourModel>routeStatus} === '70' ? ${i18n>information} : ${i18n>success}}"
+                            infoState="{= ${TourAndStopModel>routeStatus} === '10' ? ${i18n>success} : 
+                                            ${TourAndStopModel>routeStatus} === '50' ? ${i18n>error} :
+                                                ${TourAndStopModel>routeStatus} === '70' ? ${i18n>information} : ${i18n>success}}"
                                                     
-                            icon="{= ${TourModel>routeStatus} === '10' ? 'sap-icon://employee-approvals' : 
-                                        ${TourModel>routeStatus} === '50' ? 'sap-icon://shipping-status' :
-                                            ${TourModel>routeStatus} === '70' ? 'sap-icon://BusinessSuiteInAppSymbols/icon-box-truck-empty' : 'sap-icon://complete'}"
+                            icon="{= ${TourAndStopModel>routeStatus} === '10' ? 'sap-icon://employee-approvals' : 
+                                        ${TourAndStopModel>routeStatus} === '50' ? 'sap-icon://shipping-status' :
+                                            ${TourAndStopModel>routeStatus} === '70' ? 'sap-icon://BusinessSuiteInAppSymbols/icon-box-truck-empty' : 'sap-icon://complete'}"
                             type="Navigation"
                             press="setPressedTour">
                         </StandardListItem>

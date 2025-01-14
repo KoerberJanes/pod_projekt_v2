@@ -23,13 +23,13 @@
 					<viz:VizFrame id="idVizFrame" uiConfig="{applicationSet:'fiori'}" height='100%' width="100%" vizType='pie' selectData="onVizFrameSelectData">
                     <!--Hexcodes: Rot, Blau, Gruen-->
                         <viz:dataset>
-                            <viz.data:FlattenedDataset data="{TourModel>/resultsForDiagram}">
+                            <viz.data:FlattenedDataset data="{TourAndStopModel>/resultsForDiagram}">
                                 <viz.data:dimensions>
-                                    <viz.data:DimensionDefinition name="Status" value="{TourModel>routeStatusLabel}" />
+                                    <viz.data:DimensionDefinition name="Status" value="{TourAndStopModel>routeStatusLabel}" />
                                         <!--Expression-Binding wird nicht unterstuetzt: Dezember 2024-->
                                 </viz.data:dimensions>
                                 <viz.data:measures>
-                                    <viz.data:MeasureDefinition name="Anzahl" value="{TourModel>Anzahl}" />
+                                    <viz.data:MeasureDefinition name="Anzahl" value="{TourAndStopModel>Anzahl}" />
                                 </viz.data:measures>
                             </viz.data:FlattenedDataset>
                         </viz:dataset>

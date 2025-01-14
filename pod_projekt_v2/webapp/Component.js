@@ -20,7 +20,7 @@ sap.ui.define([
             init: function () {
 
             this.setModel(new sap.ui.model.json.JSONModel({
-                results: [{
+                aAllToursOfDriver: [{
 					"mandator": "17160",
 					"routeId": "13",
 					"externalId": "0100291207",
@@ -1867,9 +1867,26 @@ sap.ui.define([
 							]
 						}
 					]
+				}], 
+				"oCurrentTour" :{},
+				"oCurrentStop":{},
+				"oDeliveryNote": {
+					"note": {}
+				},
+				"oStop":{
+					"aResults":[],
+					"sCustomPosition": ""
+				},
+				"oTourStartUserInput":{
+					"sMileage": "380000"
+				},
+				"nveInputOfCustomer":{
+					"manualInput": ""
+				},
+				"GeoMapSpots": {
+					"spots": []
 				}
-				]
-			}), "TourModel");
+			}), "TourAndStopModel");
 
                 // call the base component's init function
                 UIComponent.prototype.init.apply(this, arguments);

@@ -18,7 +18,7 @@ sap.ui.define(
 			},
 
 			getPhoneAvis:function(){
-				let sPhoneAvis = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour/orders/0/phoneAvis");
+				let sPhoneAvis = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentStop/phoneAvis");
 				
 				return sPhoneAvis;
 			},

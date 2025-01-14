@@ -25,7 +25,7 @@ sap.ui.define(
 				//this.onBusyDialogOpen();
 
 				requestAnimationFrame(() => {
-					let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
+					let oCurrentStop = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentStop");
 					let {targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB} = oCurrentStop;
 
 					this.createDestinationSpot(oCurrentStop, sTargetGeoL, sTargetGeoB);  
@@ -36,10 +36,10 @@ sap.ui.define(
 			},
 
 			createDestinationSpot: function (oCurrentStop, sTargetGeoL, sTargetGeoB) { //Erstellen eines Stops
-				let oGeoMapStopModel = this.getOwnerComponent().getModel("SpotModel");
-				oGeoMapStopModel.setProperty("/spot", []); //Zuruecksetzen notwendig, weil sonst immer wieder der gleiche Stopp drin ist
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				oTourAndStopModel.setProperty("/GeoMapSpots/spots", []); //Zuruecksetzen notwendig, weil sonst immer wieder der gleiche Stopp drin ist
 
-				let aGeoMapSpots = oGeoMapStopModel.getProperty("/spot");
+				let aGeoMapSpots = oTourAndStopModel.getProperty("/GeoMapSpots/spots");
 				// Neues Stop-Objekt erstellen
 				let oStop = {
 					bTarget: true,
@@ -50,14 +50,14 @@ sap.ui.define(
 				};
 
 				let aUpdatedSpots = [...aGeoMapSpots, oStop]; //Array wird mit neuem Stopp erstellt, dass angezeigt wird
-				oGeoMapStopModel.setProperty("/spot", aUpdatedSpots); //damit ist kein Model.refresh() mehr notwendig
+				oTourAndStopModel.setProperty("/GeoMapSpots/spots", aUpdatedSpots); //damit ist kein Model.refresh() mehr notwendig
 
 				this.toCurrentPosition(sTargetGeoL, sTargetGeoB);
 			},
 
 			createOwnLocationSpot: function (sCurrentGeoL, sCurrentGeoB, bZoomToSpot) {
-				let oGeoMapStopModel = this.getOwnerComponent().getModel("SpotModel");
-				let aGeoMapSpots = oGeoMapStopModel.getProperty("/spot");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aGeoMapSpots = oTourAndStopModel.getProperty("/GeoMapSpots/spots");
 				// Neues Stop-Objekt erstellen
 				let oStop = {
 					bTarget: false,
@@ -68,14 +68,14 @@ sap.ui.define(
 				};
 
 				let aUpdatedSpots = [...aGeoMapSpots, oStop]; //Array wird mit neuem Stopp erstellt, dass angezeigt wird
-				oGeoMapStopModel.setProperty("/spot", aUpdatedSpots); //damit ist kein Model.refresh() mehr notwendig
+				oTourAndStopModel.setProperty("/GeoMapSpots/spots", aUpdatedSpots); //damit ist kein Model.refresh() mehr notwendig
 				if (bZoomToSpot) {
 					this.toCurrentPosition(sCurrentGeoL, sCurrentGeoB);
 				}
 			},
 
 			onClickGeoMapSpot: function (oEvent) {
-				let oPressedSpot = oEvent.getSource().getBindingContext("SpotModel").getObject();
+				let oPressedSpot = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
 				oEvent.getSource().openDetailWindow(oPressedSpot.description, "0", "0");
 			},
 
@@ -101,11 +101,11 @@ sap.ui.define(
 			},
 
 			removeOldOwnPosition: function () { //entfernen vom alten eigenen Pointer
-				let oGeoMapStopModel = this.getOwnerComponent().getModel("SpotModel");
-				let aGeoMapSpots = oGeoMapStopModel.getProperty("/spot");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aGeoMapSpots = oTourAndStopModel.getProperty("/GeoMapSpots/spots");
 
 				let aUpdatedSpots = aGeoMapSpots.filter((oCurrentGeoMapSpot) => oCurrentGeoMapSpot.bTarget);
-				oGeoMapStopModel.setProperty("/spot", aUpdatedSpots);
+				oTourAndStopModel.setProperty("/GeoMapSpots/spots", aUpdatedSpots);
 
 				this.getCurrentPosition(true);
 			},
@@ -128,7 +128,7 @@ sap.ui.define(
 			},
 
 			onToTargetPosition: function () { //Zur Position des derzeit ausgewaehlten Stops
-				let oCurrentStop = this.getOwnerComponent().getModel("StopInformationModel").getProperty("/tour");
+				let oCurrentStop = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentStop");
 				let {targetGeoL: sTargetGeoL, targetGeoB: sTargetGeoB} = oCurrentStop;
 				let oGeoMap = this.getView().byId("GeoMap");
 

@@ -21,25 +21,25 @@
                 <form:content>
                     <Bar>
                         <contentMiddle>
-                            <Title id="OvtbTitle" text="{CustomerModel>/driverName}" level="H2" />
+                            <Title id="OvtbTitle" text="{ConfigModel>/customerInformation/driverName}" level="H2" />
                         </contentMiddle>
                         <contentRight>
                             <Button id="idDateRefreshButton" enabled="{= ${settings>/bViewerMode} === true ? false : true }" type="Emphasized" icon="sap-icon://refresh" press="onRefreshDateAndTime" width="20%"/>
                         </contentRight>
                     </Bar>
                     <Label id="idAdresseLabel" text="{i18n>adress}"/>
-                    <Text text="{StopInformationModel>/tour/orders/0/addressName1}&#13;&#10;{StopInformationModel>/tour/orders/0/zipCode} {StopInformationModel>/tour/orders/0/city}" width="100%"/>
+                    <Text text="{TourAndStopModel>/oCurrentStop/addressName1}&#13;&#10;{TourAndStopModel>/oCurrentStop/zipCode} {TourAndStopModel>/oCurrentStop/city}" width="100%"/>
                     
                     <Label id="idLSNrLabel" text="{i18n>deliveryNoteNumber}"/>
-                    <Text text="{StopInformationModel>/tour/orders/0/shipmentNumber}"/>
+                    <Text text="{TourAndStopModel>/oDeliveryNote/note/shipmentNumber}"/>
                     <Label id="idNVEsLabel" text="{i18n>numberedDispatchUnits}"/>
-                    <Text text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalLoadedNVEs}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
-                    <Text text="{= ${StopInformationModel>/tour/orders/0/aDeliveryNotes/0/aTotalClearedNVEs}.length} {i18n>nves} {i18n>cleared}"/>
+                    <Text text="{= ${TourAndStopModel>/oDeliveryNote/note/aTotalLoadedNVEs}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
+                    <Text text="{= ${TourAndStopModel>/oDeliveryNote/note}.length} {i18n>nves} {i18n>cleared}"/>
 
                     <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
                     <Text text="{
                         parts: [
-                          { path: 'StopInformationModel>/tour/orders/0/aDeliveryNotes' },
+                          { path: 'TourAndStopModel>/tour/orders/0/aDeliveryNotes' },
                           { path: 'i18n>deliveryItems' },
                           { path: 'i18n>processed' }
                         ],
@@ -47,23 +47,23 @@
                       }"/>
                     <Text text="{
                         parts: [
-                          { path: 'StopInformationModel>/tour/orders/0/aDeliveryNotes' },
+                          { path: 'TourAndStopModel>/tour/orders/0/aDeliveryNotes' },
                           { path: 'i18n>retoures' },
                           { path: 'i18n>processed' }
                         ],
                         formatter: '.formatRetoureText'
                       }" />
-                        <!--"{path: 'StopInformationModel>/tour/orders/0/aDeliveryNotes', formatter: '.countNonRetoureNotes'}"-->
+                       <!--DeliveryNotes müssten ggf. angepasst werden. Der Code basiert auf Arrays, derzeit ist aber nur ein Objekt drin-->
                     <Label id="idLeihgutLabel" text="{i18n>loadingDevices}"/>
                     <Text text="A {i18n>unloaded}"/>
                     <Text text="B {i18n>charged}"/>
                     <Label id="idLabelplaceholder"/>
                     <Label id="idUnterschriftLabel" text="{i18n>signature}"/>
-                    <Text text="{CustomerModel>/customerName}"></Text>
+                    <Text text="{ConfigModel>/recipientOfDelivery/name}"></Text>
                     <Label id="idDatumUhrzeitLabel" text="{i18n>dateAndTime}"/>
-                    <Text text="{CustomerModel>/dateAndTime}"/>
+                    <Text text="{ConfigModel>/customerInformation/dateAndTime}"/>
                     <Label id="idGeoCoordinatesLabel" text="{i18n>geoCoordinates}"/>
-                    <Text text="B:{StopInformationModel>/tour/orders/0/startGeoB}, L:{StopInformationModel>/tour/orders/0/startGeoL}"/>
+                    <Text text="B:{TourAndStopModel>/oCurrentStop/orders/0/startGeoB}, L:{TourAndStopModel>/oCurrentStop/orders/0/startGeoL}"/>
                     <Label id="idSignFieldLabel" text="{i18n>signature}" labelFor="digitalSignatureId" required="true"/>
                     <Text/>
                 </form:content>
@@ -84,11 +84,11 @@
                 </contentMiddle>
                 <contentRight>
                     <Button text="{i18n>listCustomerTours}" icon="sap-icon://home-share" press="onNavToOverview" 
-                        visible="{= ${settings>/bViewerMode} === false ? false : 
-                        ${TourStartFragmentModel>/tour/routeStatus} === '10' ? true : false }"/>
+                        visible="{= ${ConfigModel>/generalSettings/bViewerMode} === false ? false : 
+                        ${TourAndStopModel>/oCurrentTour/routeStatus} === '10' ? true : false }"/>
                     <Button text="{i18n>listActiveTourStops}" icon="sap-icon://undo" press="onTourReviewed" 
-                        visible="{= ${settings>/bViewerMode} === false ? false : 
-                        ${TourStartFragmentModel>/tour/routeStatus} === '10' ? false : true }"/>
+                        visible="{= ${ConfigModel>/generalSettings/bViewerMode} === false ? false : 
+                        ${TourAndStopModel>/oCurrentTour/routeStatus} === '10' ? false : true }"/>
                     <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onCheckIfStopSigned" visible="{= ${settings>/bViewerMode} === true ? false : true }"/>
                 </contentRight>
             </Bar>

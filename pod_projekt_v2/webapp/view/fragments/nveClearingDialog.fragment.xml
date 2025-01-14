@@ -18,21 +18,22 @@
                 <form:SimpleForm id="clearDialogForm" editable="true" layout="ResponsiveGridLayout" title="">
                     <form:content>
                 
-                    <List id="ClearingList" items="{CurrentSittingClearingNvesModel>/results}" mode="SingleSelectLeft">
+                    <List id="ClearingList" items="{ClearingAndDialogModels>/aClearingReasons/results}" mode="SingleSelectLeft">
                         <headerToolbar>
                             <OverflowToolbar id="OvtbTourselect">
                                 <Title id="ueberschrift" text="{i18n>possibleClearingResons}" level="H1"/>
                             </OverflowToolbar>
                         </headerToolbar>
-                        <StandardListItem title="{CurrentSittingClearingNvesModel>Description}" selected="{CurrentSittingClearingNvesModel>value}" wrapping="true" press="setPressedTour"/>
+                        <StandardListItem title="{ClearingAndDialogModels>Description}" selected="{ClearingAndDialogModels>value}" wrapping="true" press="setPressedTour"/>
                     </List>
                     <Label id="txtBemerkung" text="{i18n>remarks}"/>
-                    <TextArea id="taBemerkungen" value="{CurrentSittingClearingNvesModel>/remarks}"></TextArea>
+                    <TextArea id="taBemerkungen" value="{ClearingAndDialogModels>/aClearingReasons/remarks}"></TextArea>
                     <ToggleButton id="fotoListeToggleButton" icon="{=${settings>/photoListClearingVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{settings>/photoListClearingVisible}"/>
                     <Label/>
                     <Button id="addPhotoBtn" icon="sap-icon://add-photo" text="{i18n>takePhoto}" press="clearingNvesSelectCheck" class="sapUiVisibleOnlyOnDesktop"/>
                     <Label/>
                     <!--<u:FileUploader id="btnAddPhoto" buttonOnly="true" buttonText="{i18n>foto}" icon="sap-icon://add-photo" useMultipart="false" mimeType="image/*" change="onFotoMobile" width="100%" class="sapUiHideOnDesktop"/>-->
+                    <!-- zu vernachlässigen, denn das UploadSet sei veraltet.
                     <upload:UploadSet id="photoClearingList" visible="{= ${settings>/photoListClearingVisible}}" fileTypes="png, image/*" instantUpload="false"
                         items="{path:'PhotoModelUnloading>/results', 
                             sorter: {path:'photoType', descending: false, 
@@ -76,6 +77,7 @@
                             </upload:UploadSetItem>
                         </upload:items>
                     </upload:UploadSet>
+                    -->
 
                     <List id="fotoListe" items="{PhotoModelUnloading>/results}" mode="Delete" delete="onDelete" visible="false" showNoData="false">
                         <CustomListItem >
