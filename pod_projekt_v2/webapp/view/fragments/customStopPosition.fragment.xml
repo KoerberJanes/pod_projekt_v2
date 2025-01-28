@@ -19,8 +19,8 @@
                     <Label id="custonPositionLabel" text="{i18n>position}"></Label>
                     <Input id="CustomPositionInput" liveChange="onCutomPositionInputLiveChange" valueLiveUpdate="true" change="onCustomPositionInputChange" showClearIcon="true"
                         value="{
-							path: 'customStopPositionModel>/position',
-							type: 'sap.ui.model.type.Integer',
+							path: 'TourAndStopModel>/oStop/sCustomPosition',
+							type: 'sap.ui.model.type.String',
 							constraints: {
 								minLength: 1,
 								search: '^[0-9]+$'

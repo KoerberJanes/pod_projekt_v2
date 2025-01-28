@@ -168,8 +168,26 @@ sap.ui.define(
 				if (REGEX_CUSTOMER_NAME.test(sConfigModelInput)) { //Eingabe-Parameter passen
 					this.checkIfNvesAreProcessed();
 				} else { //Eingabe-Parameter passen nicht
+					this.showMatchingErrorReason();
+					//
+				}
+			},
+
+			showMatchingErrorReason:function(){
+				let sConfigModelInput = this.getCustomerName();
+
+				if (!customerName || customerName.length === 0) { //Kein Name Angegeben
+					this._showErrorMessageBox("nameNotMatchingRegexEmpty", () => this.scrollToInputAfterError());
+				}
+			
+				if (customerName && customerName.length > 0 && customerName.length < 2) { //Name mit weniger als 2 Buchstaben
+					this._showErrorMessageBox("nameNotMatchingRegexNameTooShort", () => this.scrollToInputAfterError());
+				}
+			
+				if (customerName && customerName.length >= 2) { //Allgemeine sonderzeichenregel verletzt
 					this._showErrorMessageBox("nameNotMatchingRegex", () => this.scrollToInputAfterError());
 				}
+
 			},
 
 			checkIfNvesAreProcessed: function () { //Prüfen ob noch nicht bearbeitete Nves existieren

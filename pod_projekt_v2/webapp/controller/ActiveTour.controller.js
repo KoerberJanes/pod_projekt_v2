@@ -110,7 +110,7 @@ sap.ui.define(
 				//Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
 				//! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
 				let oInput = oEvent.getSource();
-				let oTourAndStopModel = this.getOwnerComponent().getModel("oTourAndStopModel");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				oTourAndStopModel.setProperty("/oStop/sCustomPosition", oInput.getValue());
 			},
 
@@ -220,9 +220,9 @@ sap.ui.define(
 			},
 
 			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
-				let iCustomPositionInput = this.getOwnerComponent().getModel("oTourAndStopModel").getProperty("/position"); // User-Eingabe
+				let sCustomPositionInput = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oStop/sCustomPosition"); // User-Eingabe
 
-				if (REGEX_CUSTOM_POSITION.test(iCustomPositionInput)) { //Eingabe-Parameter passen
+				if (REGEX_CUSTOM_POSITION.test(sCustomPositionInput)) { //Eingabe-Parameter passen
 					this.checkIfEnteredValueInRange();
 				} else { //Eingabe-Parameter passen nicht
 					this._showErrorMessageBox("notMatchingRegex", () => {});
@@ -231,12 +231,13 @@ sap.ui.define(
 
 			checkIfEnteredValueInRange:function(){
 				let aStops = this.getModelStops();
-				let oTourAndStopModel = this.getOwnerComponent().getModel("oTourAndStopModel");
-				let iCustomPosition = oTourAndStopModel.getProperty("/position");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let sCustomPosition = oTourAndStopModel.getProperty("/oStop/sCustomPosition");
+				let iCustomPosition = parseInt(sCustomPosition);
 				let iMaxSequenceNumber = this.getMaxSequence(aStops);
 				let iMinSequenceNumber = this.getMinSequence(aStops);
 
-				if(iCustomPosition < iMaxSequenceNumber && iCustomPosition > iMinSequenceNumber){ //Nummer ist im Intervall
+				if(iCustomPosition <= iMaxSequenceNumber && iCustomPosition >= iMinSequenceNumber){ //Nummer ist im Intervall
 					this.moveSelectedStopsToCustomPosition(iCustomPosition);
 				} else{ //Nummer ist nicht im Intervall
 					this._showErrorMessageBox("notMatchingRegex", () => this._setFocus());
@@ -256,13 +257,35 @@ sap.ui.define(
 				});
 
 				// Neue position ermitteln
-				let iValidPosition = aStops.findIndex(stop => stop.sequence < iCustomPosition);
+				//let iValidPosition = aStops.findIndex(stop => stop.sequence <= iCustomPosition);
+				let iValidPosition = this.calculateInsertPosition(iCustomPosition, aStops, aSelectedStopModelItems);
 				aStops.splice(iValidPosition, 0, ...aSelectedStopModelItems); // Items an der benutzerdefinierten Position einfuegen
 
 				this.adjustStopSequence(aStops);// Stoppreihenfolge Nummern anpassen
-				this.updateModelBindings("StopModel"); // Model-Bindings aktualisieren, um die UI zu synchronisieren
+				this.setStopOrderChangedToTrue();
+				this.updateModelBindings("TourAndStopModel"); // Model-Bindings aktualisieren, um die UI zu synchronisieren
 				this.selectSameItemsAgain(aSelectedStopModelItems); // Die gleichen Items erneut selektieren
 				this.customStopPostitionFragmentClose(); //Schliessen des Dialoges
+			},
+
+			calculateInsertPosition: function (iCustomPosition, aStops, aSelectedStopModelItems) {
+				// Kombiniere aStops und aSelectedStopModelItems, um vollständige Liste zu erhalten
+				let aAllStops = [...aStops, ...aSelectedStopModelItems];
+
+				// Sortiere Liste absteigend nach 'sequence'
+				let sortedStops = aAllStops.sort((a, b) => b.sequence - a.sequence);
+				let minSequence = Math.min(...sortedStops.map(stop => stop.sequence));
+			
+				// Ermittle die Position in der sortierten Liste, falls iCustomPosition nicht kleiner als minSequence ist
+				let targetIndexInSortedStops = iCustomPosition <= minSequence ? -1 : sortedStops.findIndex(stop => stop.sequence <= iCustomPosition);
+			
+				// Hole den Zielstop aus sortedStops, um die Position zu bestimmen
+				let targetStop = sortedStops[targetIndexInSortedStops]; //-1 ist kein Fehler, sonder der Indikator fuer den fallback-Fall
+			
+				// Um die Position zu finden, aStops mit der Position in aAllStops abgleichen
+				let targetIndexInAStops = aAllStops.findIndex(stop => stop.sequence === targetStop?.sequence);
+
+				return targetIndexInAStops === -1 ? aStops.length : targetIndexInAStops;
 			},
 
 			_setFocus:function(){
@@ -505,8 +528,8 @@ sap.ui.define(
 			},
 
 			emptyCustomInputPosition:function(){
-				let oTourAndStopModel = this.getOwnerComponent().getModel("oTourAndStopModel");
-				oTourAndStopModel.setProperty("/position", 0);
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				oTourAndStopModel.setProperty("/oStop/sCustomPosition", "");
 			},
 
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
