@@ -55,12 +55,12 @@
                     </Tree>
 
                     <!-- Liste fuer aTotalClearedNVEs im Viewer-Mode -->
-                    <List id="clearedNveList" headerText="{i18n>clearedNves}" items="{TourAndStopModel>/note/aTotalClearedNVEs}" visible="{ConfigModel>/generalSettings/bViewerMode}" noDataText="{i18n>noClearedNves}">
+                    <List id="clearedNveList" headerText="{i18n>clearedNves}" items="{TourAndStopModel>/oDeliveryNote/note/aTotalClearedNVEs}" visible="{ConfigModel>/generalSettings/bViewerMode}" noDataText="{i18n>noClearedNves}">
                         <StandardListItem title="{TourAndStopModel>accurateDescription}" />
                     </List>
 
                     <!-- Liste fuer aTotalLoadedNVEs im Viewer-Mode -->
-                    <List id="loadedNveList" headerText="{i18n>loadedNves}" items="{TourAndStopModel>/note/aTotalLoadedNVEs}" visible="{ConfigModel>/generalSettings/bViewerMode}" noDataText="{i18n>noLoadedNves}">
+                    <List id="loadedNveList" headerText="{i18n>loadedNves}" items="{TourAndStopModel>/oDeliveryNote/note/aTotalLoadedNVEs}" visible="{ConfigModel>/generalSettings/bViewerMode}" noDataText="{i18n>noLoadedNves}">
                         <StandardListItem title="{TourAndStopModel>accurateDescription}" />
                     </List>
 

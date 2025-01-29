@@ -34,7 +34,7 @@
                     <Text text="{TourAndStopModel>/oDeliveryNote/note/shipmentNumber}"/>
                     <Label id="idNVEsLabel" text="{i18n>numberedDispatchUnits}"/>
                     <Text text="{= ${TourAndStopModel>/oDeliveryNote/note/aTotalLoadedNVEs}.length} {i18n>nves} {i18n>loaded}"/> <!--TODO: Klaeren: geht es hier nur um die Verladenen NVEs?-->
-                    <Text text="{= ${TourAndStopModel>/oDeliveryNote/note}.length} {i18n>nves} {i18n>cleared}"/>
+                    <Text text="{= ${TourAndStopModel>/oDeliveryNote/note/aTotalClearedNVEs}.length} {i18n>nves} {i18n>cleared}"/>
 
                     <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
                     <Text text="{
@@ -89,7 +89,7 @@
                     <Button text="{i18n>listActiveTourStops}" icon="sap-icon://undo" press="onTourReviewed" 
                         visible="{= ${ConfigModel>/generalSettings/bViewerMode} === false ? false : 
                         ${TourAndStopModel>/oCurrentTour/routeStatus} === '10' ? false : true }"/>
-                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onCheckIfStopSigned" visible="{= ${settings>/bViewerMode} === true ? false : true }"/>
+                    <Button text="{i18n>quittieren}" icon="sap-icon://sys-enter" press="onCheckIfStopSigned" visible="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/>
                 </contentRight>
             </Bar>
         </footer>

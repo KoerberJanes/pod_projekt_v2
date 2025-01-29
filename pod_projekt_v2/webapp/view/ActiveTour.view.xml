@@ -83,7 +83,9 @@
                 <contentMiddle>
                 </contentMiddle>
                 <contentRight>
-                    <Button text="{i18n>save}" icon="sap-icon://sys-enter" press="saveStopOrderChanges" visible="{settings>/bStopOrderChanged}" />
+                    <Button text="{i18n>save}" icon="sap-icon://sys-enter" press="saveStopOrderChanges" 
+                        visible="{= ${ConfigModel>/generalSettings/bStopOrderChanged} === true ? true :
+                        ${ConfigModel>/generalSettings/bStopSequenceChangeable} === true ? true : false}" />
                 </contentRight>
             </Bar>
         </footer>

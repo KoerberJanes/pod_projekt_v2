@@ -409,21 +409,34 @@ sap.ui.define(
 			},
 
 			getStoppSequenceChangeable:function(){ //Erhalten des Wertes fuer Aenderbarkeit der Stoppreihenfolge
-				return this.getOwnerComponent().getModel("ConfigModel").getProperty("/generalSettings/bStoppSequenceChangeable");
+				return this.getOwnerComponent().getModel("ConfigModel").getProperty("/generalSettings/bStopSequenceChangeable");
 			},
 
 			checkIfStoppAlreadyDealtWith: function (oEvent) { //!Statuscodes muessen abgesprochen werden
-				let oPressedModelObject = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
-				let iNumberOfUnprocessedNves = oPressedModelObject.orders[0].loadingUnits.length;
-				let sStopStatus = oPressedModelObject.stopStatus; //in Kombination mit der Methode: 'setCurrentStopAsFinished'
+				let oPressedModelStop = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
+				let iNumberOfUnprocessedNves = oPressedModelStop.orders[0].aDeliveryNotes[0].aUnprocessedNumberedDispatchUnits.length;
+				let sStopStatus = oPressedModelStop.stopStatus; //in Kombination mit der Methode: 'setCurrentStopAsFinished'
 
 				if (iNumberOfUnprocessedNves === 0 && sStopStatus === STOP_STATUS_PROCESSED) { //Keine unbearbeiteten NVEs und Stopp hat status erledigt
-					//this._showErrorMessageBox("stopAlreadyProcessed", () => {});
-					this.viewerModeFragmentOpen();
+					this.setPressedStopInformation(oPressedModelStop);
+					this.viewerModeFragmentOpen(oPressedModelStop);
 				} else { //Stop zum verarbeiten vorbereiten
-					this.checkIfStopOrderChanged(oPressedModelObject);
-					//
+					this.checkIfStopOrderChanged(oPressedModelStop);
 				}
+			},
+
+			setPressedStopInformation:function(oPressedModelStop){ //Setzen der Infos im Viewer-Modus
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let oDeliveryNote = oPressedModelStop.orders[0].aDeliveryNotes[0];
+
+				//setzen des Stops fuer Stopp-Info
+				oTourAndStopModel.setProperty("/oCurrentStop", oPressedModelStop);
+
+				//Setzen der DeliveryNote fuer Anzeige, da ja bereits alles abgehandelt wurde
+				oTourAndStopModel.setProperty("/oDeliveryNote/note", oDeliveryNote);
+
+				this.updateModelBindings("TourAndStopModel");
+				
 			},
 
 			saveStopOrderChanges:function(){
@@ -448,21 +461,21 @@ sap.ui.define(
 				return bStopOrderChanged;
 			},
 
-			checkIfStopOrderChanged:function(oPressedModelObject){ //Objekt muss fuer NVEs mitgegeben werden.
+			checkIfStopOrderChanged:function(oPressedModelStop){ //Objekt muss fuer NVEs mitgegeben werden.
 				let aPromises = [];
 				let bStopOrderChanged = this.getIfStopOrderChanged();
 
 				if(bStopOrderChanged){
-					this.showStopOrderChangedMessage(oPressedModelObject);
+					this.showStopOrderChangedMessage(oPressedModelStop);
 				} else{
 					this.openBusyDialog();
 					aPromises.push(this.simulateBackendCallForStoppOrderChange(true)); // senden der neuen Stoppreihenfolge an das Backend
-					aPromises.push(this.simulateBackendCallToGetNVEs(true, oPressedModelObject));
+					aPromises.push(this.simulateBackendCallToGetNVEs(true, oPressedModelStop));
 
 					Promise.all(aPromises)
 					.then(() => {
 						this.closeBusyDialog();
-						this.onSetStoppInformation(oPressedModelObject);
+						this.onSetStoppInformation(oPressedModelStop);
 						this.setStopOrderChangedToFalse();
 					})
 					.catch((error) =>{
@@ -601,11 +614,12 @@ sap.ui.define(
 			},
 
 			viewerModeFragmentOpen:function(){
-				this.oCustomStopPostitionFragment ??= this.loadFragment({
+
+				this.oViewerModeFragment ??= this.loadFragment({
 					name: "podprojekt.view.fragments.displayStoppInViewerMode",
 				});
 
-				this.oCustomStopPostitionFragment.then((oDialog) => {
+				this.oViewerModeFragment.then((oDialog) => {
 					oDialog.open();
 				});
 			},

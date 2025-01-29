@@ -38,7 +38,9 @@
                     <Switch id="recipientFoundSwitch" type="AcceptReject" state="{ConfigModel>/generalSettings/recipientFound}" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
 
                     <Label id="recipientName" labelFor="recipientNameInp" text="{i18n>recipientName}" visible="{= ${ConfigModel>/generalSettings/recipientFound} }" required="true"/>
-                    <Input id="recipientNameInp" valueLiveUpdate="true" editable="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }" visible="{= ${ConfigModel>/generalSettings/recipientFound}}" liveChange="onCustomerNameInputLiveChange" change="onCustomerNameInputChange" showClearIcon="true"
+                    <Input id="recipientNameInp" valueLiveUpdate="true" liveChange="onCustomerNameInputLiveChange" change="onCustomerNameInputChange" showClearIcon="true" editable="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }" 
+                        visible="{= ${ConfigModel>/generalSettings/recipientFound} === false ? false:
+                            ${ConfigModel>/generalSettings/bViewerMode} === false ? true : false}" 
                         value="{
                             path: 'ConfigModel>/recipientOfDelivery/name',
                             type: 'sap.ui.model.type.String',
@@ -48,6 +50,7 @@
                                 search: '^[a-zA-ZäöüßÄÖÜ\\-]{2,15}$'
                                 },
                                 formatOptions: {showMeasure: false}}"/>
+                    <Input id="recipientNameInpViewerMode" visible="{= ${ConfigModel>/generalSettings/bViewerMode}}" value="{TourAndStopModel>/oCurrentStop/signedCustomerName}" editable="false" ></Input>
 
                     <Label text="{i18n>showDeliveryItems}"/>
                     <ToggleButton id="deliveryItemsToggleButton" icon="{=${ConfigModel>/generalSettings/bDeliveryItemsVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>deliveryItems}" pressed="{ConfigModel>/generalSettings/bDeliveryItemsVisible}"/>

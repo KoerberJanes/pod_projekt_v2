@@ -107,8 +107,12 @@ sap.ui.define(
 			},
 
 			setSignatureOfStopp:function(sSignatureAsPng){
-				let oStopInformationModel = this.getOwnerComponent().getModel("TourAndStopModel");
-				oStopInformationModel.setProperty("/oCurrentStop/finishedSignature", sSignatureAsPng);
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
+				let sCustomerName = oConfigModel.getProperty("/recipientOfDelivery/name");
+
+				oTourAndStopModel.setProperty("/oCurrentStop/finishedSignature", sSignatureAsPng);
+				oTourAndStopModel.setProperty("/oCurrentStop/signedCustomerName", sCustomerName);
 			},
 
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
@@ -123,7 +127,7 @@ sap.ui.define(
 				let sDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "dd.MM.YYYY HH:mm:ss",
 				}).format(new Date()); //Datum inklusive Uhrzeit
-				oConfigModel.setProperty("/dateAndTime", sDateAndTime);
+				oConfigModel.setProperty("/customerInformation/dateAndTime", sDateAndTime);
 			},
 
 			showBackendConfirmMessage: function () {
@@ -135,7 +139,7 @@ sap.ui.define(
 			},
 
 			getCurrentTour:function(){
-				let oCurrentTour = this.getOwnerComponent().getModel("TourStartFragmentModel").getProperty("/tour");
+				let oCurrentTour = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour");
 
 				return oCurrentTour;
 			},
@@ -156,10 +160,10 @@ sap.ui.define(
 				//!Statuscodes muessen abgesprochen werden
 				let oCurrentStop = this.getCurrentStopOfTour(); 
 				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); 
-				let oFoundTour = aStopsOfCurrentTour.find((element) => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
+				let oFoundCurrentStop = aStopsOfCurrentTour.find((element) => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
 
-				if (oFoundTour) {
-					oFoundTour.stopStatus = "70"; // --> Annahme: 70 ist erledigt
+				if (oFoundCurrentStop) {
+					oFoundCurrentStop.stopStatus = "70"; // --> Annahme: 70 ist erledigt
 					this.checkIfAllStopsAreCompleted();
 				}
 			},
@@ -168,67 +172,80 @@ sap.ui.define(
 				//!Statuscodes muessen abgesprochen werden
 				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); //Tour mit allen Stopps und Infos vorhanden
 				let bAllStoppsProcessed = aStopsOfCurrentTour.every((element) => element.stopStatus === "70");
-
-				if (!bAllStoppsProcessed) { //Pruefen ob es mindestens einen Stopp gibt, der nicht den Status 70 hat
-					this.changeDisplayedNvesOfStop(); 
-				} else {
+				this.finishCurrentStop();
+				
+				if (bAllStoppsProcessed) { //Pruefen ob alle stops beendet
+					//this.alterDisplayedNvesOfStop(); 
 					this.setTourStatusProcessed(); 
+				} else {
+					this.setStopSequenceChangeableFalse();
+					this.onNavToActiveTour();
 				}
 			},
 
-			changeDisplayedNvesOfStop: function () { //Aendern der Anzeige von verbleibenden NVEs in der Stoppuebersicht
-				let oStopInformationModel = this.getOwnerComponent().getModel("StopInformationModel");
-				let aRemainingNves = oStopInformationModel.getProperty("/tour/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+			setStopSequenceChangeableFalse:function(){
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
+				oConfigModel.setProperty("/generalSettings/bStopSequenceChangeable", false);
+			},
 
-				oStopInformationModel.setProperty("/tour/orders/0/loadingUnits", aRemainingNves);
+			/*
+			alterDisplayedNvesOfStop: function () { //Aendern der Anzeige von verbleibenden NVEs in der Stoppuebersicht
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aRemainingNves = oTourAndStopModel.getProperty("/oCurrentStop/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+
+				oTourAndStopModel.setProperty("/tour/orders/0/loadingUnits", aRemainingNves);
 
 				this.finishCurrentStop();
 			},
+			*/
 
 			finishCurrentStop:function(){ //Stopp wurde beendet, alles wird wieder bereitgestellt und die Uebersicht der Stopps wird angezeigt
-				this.resetUserInput();
+				this.resetUserModelInput();
 				this.resetUserPhotos();
-				this.onNavToActiveTour(); 
+				//this.onNavToActiveTour(); 
 			},
 
 			setTourStatusProcessed: function () { //!Statuscodes muessen abgesprochen werden
-				let oCurrentTour = this.getCurrentTour();;
+				let oCurrentTour = this.getCurrentTour();
 
 				oCurrentTour.routeStatus = "10";
 				this.onNavToOverview(); 
 			},
 
-			resetUserInput: function () {
+			resetUserModelInput: function () {
 				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel"); //Angabe zum Namen des Kunden
 				//let oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
-
-				oConfigModel.setProperty("/customerName", "");
+				oConfigModel.setProperty("/customerInformation/customerName", "");
 			},
 
 			resetUserPhotos: function () {
-				let oPhotoListModel = this.getOwnerComponent().getModel("PhotoModel");
+				let oPhotoManagementModel = this.getOwnerComponent().getModel("PhotoManagementModel");
+				let aPhotoTypes = oPhotoManagementModel.getProperty("/photos/types");
 
-				oPhotoListModel.setProperty("/photos", []);
+				oPhotoManagementModel.setProperty("/photos/allPhotos", []);
+				aPhotoTypes.forEach(photoTyp => {
+					photoTyp.photo = [];
+				});
 			},
 
 			setStopOrderChangedToTrue:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				oSettingsModel.setProperty("/bStopOrderChanged", true);
+				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
+				oSettingsModel.setProperty("/generalSettings/bStopOrderChanged", true);
 			},
 
 			setStopOrderChangedToFalse:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				oSettingsModel.setProperty("/bStopOrderChanged", false);
+				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
+				oSettingsModel.setProperty("/generalSettings/bStopOrderChanged", false);
 			},
 
 			setUserViewerSettingToTrue:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				oSettingsModel.setProperty("/bViewerMode", true);
+				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
+				oSettingsModel.setProperty("/generalSettings/bViewerMode", true);
 			},
 
 			setUserViewerSettingToFalse:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("settings");
-				oSettingsModel.setProperty("/bViewerMode", false);
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
+				oConfigModel.setProperty("/generalSettings/bViewerMode", false);
 			},
 
 			onTourReviewed:function(){
@@ -262,7 +279,7 @@ sap.ui.define(
 			},
 
 			onNavToActiveTour: function () { //Nicht alle Stopps beendet
-				this.updateModelBindings("StopModel"); //Aktualisiert die verbleibenden NVEs und das Unterschrift Icon
+				this.updateModelBindings("TourAndStopModel"); //Aktualisiert die verbleibenden NVEs und das Unterschrift Icon
 
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("ActiveTour");
@@ -270,9 +287,8 @@ sap.ui.define(
 
 			onNavToOverview: function () { //Alle Stopps beendet, navigation zur Touruebersicht
 				//Models ueber Statusaenderung der Tour informieren
-				this.updateModelBindings("StopModel");
 				this.updateModelBindings("TourAndStopModel");
-				this.resetUserInput();
+				this.resetUserModelInput();
 
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("Overview");

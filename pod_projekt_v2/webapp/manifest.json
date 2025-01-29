@@ -72,7 +72,7 @@
             "bLoadingDevicesVisible": false,
             "bPhotoListVisible": false,
             "bPhotoListClearingVisible": false,
-            "bStoppSequenceChangeable": true,
+            "bStopSequenceChangeable": true,
             "bViewerMode": false,
             "bStopOrderChanged": false
           },

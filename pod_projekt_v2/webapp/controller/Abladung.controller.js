@@ -123,7 +123,7 @@ sap.ui.define(
 				//! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
 				let oInput = oEvent.getSource();
 
-				this._updateModel("manualNveInputModel", "/manualInput", oInput.getValue());
+				this._updateModel("TourAndStopModel", "/nveInputOfCustomer/manualInput", oInput.getValue());
 			},
 
 			onManualInputInputLiveChange: function (oEvent) {
@@ -150,7 +150,7 @@ sap.ui.define(
 
 			resetUserBarcodeInput: function () { //Sowohl Model als auch Input leeren
 				this._setValueOnViewById("barcodeInput", "");
-				this._updateModel("manualNveInputModel", "/manualInput", "");
+				this._updateModel("TourAndStopModel", "/nveInputOfCustomer/manualInput", "");
 			},
 
 			_setValueOnViewById: function (sViewId, value) {
@@ -504,7 +504,7 @@ sap.ui.define(
 			},
 
 			clearManualNveInput: function () {
-				this.getOwnerComponent().getModel("manualNveInputModel").setProperty("/manualInput", "");
+				this.getOwnerComponent().getModel("TourAndStopModel").setProperty("/nveInputOfCustomer/manualInput", "");
 			},
 
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {

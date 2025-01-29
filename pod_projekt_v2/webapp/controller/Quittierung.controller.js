@@ -79,8 +79,32 @@ sap.ui.define(
 				this._showMessageToast("dummyProcessFinished", 2500);
 
 				setTimeout(() => {
+					this.setCurrentStopAsFinished(); //Demo weil Kunde nicht angetroffen
 					this.onNavToActiveTour();
 				}, 2000);
+			},
+
+			setCurrentStopAsFinished: function () {
+				//!Statuscodes muessen abgesprochen werden
+				let oCurrentStop = this.getCurrentStopOfTour(); 
+				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); 
+				let oFoundCurrentStop = aStopsOfCurrentTour.find((element) => element.addressName1 === oCurrentStop.addressName1); //'.filter' wuerde ein Arraay zurueckgeben
+
+				if (oFoundCurrentStop) {
+					oFoundCurrentStop.stopStatus = "70"; // --> Annahme: 70 ist erledigt
+				}
+			},
+
+			getCurrentStopOfTour:function(){
+				let oCurrentStop = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentStop"); //Infos ueber derzeitigen Stopp
+
+				return oCurrentStop;
+			},
+
+			getStopsOfCurrentTour:function(){
+				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/stops"); //Tour mit allen Stopps und Infos vorhanden
+
+				return aStopsOfCurrentTour;
 			},
 
 			_showMessageToast: function (sMessageKey, iDuration) {
@@ -207,8 +231,13 @@ sap.ui.define(
 					pattern: "dd.MM.YYYY HH:mm:ss",
 				}).format(new Date()); //Datum inklusive Uhrzeit
 				oConfigModel.setProperty("/customerInformation/dateAndTime", sDateAndTime);
+				this.removeCustomerNameInputText();
 
 				this.onNavToUnterschrift();
+			},
+
+			removeCustomerNameInputText:function(){ //!Test
+				this.getView().byId("recipientNameInp").setValue("");
 			},
 
 			onAddFotoDialogClose: function () { //Schließen Dialog
@@ -503,7 +532,7 @@ sap.ui.define(
 			},
 
 			onNavToActiveTour: function () { //Nicht alle Stopps beendet
-				this.updateModelBindings("StopModel"); //Aktualisiert die verbleibenden NVEs und das Unterschrift Icon
+				this.updateModelBindings("TourAndStopModel"); //Aktualisiert die verbleibenden NVEs und das Unterschrift Icon
 
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("ActiveTour");
