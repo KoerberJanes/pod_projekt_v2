@@ -95,6 +95,7 @@
           "aAllToursOfDriver": [],
           "oCurrentTour": {},
           "oCurrentStop":{},
+          "oViewerModeNve":{},
           "oDeliveryNote": {
             "note": {}
           },

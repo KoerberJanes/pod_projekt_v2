@@ -621,7 +621,7 @@ sap.ui.define(
 				this.byId("photoDialogClearing").close();
 			},
 
-			oTakenPhoto: function () { //Derzeit nicht benutzt weil fotos in der Abladung oder Quittierung geklaert werden sollten
+			onTakenPhoto: function () { //Derzeit nicht benutzt weil fotos in der Abladung oder Quittierung geklaert werden sollten
 				//TODO: Hier wuerde Foto fuer den Klaergrund an die NVE gehaengt werden anstatt an das normale Model!
 				let oTakenPhoto = this.getNewestImage(); //'Geschossenes' Foto
 
@@ -636,6 +636,46 @@ sap.ui.define(
 					}
 				}
 				this.onPhotoDialogClearingClose();
+			},
+
+			onClearedNvePressed:function(oEvent){
+				let oPressedClearedNve = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
+				let oTourAndStopModel =this.getOwnerComponent().getModel("TourAndStopModel");
+				
+				oTourAndStopModel.setProperty("/oViewerModeNve", oPressedClearedNve);
+				this.openClearedViewerInfoDialog();
+			},
+
+			onLoadedNvePressed:function(oEvent){
+				let oPressedLoadedNve = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
+				let oTourAndStopModel =this.getOwnerComponent().getModel("TourAndStopModel");
+				
+				oTourAndStopModel.setProperty("/oViewerModeNve", oPressedLoadedNve);
+				this.openLoadedViewerInfoDialog();
+			},
+
+			openClearedViewerInfoDialog:function(){
+				this.oClearedViewerInfoDialog ??= this.loadFragment({
+					name: "podprojekt.view.fragments.clearedViewerInfoDialog",
+				});
+
+				this.oClearedViewerInfoDialog.then((oDialog) => oDialog.open());
+			},
+
+			openLoadedViewerInfoDialog:function(){
+				this.oLoadedViewerInfoDialog ??= this.loadFragment({
+					name: "podprojekt.view.fragments.loadedViewerInfoDialog",
+				});
+
+				this.oLoadedViewerInfoDialog.then((oDialog) => oDialog.open());
+			},
+
+			onClearedViewerInfoDialogClose:function(){
+				this.getView().byId("clearedViewerInfoDialog").close();
+			},
+
+			onLoadedViewerInfoDialogClose:function(){
+				this.getView().byId("loadedViewerInfoDialog").close();
 			},
 
 			getClearingPhotos:function(){

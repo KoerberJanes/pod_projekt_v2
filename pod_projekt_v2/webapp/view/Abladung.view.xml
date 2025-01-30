@@ -56,12 +56,12 @@
 
                     <!-- Liste fuer aTotalClearedNVEs im Viewer-Mode -->
                     <List id="clearedNveList" headerText="{i18n>clearedNves}" items="{TourAndStopModel>/oDeliveryNote/note/aTotalClearedNVEs}" visible="{ConfigModel>/generalSettings/bViewerMode}" noDataText="{i18n>noClearedNves}">
-                        <StandardListItem title="{TourAndStopModel>accurateDescription}" />
+                        <StandardListItem title="{TourAndStopModel>accurateDescription}" press="onClearedNvePressed" type="Active"/>
                     </List>
 
                     <!-- Liste fuer aTotalLoadedNVEs im Viewer-Mode -->
                     <List id="loadedNveList" headerText="{i18n>loadedNves}" items="{TourAndStopModel>/oDeliveryNote/note/aTotalLoadedNVEs}" visible="{ConfigModel>/generalSettings/bViewerMode}" noDataText="{i18n>noLoadedNves}">
-                        <StandardListItem title="{TourAndStopModel>accurateDescription}" />
+                        <StandardListItem title="{TourAndStopModel>accurateDescription}" press="onLoadedNvePressed" type="Active"/>
                     </List>
 
 

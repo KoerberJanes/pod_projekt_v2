@@ -1,0 +1,52 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+>
+    <Dialog id="clearedViewerInfoDialog" title="{i18n>buildNo}" >
+        <customHeader>
+            <Bar >
+                <contentLeft>
+                    <Title id="clearedViewerInfoDialogTitleId" text="{i18n>ViewerInfoDialogTitle}  &#13;{i18n>buildNo}"/>
+                </contentLeft>
+                <contentRight>
+                    <Button icon="sap-icon://decline" press="onClearedViewerInfoDialogClose"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <form:SimpleForm id="clearedViewerInfoDialogFormId">
+                <form:content>
+                <Label id="clearedViewerInfoDialogDescriptionLabelId" text="{i18n>nveDescription}"></Label>
+                <Input id="clearedViewerInfoDialogDescriptionInputId" value="{TourAndStopModel>/oViewerModeNve/accurateDescription}" editable="false"></Input>
+                
+                <Label id="clearedViewerInfoDialogArticleCaptionLabelId" text="{i18n>nveArticleDescription}"></Label>
+                <Input id="clearedViewerInfoDialogArticleCaptionInputId" value="{TourAndStopModel>/oViewerModeNve/amount} &#13;{TourAndStopModel>/oViewerModeNve/articleCaption}" editable="false"></Input>
+
+                <Label id="clearedViewerInfoDialogTypeCaptionLabelId" text="{i18n>nveLoadingDeviceTypeCaption}"></Label>
+                <Input id="clearedViewerInfoDialogTypeCaptionInputId" value="{TourAndStopModel>/oViewerModeNve/lodingDeviceTypeCaption}" editable="false"></Input>
+
+                <Label id="clearedViewerInfoDialogclearingReasonLabelId" text="{i18n>nveClearingReasonDescription}"></Label>
+                <Input id="clearedViewerInfoDialogclearingReasonInputId" value="{TourAndStopModel>/oViewerModeNve/clearingReasonDescription}" editable="false"></Input>
+                
+                <Label id="clearedViewerInfoDialogSignedCustomerNameLabelId" text="{i18n>nveSignedCustomerName}"></Label>
+                <Input id="clearedViewerInfoDialogSignedCustomerNameInputId" value="{TourAndStopModel>/oCurrentStop/signedCustomerName}" editable="false"></Input>
+
+                <Label id="clearedViewerInfoDialogPhoneAvisLabelId" text="{i18n>nvePhoneAvis}"></Label>
+                <Button id="clearedViewerInfoDialogPhoneAvisButtonId" type="Emphasized" press="" icon="sap-icon://call" text="{TourAndStopModel>/oCurrentStop/orders/0/phoneAvis}"/> <!--Funktion nicht hinterlegt-->
+
+                </form:content>
+            </form:SimpleForm>
+
+            <VBox alignItems="Center" id="clearedViewerInfoDialogVBoxId">
+                <Image id="clearedViewerInfoDialogImageId" src="{TourAndStopModel>/oCurrentStop/finishedSignature}"></Image>
+            </VBox>
+        </content>
+        <beginButton>
+            
+        </beginButton>
+        <endButton>
+            
+        </endButton>
+    </Dialog>
+</c:FragmentDefinition>

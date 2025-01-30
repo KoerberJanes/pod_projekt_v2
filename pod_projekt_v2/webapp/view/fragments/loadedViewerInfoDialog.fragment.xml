@@ -1,0 +1,51 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+>
+    <Dialog id="loadedViewerInfoDialog" title="{i18n>buildNo}" >
+        <customHeader>
+            <Bar >
+                <contentLeft>
+                    <Title id="loadedViewerInfoDialogTitleId" text="{i18n>ViewerInfoDialogTitle}  &#13;{i18n>buildNo}"/>
+                </contentLeft>
+                <contentRight>
+                    <Button icon="sap-icon://decline" press="onLoadedViewerInfoDialogClose"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <form:SimpleForm id="loadedViewerInfoDialogFormId">
+                <form:content>
+
+                <Label id="loadedViewerInfoDialogDescriptionLabelId" text="{i18n>nveDescription}"></Label>
+                <Input id="loadedViewerInfoDialogDescriptionInputId" value="{TourAndStopModel>/oViewerModeNve/accurateDescription}" editable="false"></Input>
+                
+                <Label id="loadedViewerInfoDialogArticleCaptionLabelId" text="{i18n>nveArticleDescription}"></Label>
+                <Input id="loadedViewerInfoDialogArticleCaptionInputId" value="{TourAndStopModel>/oViewerModeNve/amount} &#13;{TourAndStopModel>/oViewerModeNve/articleCaption}" editable="false"></Input>
+
+                <Label id="loadedViewerInfoDialogTypeCaptionLabelId" text="{i18n>nveLoadingDeviceTypeCaption}"></Label>
+                <Input id="loadedViewerInfoDialogTypeCaptionInputId" value="{TourAndStopModel>/oViewerModeNve/lodingDeviceTypeCaption}" editable="false"></Input>
+
+                <Label id="loadedViewerInfoDialogSignedCustomerNameLabelId" text="{i18n>nveSignedCustomerName}"></Label>
+                <Input id="loadedViewerInfoDialogSignedCustomerNameInputId" value="{TourAndStopModel>/oCurrentStop/signedCustomerName}" editable="false"></Input>
+
+                <Label id="loadedViewerInfoDialogPhoneAvisLabelId" text="{i18n>nvePhoneAvis}"></Label>
+                <Button id="loadedViewerInfoDialogPhoneAvisButtonId" type="Emphasized" press="" icon="sap-icon://call" text="{TourAndStopModel>/oCurrentStop/orders/0/phoneAvis}"/> <!--Funktion nicht hinterlegt-->
+
+                </form:content>
+            </form:SimpleForm>
+
+            <VBox alignItems="Center" id="loadedViewerInfoDialogVBoxId">
+                <Image id="loadedViewerInfoDialogImageId" src="{TourAndStopModel>/oCurrentStop/finishedSignature}"></Image>
+            </VBox>
+
+        </content>
+        <beginButton>
+            
+        </beginButton>
+        <endButton>
+            
+        </endButton>
+    </Dialog>
+</c:FragmentDefinition>

@@ -39,7 +39,7 @@
                     <Label id="idLieferscheineLabel" text="{i18n>deliveryItems}" />
                     <Text text="{
                         parts: [
-                          { path: 'TourAndStopModel>/tour/orders/0/aDeliveryNotes' },
+                          { path: 'TourAndStopModel>/oCurrentStop/orders/0/aDeliveryNotes' },
                           { path: 'i18n>deliveryItems' },
                           { path: 'i18n>processed' }
                         ],
@@ -47,7 +47,7 @@
                       }"/>
                     <Text text="{
                         parts: [
-                          { path: 'TourAndStopModel>/tour/orders/0/aDeliveryNotes' },
+                          { path: 'TourAndStopModel>/oCurrentStop/orders/0/aDeliveryNotes' },
                           { path: 'i18n>retoures' },
                           { path: 'i18n>processed' }
                         ],
