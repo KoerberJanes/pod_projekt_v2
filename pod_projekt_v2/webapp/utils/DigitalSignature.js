@@ -4,6 +4,7 @@ sap.ui.define(
         return Control.extend("podprojekt.utils.DigitalSignature", {
             metadata: {
                 properties: {
+                    visible: { type: "boolean", defaultValue: true },
                     width: { type: "sap.ui.core.CSSSize", defaultValue: "auto" },
                     height: { type: "sap.ui.core.CSSSize", defaultValue: "auto" },
                     borderColor: { type: "sap.ui.core.CSSColor", defaultValue: "#000000" },

@@ -15,6 +15,11 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
+			signatureFieldFormatter: function(bViwerMode) {//Regelt ob das Unterschrift-Feld sichtbar sein soll
+				// Wenn bViwerMode true ist, soll das Control unsichtbar sein:
+				return !bViwerMode;
+			},
+
 			simulateBackendCallForSigneageOfStopp: function (bTestCase) {
 				//this.openBusyDialog() //Dialog oeffnen um Backend-Call abzuwarten ggf. nicht notwendig, da nur gesendet wird
 				//Methoden und Filter koennen hier erstellt werden.

@@ -82,9 +82,9 @@
             </form:SimpleForm>
             <!--Leider ist mir keine bessere Idee gekommen, dass das Signature-Feld mittig angeziegt wird-->
             <Button width="5%" icon="sap-icon://decline" press="onClearSignField"/>
-            <VBox alignItems="Center">
-                <customControl:DigitalSignature id="digitalSignatureId" visible="{= ${settings>/bViwerMode} === true ? false : true}" /> <!--visible scheint hier nicht zu funktionieren, in der vbox uebrigends auch nicht-->
-                <ImageContent id="alreadySignedPicture" src="{TourAndStopModel>/oCurrentStop/finishedSignature}" visible="{settings>/bViwerMode}"/>
+            <VBox id="vBoxSignField" alignItems="Center" visible="{= ${ConfigModel>/generalSettings/bViwerMode} === true ? false : true}">
+                <customControl:DigitalSignature id="digitalSignatureId" visible="{ path: 'ConfigModel>/generalSettings/bViewerMode', formatter: '.signatureFieldFormatter' }"/> 
+                <Image id="alreadySignedPicture" src="{TourAndStopModel>/oCurrentStop/finishedSignature}" visible="{ConfigModel>/generalSettings/bViwerMode}"/>
             </VBox>
         </content>
 
