@@ -23,7 +23,7 @@
         <content>
             <form:SimpleForm id="currentTourInfoForm">
                 <form:content>
-                    <Text id="driverInfo" text="{ConfigModel>/customerInformation/driverName}&#10;"/>
+                    <Text id="driverInfo" text="{TourAndStopModel>/customerInformation/driverName}&#10;"/>
                     <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourAndStopModel>/oCurrentTour/routeCaption}" wrapping="true" level="H2"/>
                         <HBox justifyContent="SpaceAround">
                             <Label text="{i18n>adress}"/>
@@ -42,7 +42,7 @@
                         visible="{= ${ConfigModel>/generalSettings/recipientFound} === false ? false:
                             ${ConfigModel>/generalSettings/bViewerMode} === false ? true : false}" 
                         value="{
-                            path: 'ConfigModel>/recipientOfDelivery/name',
+                            path: 'TourAndStopModel>/aQuittierungInformation/sName',
                             type: 'sap.ui.model.type.String',
                             constraints: {
                                 minLength: 2,
@@ -77,12 +77,16 @@
                         type="{= ${TourAndStopModel>/oCurrentStop/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits}.length > 0 ? 'Error' : 'None'}" />
 
                     <Label id="complaints" text="{i18n>complaints}"/>
-                    <Switch id="complaintsSwitch" type="AcceptReject" state="{ConfigModel>/generalSettings/complaintsSwitch}" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
+                        <!--Switch ohne Anzeigemodus-->
+                    <Switch id="complaintsSwitch" type="AcceptReject" state="{ConfigModel>/generalSettings/complaintsSwitch}" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }" visible="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
+                        <!--Switch mit Anzeigemodus-->
+                    <Switch id="complaintsSwitchViewerMode" type="AcceptReject" state="{= ${TourAndStopModel>/oCurrentStop/aComplaints}.length > 0 ? true : false }" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }" visible="{ConfigModel>/generalSettings/bViewerMode}"/>
                     <Label />
-                    <List id="complaintsList" mode="MultiSelect" includeItemInSelection="true" items="{ComplaintsModel>/results}" visible="{= ${ConfigModel>/generalSettings/complaintsSwitch}}">
+
+                    <!--Liste mit Beanstandungen ohne Anzeigemodus-->
+                    <List id="complaintsList" mode="MultiSelect" includeItemInSelection="true" items="{ComplaintsModel>/results}" visible="{= ${ConfigModel>/generalSettings/complaintsSwitch}}" >
                         <items>
-                            <StandardListItem
-                                title="{ComplaintsModel>complaintText}"/>
+                            <StandardListItem title="{ComplaintsModel>complaintText}" selected="{ComplaintsModel>value}"/>
                         </items>
                         <headerToolbar>
                             <OverflowToolbar>
@@ -91,10 +95,31 @@
                         </headerToolbar>
                     </List>
 
-                    <Label id="remarks" text="{i18n>remarks}"/>
-                    <Switch id="remarksSwitch" type="AcceptReject" state="{ConfigModel>/generalSettings/remarksSwitch}" enabled="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
+                    <!--Liste mit Beanstandungen mit Anzeigemodus-->
+                    <List id="complaintsListViewerMode" mode="None" includeItemInSelection="true" items="{TourAndStopModel>/oCurrentStop/aComplaints}" visible="{ConfigModel>/generalSettings/bViewerMode}"> <!--mode="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? 'MultiSelect' : 'None'}"-->
+                        <items>
+                            <StandardListItem title="{TourAndStopModel>complaintText}" selected="{TourAndStopModel>value}"/>
+                        </items>
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title text="{i18n>complaints}" level="H2" />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                    </List>
+
+                    <Label id="remarks" text="{i18n>remarks}" />
+                    <Switch id="remarksSwitch" type="AcceptReject" enabled="{= !${ConfigModel>/generalSettings/bViewerMode} }" state="{ConfigModel>/generalSettings/remarksSwitch}" visible="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? false : true }"/> <!--text is prohibited: https://experience.sap.com/fiori-design-web/switch/-->
+                    <Switch id="remarksSwitchViewerMode" type="AcceptReject" enabled="false" state="{= ${TourAndStopModel>/oCurrentStop/sDeliveryRemarks} === '' ? false : true }" visible="{ConfigModel>/generalSettings/bViewerMode}"/> 
                     <Label />
-                    <TextArea id="idTextarea" visible="{ConfigModel>/generalSettings/remarksSwitch}"/>
+
+                        <!--Text-feld fuer remakrs ohne Anzeigemodus-->
+                    <TextArea id="idTextarea" 
+                        value="{TourAndStopModel>/aQuittierungInformation/sRemarks}" 
+                        visible="{= ${ConfigModel>/generalSettings/remarksSwitch} === true ? (${ConfigModel>/generalSettings/bViewerMode} === true ? false : true) : false }"/>
+                        <!--Text-feld fuer remakrs im Anzeigemodus-->
+                    <TextArea id="idTextareaViewerMode" value="{TourAndStopModel>/oCurrentStop/sDeliveryRemarks}" 
+                        visible="{= ${ConfigModel>/generalSettings/bViewerMode} === true ? true : false }"
+                        editable="false"/>
 
                     <Label id="photoItems" text="{i18n>showPhotos}"/>
                     <ToggleButton id="photoItemsToggleButton" icon="{=${ConfigModel>/generalSettings/bPhotoListVisible} === true ? 'sap-icon://less' : 'sap-icon://add'}" text="{i18n>photoList}" pressed="{ConfigModel>/generalSettings/bPhotoListVisible}"/>
@@ -189,7 +214,6 @@
                                         urlPath="url"
                                         previewablePath="previewable"
                                         fileSizePath="fileSize"
-                                        isTrustedSourcePath="trustedSource"
                                     />
                                 </rowConfiguration>
                             </plugins.UploadSetwithTable>

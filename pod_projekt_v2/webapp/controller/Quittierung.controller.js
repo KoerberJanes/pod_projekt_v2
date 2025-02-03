@@ -50,7 +50,7 @@ sap.ui.define(
 			},
 
 			setCustomerName:function(sCustomerInput){
-				this.getView().getModel("ConfigModel").setProperty("/recipientOfDelivery/name", sCustomerInput);
+				this.getView().getModel("TourAndStopModel").setProperty("/aQuittierungInformation/sName", sCustomerInput);
 			},
 
 			onCustomerNameInputLiveChange: function (oEvent) { //Leider notwendig, weil das 'clearIcon' nicht das Model aktualisiert
@@ -181,9 +181,9 @@ sap.ui.define(
 			},
 
 			getCustomerName:function(){
-				let sConfigModelInput = this.getView().getModel("ConfigModel").getProperty("/recipientOfDelivery/name");
+				let sTourAndStopModelInput = this.getView().getModel("TourAndStopModel").getProperty("/aQuittierungInformation/sName");
 
-				return sConfigModelInput;
+				return sTourAndStopModelInput;
 			},
 
 			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
@@ -193,22 +193,21 @@ sap.ui.define(
 					this.checkIfNvesAreProcessed();
 				} else { //Eingabe-Parameter passen nicht
 					this.showMatchingErrorReason();
-					//
 				}
 			},
 
 			showMatchingErrorReason:function(){
 				let sConfigModelInput = this.getCustomerName();
 
-				if (!customerName || customerName.length === 0) { //Kein Name Angegeben
+				if (!sConfigModelInput || sConfigModelInput.length === 0) { //Kein Name Angegeben
 					this._showErrorMessageBox("nameNotMatchingRegexEmpty", () => this.scrollToInputAfterError());
 				}
 			
-				if (customerName && customerName.length > 0 && customerName.length < 2) { //Name mit weniger als 2 Buchstaben
+				if (sConfigModelInput && sConfigModelInput.length > 0 && sConfigModelInput.length < 2) { //Name mit weniger als 2 Buchstaben
 					this._showErrorMessageBox("nameNotMatchingRegexNameTooShort", () => this.scrollToInputAfterError());
 				}
 			
-				if (customerName && customerName.length >= 2) { //Allgemeine sonderzeichenregel verletzt
+				if (sConfigModelInput && sConfigModelInput.length >= 2) { //Allgemeine sonderzeichenregel verletzt
 					this._showErrorMessageBox("nameNotMatchingRegex", () => this.scrollToInputAfterError());
 				}
 
@@ -222,22 +221,32 @@ sap.ui.define(
 					this._showErrorMessageBox("notPermitedToSignTour", () => this.scrollToDeliveryNotesAfterError());
 				} else { //Es sind keine Nves mehr zu bearbeiten
 					this.setSigningDateAndTime();
+					this.setComplaints();
 				}
 			},
 
 			setSigningDateAndTime: function () { //Erstellen des Datums und der Uhrzeit fuer die Unterschrift-Seite
-				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "dd.MM.YYYY HH:mm:ss",
 				}).format(new Date()); //Datum inklusive Uhrzeit
-				oConfigModel.setProperty("/customerInformation/dateAndTime", sDateAndTime);
-				this.removeCustomerNameInputText();
+				oTourAndStopModel.setProperty("/customerInformation/dateAndTime", sDateAndTime);
 
 				this.onNavToUnterschrift();
 			},
 
-			removeCustomerNameInputText:function(){ //!Test
-				this.getView().byId("recipientNameInp").setValue("");
+			setComplaints:function(){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aCollectionOfFilteredComplaints = this.getFilteredComplaints();
+				
+				oTourAndStopModel.setProperty("/aQuittierungInformation/aComplaints", aCollectionOfFilteredComplaints);
+			},
+
+			getFilteredComplaints:function(){
+				let aCurrentComplaints = this.getOwnerComponent().getModel("ComplaintsModel")?.getProperty("/results") || [];
+				let aCollectionOfFilteredComplaints = aCurrentComplaints.filter((element) => element.value === true);
+
+				return aCollectionOfFilteredComplaints;
 			},
 
 			onAddFotoDialogClose: function () { //Schließen Dialog

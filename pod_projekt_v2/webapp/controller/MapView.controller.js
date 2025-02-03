@@ -30,6 +30,7 @@ sap.ui.define(
 
 					this.createDestinationSpot(oCurrentStop, sTargetGeoL, sTargetGeoB);  
 					this.getCurrentPosition(false); // Abrufen der aktuellen Position
+					this.setDemoLocationForUser(false);
 
 					//this.onBusyDialogClose(); // Ladeindikator schließen
 				});
@@ -89,6 +90,7 @@ sap.ui.define(
 					},
 					(oError) => {
 						MessageToast.show("Could not fetch Geo-Location");
+						this.setDemoLocationForUser(bZoomToSpot);
 					},
 					{
 						//Attributes for better GPS-Data
@@ -98,6 +100,25 @@ sap.ui.define(
 					}
 				);
 				//this.onBusyDialogClose();
+			},
+
+			setDemoLocationForUser:function(bZoomToSpot){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aGeoMapSpots = oTourAndStopModel.getProperty("/GeoMapSpots/spots");
+				// Neues Stop-Objekt erstellen
+				let oStop = {
+					bTarget: false,
+					pos: '8.998693;48.674406',
+					tooltip: "current location",
+					type: "Success",
+					description: "Own Location",
+				};
+
+				let aUpdatedSpots = [...aGeoMapSpots, oStop]; //Array wird mit neuem Stopp erstellt, dass angezeigt wird
+				oTourAndStopModel.setProperty("/GeoMapSpots/spots", aUpdatedSpots); //damit ist kein Model.refresh() mehr notwendig
+				if (bZoomToSpot) {
+					this.toCurrentPosition('8.998693', '48.674406');
+				}
 			},
 
 			removeOldOwnPosition: function () { //entfernen vom alten eigenen Pointer

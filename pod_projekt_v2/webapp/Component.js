@@ -1870,6 +1870,19 @@ sap.ui.define([
 				}], 
 				"oCurrentTour" :{},
 				"oCurrentStop":{},
+				"oViewerModeNve":{},
+				"customerInformation":{
+					"role": "",
+					"dateAndTime": "",
+					"driverId": "",
+					"driverName": "Test Driver",
+					"customerName": ""
+				},
+				"aQuittierungInformation": {
+					"sName": "",
+					"sRemarks": "",
+					"aComplaints": []
+				},
 				"oDeliveryNote": {
 					"note": {}
 				},

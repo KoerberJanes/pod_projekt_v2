@@ -20,7 +20,7 @@
             </customHeader>
         <content>
             <!-- FilterBar -->
-            <fb:FilterBar id="filterBar" search="onFilterSearch" filterBarExpanded="false" visible="{= ${ConfigModel>/customerInformation/role} === 'dispo' ? true : false}">
+            <fb:FilterBar id="filterBar" search="onFilterSearch" filterBarExpanded="false" visible="{= ${TourAndStopModel>/customerInformation/role} === 'dispo' ? true : false}">
                 <fb:filterGroupItems>
                     <fb:FilterGroupItem name="RouteStatus" label="{i18n>routeStatusLabel}" groupName="StatusFilter" visibleInFilterBar="true" > <!--visibleInFilterBar="true" notwendig, sonst keine Filter sichtbar-->
                         <fb:control>

@@ -75,16 +75,6 @@
             "bStopSequenceChangeable": true,
             "bViewerMode": false,
             "bStopOrderChanged": false
-          },
-          "customerInformation":{
-            "role": "",
-            "dateAndTime": "",
-            "driverId": "",
-            "driverName": "Test Driver",
-            "customerName": ""
-          },
-          "recipientOfDelivery": {
-            "name": ""
           }
         }
       },
@@ -96,6 +86,17 @@
           "oCurrentTour": {},
           "oCurrentStop":{},
           "oViewerModeNve":{},
+          "customerInformation":{
+            "role": "",
+            "dateAndTime": "",
+            "driverId": "",
+            "driverName": "Test Driver"
+          },
+          "aQuittierungInformation": {
+            "sName": "",
+            "sRemarks": "",
+            "aComplaints": []
+          },
           "oDeliveryNote": {
             "note": {}
           },
@@ -158,10 +159,10 @@
         "type": "sap.ui.model.json.JSONModel",
         "settings": {
           "results": [
-            { "complaintText": "Abladen nicht möglich - Annahmeverweigerung" },
-            { "complaintText": "Abladen nicht möglich - Kunde nicht angetroffen" },
-            { "complaintText": "Abladen nicht möglich - Sonstiges" },
-            { "complaintText": "Beschädigung (gesamte Sendung)" }
+            { "complaintText": "Abladen nicht möglich - Annahmeverweigerung", "value": false },
+            { "complaintText": "Abladen nicht möglich - Kunde nicht angetroffen", "value": false },
+            { "complaintText": "Abladen nicht möglich - Sonstiges", "value": false },
+            { "complaintText": "Beschädigung (gesamte Sendung)", "value": false }
           ]
         }
       },

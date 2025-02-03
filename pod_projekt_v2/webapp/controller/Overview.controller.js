@@ -23,9 +23,10 @@ sap.ui.define(
 			},
 
 			getUrlParameters() {
-				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sIdEumDev;
-				let userRole = '';
+				let userRoleDispo = 'dispo';
+				let userRoleDefault = '';
 				let sDriverName = "Test Driver";
 
 				// Abfragen der Startup-Parameter, wenn verfuegbar
@@ -37,9 +38,9 @@ sap.ui.define(
 					sIdEumDev = jQuery.sap.getUriParameters().get("IdEumDev") || "3";
 				}*/
 
-				oConfigModel.setProperty("/customerInformation/driverId", sIdEumDev);
-				oConfigModel.setProperty("/customerInformation/role", userRole);
-				oConfigModel.setProperty("/customerInformation/driverName", sDriverName);
+				oTourAndStopModel.setProperty("/customerInformation/driverId", sIdEumDev);
+				oTourAndStopModel.setProperty("/customerInformation/role", userRoleDispo);
+				oTourAndStopModel.setProperty("/customerInformation/driverName", sDriverName);
 
 				//Simulation fuer den Backend-Call nachdem Fahrerdaten gesetzt wurden
 				this.simulateBackendCallForTours(true);
@@ -189,8 +190,8 @@ sap.ui.define(
 
 			getFilteredStops: function (aRecievedTours) { //Tour-Stati werden gefiltert
 				
-				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
-				let sCustomerRole = oConfigModel.getProperty(("/customerInformation/role"));
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let sCustomerRole = oTourAndStopModel.getProperty(("/customerInformation/role"));
 
 				return sCustomerRole !== 'dispo' ? aRecievedTours.filter((tour) => !["90", "70", "10"].includes(tour.routeStatus)) : aRecievedTours;
 			},

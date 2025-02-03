@@ -78,22 +78,38 @@ sap.ui.define(
 				this.getView().byId("digitalSignatureId").clearArea();
 			},
 
+			clearRemarksField:function(){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+
+				oTourAndStopModel.setProperty("/aQuittierungInformation/sRemarks", "");
+				this.updateModelBindings("TourAndStopModel");
+			},
+
 			onCheckIfStopSigned: function () { //Pruefen ob die Tour unterschrieben wurde
 				let sDigitalSignatureId = this.byId("digitalSignatureId");
 				let sSignatureAsPng = sDigitalSignatureId.getSignatureAsPng();
 
 				if (sSignatureAsPng) { // Feld enthaelt etwas und wurde unterschrieben!
 					this.openBusyDialog();
-					this.setSignatureOfStopp(sSignatureAsPng);
+					this.concludeStop(sSignatureAsPng); //Setzt alle notwendigen Infos fuer den Stopp
 
 					let aPromises = [];
 
 					aPromises.push(this.simulateBackendCallForSigneageOfStopp(true));
 
 					Promise.all(aPromises)
-					.then(() => {
+					.then(() => { //Setzt alle Dinge fuer den naechsten Stopp zurueck
 						this.closeBusyDialog();
-						this.onClearSignField();
+						this.onClearSignField(); //unterschrift leeren
+						this.clearCustomerNameInput(); //Kundenname leeren
+						this.clearStopComplaints(); //Beanstandungen leeren
+						this.resetComplaintsSwitch(); //Beanstandungen-Switch reset
+						this.clearRemarksField(); //Bemerkungen leeren
+						this.resetRemarksSwitch(); //Bemerkungen-Switch reset
+
+						this.updateModelBindings("TourAndStopModel"); //update, damit Tourinfos wieder zurueckgesetzt sind
+						this.updateModelBindings("ComplaintsModel"); //update, damit complaints wieder zurueckgesetzt sind
+						this.updateModelBindings("ConfigModel"); //update, damit switches, etc. wieder zurueckgesetzt sind
 						this.showBackendConfirmMessage();
 						this.setCurrentStopAsFinished();
 					})	
@@ -106,13 +122,79 @@ sap.ui.define(
 				}
 			},
 
+			clearCustomerNameInput:function(){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+
+				oTourAndStopModel.setProperty("/aQuittierungInformation/sName", "");
+			},
+
+			clearStopComplaints:function(){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+
+				oTourAndStopModel.setProperty("/aQuittierungInformation/aComplaints", []);
+				this.resetUserComplaints();
+			},
+
+			resetComplaintsSwitch:function(){
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
+
+				oConfigModel.setProperty("/generalSettings/complaintsSwitch", false);
+			},
+
+			resetRemarksSwitch:function(){
+				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
+
+				oConfigModel.setProperty("/generalSettings/remarksSwitch", false);
+			},
+
+			resetUserComplaints:function(){
+				let oComplaintsModel = this.getOwnerComponent().getModel("ComplaintsModel");
+				let aComplaints = oComplaintsModel.getProperty("/results");
+
+				aComplaints.forEach((stop) => stop.value = false);
+			},
+
+			concludeStop:function(sSignatureAsPng){ //Methode um alle Dinge des Stops zu sichern
+				this.setSignatureOfStopp(sSignatureAsPng); //Unterschirft dem Stop zuweisen
+				this.setRecipientOfStop(); //Empfaenger dem Stop zuweisen
+				this.setRemarksOfStop(); //Bemerkungen dem Stop zuweisen
+				this.setSignTimeOfStop(); //Uhrzeit dem Stop Zuweisen
+				this.setComplaintsOfStop(); //Array mit Beanstandungen dem Stop zuweisen
+				this.resetUserPhotos(); //User-Fotos leeren
+			},
+
 			setSignatureOfStopp:function(sSignatureAsPng){
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
-				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
-				let sCustomerName = oConfigModel.getProperty("/recipientOfDelivery/name");
 
 				oTourAndStopModel.setProperty("/oCurrentStop/finishedSignature", sSignatureAsPng);
+			},
+
+			setRecipientOfStop:function(){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let sCustomerName = oTourAndStopModel.getProperty("/aQuittierungInformation/sName");
+
 				oTourAndStopModel.setProperty("/oCurrentStop/signedCustomerName", sCustomerName);
+			},
+
+			setRemarksOfStop:function(){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let sRemarkesFieldInput = oTourAndStopModel.getProperty("/aQuittierungInformation/sRemarks");
+
+				oTourAndStopModel.setProperty("/oCurrentStop/sDeliveryRemarks", sRemarkesFieldInput);
+			},
+
+			setSignTimeOfStop:function(){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let sDateAndTime = oTourAndStopModel.getProperty("/customerInformation/dateAndTime");
+
+				oTourAndStopModel.setProperty("/oCurrentStop/sDateAndTimeOfSignature", sDateAndTime);
+			},
+
+			setComplaintsOfStop:function(){
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aCollectionOfFilteredComplaints = oTourAndStopModel.getProperty("/aQuittierungInformation/aComplaints");
+				
+				oTourAndStopModel.setProperty("/oCurrentStop/aComplaints", aCollectionOfFilteredComplaints);
 			},
 
 			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
@@ -123,11 +205,11 @@ sap.ui.define(
 			},
 
 			onRefreshDateAndTime: function () {
-				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "dd.MM.YYYY HH:mm:ss",
 				}).format(new Date()); //Datum inklusive Uhrzeit
-				oConfigModel.setProperty("/customerInformation/dateAndTime", sDateAndTime);
+				oTourAndStopModel.setProperty("/customerInformation/dateAndTime", sDateAndTime);
 			},
 
 			showBackendConfirmMessage: function () {
@@ -172,7 +254,7 @@ sap.ui.define(
 				//!Statuscodes muessen abgesprochen werden
 				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); //Tour mit allen Stopps und Infos vorhanden
 				let bAllStoppsProcessed = aStopsOfCurrentTour.every((element) => element.stopStatus === "70");
-				this.finishCurrentStop();
+				//this.finishCurrentStop();
 				
 				if (bAllStoppsProcessed) { //Pruefen ob alle stops beendet
 					//this.alterDisplayedNvesOfStop(); 
@@ -200,7 +282,7 @@ sap.ui.define(
 			*/
 
 			finishCurrentStop:function(){ //Stopp wurde beendet, alles wird wieder bereitgestellt und die Uebersicht der Stopps wird angezeigt
-				this.resetUserModelInput();
+				//this.resetUserModelInput();
 				this.resetUserPhotos();
 				//this.onNavToActiveTour(); 
 			},
@@ -212,11 +294,13 @@ sap.ui.define(
 				this.onNavToOverview(); 
 			},
 
+			/*
 			resetUserModelInput: function () {
-				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel"); //Angabe zum Namen des Kunden
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel"); //Angabe zum Namen des Kunden
 				//let oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
-				oConfigModel.setProperty("/customerInformation/customerName", "");
+				oTourAndStopModel.setProperty("/customerInformation/customerName", "");
 			},
+			*/
 
 			resetUserPhotos: function () {
 				let oPhotoManagementModel = this.getOwnerComponent().getModel("PhotoManagementModel");
@@ -288,7 +372,7 @@ sap.ui.define(
 			onNavToOverview: function () { //Alle Stopps beendet, navigation zur Touruebersicht
 				//Models ueber Statusaenderung der Tour informieren
 				this.updateModelBindings("TourAndStopModel");
-				this.resetUserModelInput();
+				//this.resetUserModelInput();
 
 				let oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("Overview");

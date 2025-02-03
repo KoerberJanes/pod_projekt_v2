@@ -19,7 +19,7 @@
 
             <form:SimpleForm id="currentTourInfoForm">
                 <form:content>
-                    <Text id="driverInfo" text="{ConfigModel>/customerInformation/driverName}&#10;"/>
+                    <Text id="driverInfo" text="{TourAndStopModel>/customerInformation/driverName}&#10;"/>
                     <Title id="currentTourInfo" text="{i18n>currentTour}&#13;{TourAndStopModel>/oCurrentTour/routeCaption}" wrapping="true" level="H2"/>
                         <HBox justifyContent="SpaceAround">
                             <Label text="{i18n>adress}"/>

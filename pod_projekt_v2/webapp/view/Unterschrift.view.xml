@@ -21,7 +21,7 @@
                 <form:content>
                     <Bar>
                         <contentMiddle>
-                            <Title id="OvtbTitle" text="{ConfigModel>/customerInformation/driverName}" level="H2" />
+                            <Title id="OvtbTitle" text="{TourAndStopModel>/customerInformation/driverName}" level="H2" />
                         </contentMiddle>
                         <contentRight>
                             <Button id="idDateRefreshButton" enabled="{= ${settings>/bViewerMode} === true ? false : true }" type="Emphasized" icon="sap-icon://refresh" press="onRefreshDateAndTime" width="20%"/>
@@ -58,10 +58,22 @@
                     <Text text="A {i18n>unloaded}"/>
                     <Text text="B {i18n>charged}"/>
                     <Label id="idLabelplaceholder"/>
-                    <Label id="idUnterschriftLabel" text="{i18n>signature}"/>
-                    <Text text="{ConfigModel>/recipientOfDelivery/name}"></Text>
-                    <Label id="idDatumUhrzeitLabel" text="{i18n>dateAndTime}"/>
-                    <Text text="{ConfigModel>/customerInformation/dateAndTime}"/>
+                        <!--Text-Feld fuer Unterschrift ohne Anzeigemodus-->
+                    <Label id="idUnterschriftLabel" text="{i18n>recipientName}" visible="{= ${ConfigModel>/generalSettings/bViewerMode} === false ? true : false }"/>
+                    <Text text="{TourAndStopModel>/aQuittierungInformation/sName}" visible="{= ${ConfigModel>/generalSettings/bViewerMode} === false ? true : false }"></Text>
+                        <!--Text-Feld fuer Unterschrift im Anzeigemodus-->
+                    <Label id="idUnterschriftLabelViewerMode" text="{i18n>recipientName}" visible="{ConfigModel>/generalSettings/bViewerMode}"/>
+                    <Text text="{TourAndStopModel>/oCurrentStop/signedCustomerName}" visible="{ConfigModel>/generalSettings/bViewerMode}"></Text>
+
+
+                        <!--Text-Feld fuer Stop ohne Anzeigemodus-->
+                    <Label id="idDatumUhrzeitLabel" text="{i18n>dateAndTime}" visible="{= ${ConfigModel>/generalSettings/bViewerMode} === false ? true : false }"/>
+                    <Text text="{TourAndStopModel>/customerInformation/dateAndTime}" visible="{= ${ConfigModel>/generalSettings/bViewerMode} === false ? true : false }" />
+                        <!--Text-Feld fuer Stop im Anzeigemodus-->
+                    <Label id="idDatumUhrzeitLabelViewerMode" text="{i18n>dateAndTime}" visible="{ConfigModel>/generalSettings/bViewerMode}"/>
+                    <Text text="{TourAndStopModel>/oCurrentStop/sDateAndTimeOfSignature}" visible="{ConfigModel>/generalSettings/bViewerMode}" />
+
+
                     <Label id="idGeoCoordinatesLabel" text="{i18n>geoCoordinates}"/>
                     <Text text="B:{TourAndStopModel>/oCurrentStop/orders/0/startGeoB}, L:{TourAndStopModel>/oCurrentStop/orders/0/startGeoL}"/>
                     <Label id="idSignFieldLabel" text="{i18n>signature}" labelFor="digitalSignatureId" required="true"/>
@@ -72,7 +84,7 @@
             <Button width="5%" icon="sap-icon://decline" press="onClearSignField"/>
             <VBox alignItems="Center">
                 <customControl:DigitalSignature id="digitalSignatureId" visible="{= ${settings>/bViwerMode} === true ? false : true}" /> <!--visible scheint hier nicht zu funktionieren, in der vbox uebrigends auch nicht-->
-                <ImageContent id="alreadySignedPicture" src="{StopInformationModel>/tour/finishedSignature}" visible="{settings>/bViwerMode}"/>
+                <ImageContent id="alreadySignedPicture" src="{TourAndStopModel>/oCurrentStop/finishedSignature}" visible="{settings>/bViwerMode}"/>
             </VBox>
         </content>
 

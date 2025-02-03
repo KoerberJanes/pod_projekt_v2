@@ -32,6 +32,9 @@
                 <Label id="clearedViewerInfoDialogSignedCustomerNameLabelId" text="{i18n>nveSignedCustomerName}"></Label>
                 <Input id="clearedViewerInfoDialogSignedCustomerNameInputId" value="{TourAndStopModel>/oCurrentStop/signedCustomerName}" editable="false"></Input>
 
+                <Label id="clearedViewerInfoDialogSignedCustomerNameLabelId" text="{i18n>stopSignDateAndTime}"></Label>
+                <Input id="clearedViewerInfoDialogSignedCustomerNameInputId" value="{TourAndStopModel>/oCurrentStop/sDateAndTimeOfSignature}" editable="false"></Input>
+
                 <Label id="clearedViewerInfoDialogPhoneAvisLabelId" text="{i18n>nvePhoneAvis}"></Label>
                 <Button id="clearedViewerInfoDialogPhoneAvisButtonId" type="Emphasized" press="" icon="sap-icon://call" text="{TourAndStopModel>/oCurrentStop/orders/0/phoneAvis}"/> <!--Funktion nicht hinterlegt-->
 
