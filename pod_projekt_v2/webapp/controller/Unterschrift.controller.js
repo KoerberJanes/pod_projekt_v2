@@ -16,7 +16,8 @@ sap.ui.define(
 			},
 
 			signatureFieldFormatter: function(bViwerMode) {//Regelt ob das Unterschrift-Feld sichtbar sein soll
-				// Wenn bViwerMode true ist, soll das Control unsichtbar sein:
+				// Habe leider keine bessere moeglichkeit gefunden
+				// Da das visible Attribut in den metadaten des SignFields steckt reagiert es nicht auf die View
 				return !bViwerMode;
 			},
 
@@ -49,13 +50,9 @@ sap.ui.define(
 
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
-						//this.closeBusyDialog();
-						if (bTestCase) {
-							//Success-Fall simulieren
-							//this.setStopOrderChangedToFalse();
+						if (bTestCase) { //Success-Fall simulieren
 							return resolve();
-						} else {
-							//Error-Fall simulieren
+						} else { //Error-Fall simulieren
 							return reject("Fehler beim senden des Stopps.");
 						}
 					}, 50);
@@ -75,15 +72,15 @@ sap.ui.define(
 				return `${count} ${retouresText} ${processedText}`; // Formatierter Text mit der Anzahl
 			},
 
-			updateModelBindings:function(sModelName){
+			updateModelBindings:function(sModelName){ //Update des Models in allen Views
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
-			onClearSignField: function () {
+			onClearSignField: function () { //Leeren des Unterschrift-Feldes
 				this.getView().byId("digitalSignatureId").clearArea();
 			},
 
-			clearRemarksField:function(){
+			clearRemarksField:function(){ //Leeren des Feldes fuer Bemerkungen
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 
 				oTourAndStopModel.setProperty("/aQuittierungInformation/sRemarks", "");
@@ -127,32 +124,32 @@ sap.ui.define(
 				}
 			},
 
-			clearCustomerNameInput:function(){
+			clearCustomerNameInput:function(){ //Leeren des Feldes des Kundennamen im Model
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 
 				oTourAndStopModel.setProperty("/aQuittierungInformation/sName", "");
 			},
 
-			clearStopComplaints:function(){
+			clearStopComplaints:function(){ //Leeren des Feldes der Beanstandungen im Model
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 
 				oTourAndStopModel.setProperty("/aQuittierungInformation/aComplaints", []);
 				this.resetUserComplaints();
 			},
 
-			resetComplaintsSwitch:function(){
+			resetComplaintsSwitch:function(){ //Zuruecksetzen der Switch fuer Beanstandungen
 				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
 
 				oConfigModel.setProperty("/generalSettings/complaintsSwitch", false);
 			},
 
-			resetRemarksSwitch:function(){
+			resetRemarksSwitch:function(){ //Zuruecksetzen der Switch fuer Bemerkungen
 				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
 
 				oConfigModel.setProperty("/generalSettings/remarksSwitch", false);
 			},
 
-			resetUserComplaints:function(){
+			resetUserComplaints:function(){ //Zuruecksetzen der Hacken bei Beanstandungen
 				let oComplaintsModel = this.getOwnerComponent().getModel("ComplaintsModel");
 				let aComplaints = oComplaintsModel.getProperty("/results");
 
@@ -168,48 +165,48 @@ sap.ui.define(
 				this.resetUserPhotos(); //User-Fotos leeren
 			},
 
-			setSignatureOfStopp:function(sSignatureAsPng){
+			setSignatureOfStopp:function(sSignatureAsPng){ //Setzen der Unterschrift fuer den Stopp
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 
 				oTourAndStopModel.setProperty("/oCurrentStop/finishedSignature", sSignatureAsPng);
 			},
 
-			setRecipientOfStop:function(){
+			setRecipientOfStop:function(){ //Setzen des Empfaengers fuer den Stopp
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sCustomerName = oTourAndStopModel.getProperty("/aQuittierungInformation/sName");
 
 				oTourAndStopModel.setProperty("/oCurrentStop/signedCustomerName", sCustomerName);
 			},
 
-			setRemarksOfStop:function(){
+			setRemarksOfStop:function(){ //Setzen der Bemerkungen fuer den Stopp
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sRemarkesFieldInput = oTourAndStopModel.getProperty("/aQuittierungInformation/sRemarks");
 
 				oTourAndStopModel.setProperty("/oCurrentStop/sDeliveryRemarks", sRemarkesFieldInput);
 			},
 
-			setSignTimeOfStop:function(){
+			setSignTimeOfStop:function(){ //Setzen der Zeit und des Datums fuer den Stopp
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sDateAndTime = oTourAndStopModel.getProperty("/customerInformation/dateAndTime");
 
 				oTourAndStopModel.setProperty("/oCurrentStop/sDateAndTimeOfSignature", sDateAndTime);
 			},
 
-			setComplaintsOfStop:function(){
+			setComplaintsOfStop:function(){ //Setzen des Beanstandungen fuer den Stopp
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let aCollectionOfFilteredComplaints = oTourAndStopModel.getProperty("/aQuittierungInformation/aComplaints");
 				
 				oTourAndStopModel.setProperty("/oCurrentStop/aComplaints", aCollectionOfFilteredComplaints);
 			},
 
-			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
+			_showErrorMessageBox: function (sMessageKey, fnOnClose) { //Generische Loesung feur Fehlermeldungen
 				StatusSounds.playBeepError();
 				MessageBox.error(this._oBundle.getText(sMessageKey), {
 					onClose: fnOnClose || function () {}, // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
 				});
 			},
 
-			onRefreshDateAndTime: function () {
+			onRefreshDateAndTime: function () { //Datum und Uhrzeit werden aktualisiert
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sDateAndTime = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "dd.MM.YYYY HH:mm:ss",
@@ -217,7 +214,7 @@ sap.ui.define(
 				oTourAndStopModel.setProperty("/customerInformation/dateAndTime", sDateAndTime);
 			},
 
-			showBackendConfirmMessage: function () {
+			showBackendConfirmMessage: function () { //Meldung an den User, dass der Stopp erfolgreich verarbeitet wurde
 				StatusSounds.playBeepSuccess();
 				MessageToast.show(this._oBundle.getText("stopSuccessfullyReceipt"), {
 					duration: 2500,
@@ -225,25 +222,25 @@ sap.ui.define(
 				});
 			},
 
-			getCurrentTour:function(){
+			getCurrentTour:function(){ //Zurueckgeben der aktuellen Tour
 				let oCurrentTour = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour");
 
 				return oCurrentTour;
 			},
 
-			getCurrentStopOfTour:function(){
+			getCurrentStopOfTour:function(){ //Zurueckgeben der aktuellen Stopps der aktuellen Tour
 				let oCurrentStop = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentStop"); //Infos ueber derzeitigen Stopp
 
 				return oCurrentStop;
 			},
 
-			getStopsOfCurrentTour:function(){
+			getStopsOfCurrentTour:function(){ //Zurueckgeben aller Stopps der aktuellen Tour
 				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/stops"); //Tour mit allen Stopps und Infos vorhanden
 
 				return aStopsOfCurrentTour;
 			},
 
-			setCurrentStopAsFinished: function () {
+			setCurrentStopAsFinished: function () { //aktuellen Stopp als bearbeitet Markieren
 				//!Statuscodes muessen abgesprochen werden
 				let oCurrentStop = this.getCurrentStopOfTour(); 
 				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); 
@@ -259,7 +256,6 @@ sap.ui.define(
 				//!Statuscodes muessen abgesprochen werden
 				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); //Tour mit allen Stopps und Infos vorhanden
 				let bAllStoppsProcessed = aStopsOfCurrentTour.every((element) => element.stopStatus === "70");
-				//this.finishCurrentStop();
 				
 				if (bAllStoppsProcessed) { //Pruefen ob alle stops beendet
 					//this.alterDisplayedNvesOfStop(); 
@@ -270,44 +266,20 @@ sap.ui.define(
 				}
 			},
 
-			setStopSequenceChangeableFalse:function(){
+			setStopSequenceChangeableFalse:function(){ //Zuruecksetzen des Attributes fuer die veraenderte Stoppreihenfolge
 				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
 				oConfigModel.setProperty("/generalSettings/bStopSequenceChangeable", false);
 			},
 
-			/*
-			alterDisplayedNvesOfStop: function () { //Aendern der Anzeige von verbleibenden NVEs in der Stoppuebersicht
-				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
-				let aRemainingNves = oTourAndStopModel.getProperty("/oCurrentStop/orders/0/aDeliveryNotes/0/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
-
-				oTourAndStopModel.setProperty("/tour/orders/0/loadingUnits", aRemainingNves);
-
-				this.finishCurrentStop();
-			},
-			*/
-
-			finishCurrentStop:function(){ //Stopp wurde beendet, alles wird wieder bereitgestellt und die Uebersicht der Stopps wird angezeigt
-				//this.resetUserModelInput();
-				this.resetUserPhotos();
-				//this.onNavToActiveTour(); 
-			},
-
-			setTourStatusProcessed: function () { //!Statuscodes muessen abgesprochen werden
+			setTourStatusProcessed: function () { //Tour als Abgeschlossen markieren
+				//!Statuscodes muessen abgesprochen werden
 				let oCurrentTour = this.getCurrentTour();
 
 				oCurrentTour.routeStatus = "10";
 				this.onNavToOverview(); 
 			},
 
-			/*
-			resetUserModelInput: function () {
-				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel"); //Angabe zum Namen des Kunden
-				//let oLoadingDevicesModel=this.getOwnerComponent().getModel("LoadingDeviceModel");
-				oTourAndStopModel.setProperty("/customerInformation/customerName", "");
-			},
-			*/
-
-			resetUserPhotos: function () {
+			resetUserPhotos: function () { //Zuruecksetzen der Fotos vom User
 				let oPhotoManagementModel = this.getOwnerComponent().getModel("PhotoManagementModel");
 				let aPhotoTypes = oPhotoManagementModel.getProperty("/photos/types");
 
@@ -317,27 +289,17 @@ sap.ui.define(
 				});
 			},
 
-			setStopOrderChangedToTrue:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
-				oSettingsModel.setProperty("/generalSettings/bStopOrderChanged", true);
-			},
-
-			setStopOrderChangedToFalse:function(){
+			setStopOrderChangedToFalse:function(){ //Setzen des StopOrderChanged Attributes auf false
 				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
 				oSettingsModel.setProperty("/generalSettings/bStopOrderChanged", false);
 			},
 
-			setUserViewerSettingToTrue:function(){
-				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
-				oSettingsModel.setProperty("/generalSettings/bViewerMode", true);
-			},
-
-			setUserViewerSettingToFalse:function(){
+			setUserViewerSettingToFalse:function(){ //Setzen des Viewer-Modus Attributes auf false
 				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel");
 				oConfigModel.setProperty("/generalSettings/bViewerMode", false);
 			},
 
-			onTourReviewed:function(){
+			onTourReviewed:function(){ //Tour wurde im Viewer-Modus betrachtet
 				this.setUserViewerSettingToFalse();
 				this.setStopOrderChangedToFalse();
 				this.onNavToActiveTour();
@@ -346,13 +308,11 @@ sap.ui.define(
 			openBusyDialog: async function () {
 				//Lade-Dialog oeffnen
 				if (!this.oBusyDialog) {
-					try {
-						// Lade das Fragment, wenn es noch nicht geladen wurde
+					try { // Lade das Fragment, wenn es noch nicht geladen wurde
 						this.oBusyDialog = await this.loadFragment({
 							name: "podprojekt.view.fragments.BusyDialog",
 						});
-					} catch (error) {
-						// Fehlerbehandlung bei Problemen beim Laden des Fragments
+					} catch (error) { // Fehlerbehandlung bei Problemen beim Laden des Fragments
 						console.error("Fehler beim Laden des BusyDialogs:", error);
 						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
 						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte

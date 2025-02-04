@@ -6,10 +6,10 @@ sap.ui.define(
 	function (Controller, MessageToast, MessageBox, StatusSounds) {
 		"use strict";
 
-		const MAX_PHOTOS_ALLOWED = 5;
+		const MAX_PHOTOS_ALLOWED = 5; //Maximum an erlaubten Fotos
 		const REGEX_NVE_USER_INPUT = /^[0-9]{5}$/; //es sind nur Ziffern erlaubt mit genau 5 Zeichen laenge
-		const MIN_SELECTED_ERROR_REASONS = 1;
-		const MAX_SELECTED_ERROR_REASONS = 2;
+		const MIN_SELECTED_ERROR_REASONS = 1; //Minimum an selektierten Klaergruenden
+		const MAX_SELECTED_ERROR_REASONS = 2; //Maximum an selektierten Klaergruenden
 
 		return Controller.extend("podprojekt.controller.Abladung", {
 			onInit: function () {},
@@ -49,12 +49,10 @@ sap.ui.define(
 				return new Promise((resolve, reject) => { // Promise erstellen
 					setTimeout(() => { // Asynchrone Verzögerung simulieren
 						//this.closeBusyDialog();
-						if (bTestCase) {
-							//Success-Fall simulieren
+						if (bTestCase)  {//Success-Fall simulieren
 							this.showSavingSuccessfullMessage();
 							return resolve();
-						} else {
-							//Error-Fall simulieren
+						} else { //Error-Fall simulieren
 							return reject("Fehler beim Verladen der NVEs.")
 						}
 					}, 500);
@@ -90,19 +88,17 @@ sap.ui.define(
 				return new Promise((resolve, reject) => { // Promise erstellen
 					setTimeout(() => { // Asynchrone Verzögerung simulieren
 						//this.closeBusyDialog();
-						if (bTestCase) {
-							//Success-Fall simulieren
+						if (bTestCase) { //Success-Fall simulieren
 							this.showSavingSuccessfullMessage();
 							return resolve(); // Erfolgreicher Call
-						} else {
-							//Error-Fall simulieren
+						} else { //Error-Fall simulieren
 							return reject("Fehler beim Klären der NVEs");
 						}
 					}, 500);
 				});
 			},
 
-			updateModelBindings:function(sModelName){
+			updateModelBindings:function(sModelName){ //Updated jede Eigenschaft innerhalb des Models auf allen Views
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
@@ -113,13 +109,12 @@ sap.ui.define(
 			_setFocusOnInput: function (sInputId) {
 				let oInput = this.getView().byId(sInputId);
 
-				if (oInput && oInput.getDomRef()) {
+				if (oInput && oInput.getDomRef()) { //Warten bis Renderer fertig ist um Fokus zu setzen
 					requestAnimationFrame(() => oInput.focus());
 				}
 			},
 
-			onManualInputChange: function (oEvent) {
-				//Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
+			onManualInputChange: function (oEvent) { //Bei jeder eingabe, wird der Wert des Inputs auch in das Model uebernommen
 				//! Impliziter aufruf des Change events findet sonst nicht statt (wurde vor einem Jahr schon festgestellt und ein Ticket bei SAP eroeffnet)
 				let oInput = oEvent.getSource();
 
@@ -132,7 +127,7 @@ sap.ui.define(
 				this._validateInput(oInput);
 			},
 
-			_validateInput: function (oInput) {
+			_validateInput: function (oInput) { //Zustaendig fuer die Anzeige ob Inhalt der view regex entspricht
 				let sValueState = "None";
 
 				try {
@@ -159,7 +154,7 @@ sap.ui.define(
 				oInput.setValue(value);
 			},
 
-			scrollToInputAfterError: function () {
+			scrollToInputAfterError: function () { //Eingabe war nicht OK, sprung in der View zum Feld
 				let oInputField = this.getView().byId("barcodeInput");
 
 				oInputField.setValueState("Error");
@@ -168,7 +163,7 @@ sap.ui.define(
 				}, 50);
 			},
 
-			onClearingButtonPress: function (oEvent) {
+			onClearingButtonPress: function (oEvent) { //Sicherheit fuer weitere Logik implementation
 				this._handleClearingButtonPress(oEvent);
 			},
 
@@ -183,8 +178,8 @@ sap.ui.define(
 				this._openNveClearingDialog();
 			},
 
-			getPossiblyRemainingNves:function(){
-				let aRemainingNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits"); //Noch nicht quittierte Nves
+			getPossiblyRemainingNves:function(){ //Gibt unbearbeitet Nves zurueck, sofern vorhanden
+				let aRemainingNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits") || []; //Noch nicht quittierte Nves
 
 				return aRemainingNves;
 			},
@@ -265,7 +260,7 @@ sap.ui.define(
 				});
 			},
 
-			AbortCurrentLoadedAndClearedNves: function () {
+			AbortCurrentLoadedAndClearedNves: function () { //Nachdem Nves verarbeitet wurden moechte der User zurueck gehen ohne zu sichern
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let aClearingNvesTemp = this.getUnsavedClearedNves(); //geklaerte Nves
 				let aLoadingNvesTemp = this.getUnsavedLoadedNves(); //verladene Nves
@@ -275,7 +270,7 @@ sap.ui.define(
 				let aUpdatedLoadingUnits = [...aLoadingUnits, ...aClearingNvesTemp, ...aLoadingNvesTemp];
 
 				oTourAndStopModel.setProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits", aUpdatedLoadingUnits);
-				this._emptyTempModels();
+				this._emptyTempNves();
 				this.navBackToQuittierung();
 			},
 
@@ -315,11 +310,11 @@ sap.ui.define(
 				this.openBusyDialog();
 				let aPromises = [];
 				
-				if(this.checkIfNvesWhereLoaded()){
+				if(this.checkIfNvesWhereLoaded()){ //Boolsche Variable ob verladene Nves existieren
 					aPromises.push(this.simulateBackendCallForLoadingNVEs(true));
 				}
 
-				if(this.checkIfNvesWhereCleared()){
+				if(this.checkIfNvesWhereCleared()){ //Boolsche Variable ob geklaerte Nves existieren
 					aPromises.push(this.simulateBackendCallForClearingNVEs(true));
 				}
 
@@ -341,13 +336,13 @@ sap.ui.define(
 				
 			},
 
-			_saveAllTempStoredNVEs: function () {
+			_saveAllTempStoredNVEs: function () { //sichern der temporär verladenen Nves
 				StatusSounds.playBeepSuccess();
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 
 				this._mergeAndSaveNves(oTourAndStopModel, "aTempLoadedNVEs", "aTotalLoadedNVEs");
 				this._mergeAndSaveNves(oTourAndStopModel, "aTempClearedNVEs", "aTotalClearedNVEs");
-				this._emptyTempModels();
+				this._emptyTempNves();
 			},
 
 			_mergeAndSaveNves: function (oModel, sTempProperty, sTotalProperty) { //Zusammenfuehren von temp und abgeschlossenen NVEs aus dem klaerungs bzw. verladungs-Model
@@ -360,13 +355,14 @@ sap.ui.define(
 				}
 			},
 
-			_emptyTempModels: function () { //Leeren der temporaeren Arrays
+			_emptyTempNves: function () { //Leeren der temporaeren Arrays
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				oTourAndStopModel.setProperty("/oDeliveryNote/note/aTempClearedNVEs", []);
 				oTourAndStopModel.setProperty("/oDeliveryNote/note/aTempLoadedNVEs", []);
 			},
 
-			nveClearingDialogConfirm: function (oEvent) { //Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
+			nveClearingDialogConfirm: function (oEvent) { //Nve soll geklaert werden
+				//Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
 				this.checkIfMinErrorReasonsSelected(oEvent);
 			},
 
@@ -376,7 +372,7 @@ sap.ui.define(
 				return aCurrentClearingReasons;
 			},
 
-			checkIfMinErrorReasonsSelected: function (oEvent) {
+			checkIfMinErrorReasonsSelected: function (oEvent) { //pruefen ob mindestanzahl an Gruenden eingehalten wurde 
 				let aCurrentClearingReasons = this.getCurrentClearingReasons();
 				let aCollectionOfSelectedReasons = aCurrentClearingReasons.filter((element) => element.value === true);
 
@@ -387,7 +383,7 @@ sap.ui.define(
 				}
 			},
 
-			checkIfMaxErrorReasonsSelected: function (aCollectionOfSelectedReasons, oEvent) {
+			checkIfMaxErrorReasonsSelected: function (aCollectionOfSelectedReasons, oEvent) { //pruefen ob maximalanzahl an Gruenden eingehalten wurde
 				if (aCollectionOfSelectedReasons.length <= MAX_SELECTED_ERROR_REASONS) { //Maximalanzahl Klaergruende wurde bestaetigt
 					this.setClearingResonInNve(aCollectionOfSelectedReasons, oEvent); //Einzelner Reason
 					//this.setClearingResonsInNve(aCollectionOfSelectedReasons); //!Mehrere Klaergruende, nicht entfernen!
@@ -396,13 +392,13 @@ sap.ui.define(
 				}
 			},
 
-			getClearingNve:function(){
+			getClearingNve:function(){ //Rueckgabe der klaer-Nve
 				let oClearingNve = this.getOwnerComponent().getModel("ClearingAndDialogModels").getProperty("/oClearingNve");
 
 				return oClearingNve;
 			},
 
-			setClearingResonInNve: function (aCollectionOfSelectedReasons, oEvent) {
+			setClearingResonInNve: function (aCollectionOfSelectedReasons, oEvent) { //Attribut fuer Klaergruende der Nve erstellen und fuellen
 				let oClearingNve = this.getClearingNve();
 
 				let oClearingReason = aCollectionOfSelectedReasons[0]; //da nur ein Klaergrund mitgegeben werden kann
@@ -423,35 +419,30 @@ sap.ui.define(
 			nveClearingDialogReject: function () { //Platz fuer zusaetzliche Funktionen, die gemacht werden koennen
 				this.nveClearingDialogClose();
 			},
-			/*
-			findClearingNve: function (oEvent) { //Klaer-Objekt finden
-				let oClearingNve = this.getClearingNve(); //Model der zu klaerenden Nve
-				this.differenciateNveProcessingType(oClearingNve, oEvent); //Schnittstelle von Klaer- und Verlade-Nves
-			},
-			*/
-			getUserInputForNve:function(){
+			
+			getUserInputForNve:function(){ //Auslesen des Strings der eine Nve darstellen soll
 				let sManualNveUserInput = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/nveInputOfCustomer/manualInput"); //UserInput aus Feld auslesen
 
 				return sManualNveUserInput;
 			},
 
-			checkIfInputConstraintsComply: function (oEvent) {
+			checkIfInputConstraintsComply: function (oEvent) { //Pruefen ob Eingabebedingungen erfuellt sind
 				let sManualNveUserInput = this.getUserInputForNve(); //UserInput aus Feld auslesen
 
 				if (REGEX_NVE_USER_INPUT.test(sManualNveUserInput)) {
-					this.findLoadingNve(oEvent);
+					this.findManualProcessingNve(oEvent);
 				} else {
 					this._showErrorMessageBox("nameNotMatchingRegex", () => this.scrollToInputAfterError());
 				}
 			},
 
-			findLoadingNve: function (oEvent) { //Verlade-Objekt finden
+			findManualProcessingNve: function (oEvent) { //Zu bearbeitende Nve finden
 				let sManualNveUserInput = this.getUserInputForNve(); //UserInput aus Feld auslesen
-				let aLoadingUnits = this.getPossiblyRemainingNves();
+				let aRemainingNves = this.getPossiblyRemainingNves();
 
-				let oLoadingNve = aLoadingUnits.find((element) => element.label1 === sManualNveUserInput);
+				let oLoadingNve = aRemainingNves.find((element) => element.label1 === sManualNveUserInput);
 
-				if (oLoadingNve) {
+				if (oLoadingNve) { //Nve fuer manuelle bearbeitung wurde gefunden
 					this.differenciateNveProcessingType(oLoadingNve, oEvent);
 				} else {
 					this.resetUserBarcodeInput();
@@ -460,11 +451,11 @@ sap.ui.define(
 			},
 
 			differenciateNveProcessingType: function (oDiffNve, oEvent) { //unterscheiden ob manuelles klaeren oder verladen verwendet wurde
-				let sDialogId = oEvent.getSource().getParent().getId().split("-").pop();
+				let sDialogId = oEvent.getSource().getParent().getId().split("-").pop(); //leider keine bessere Idee dazu gehabt
 
 				if (sDialogId === "clearDialog") { // Klaer-Dialog
 					this.saveTempNve(oDiffNve, "Clearing"); 
-				} else { // Hand-Klaerung
+				} else { // Loading-Klaerung
 					this.saveTempNve(oDiffNve, "Loading"); 
 				}
 			},
@@ -476,24 +467,28 @@ sap.ui.define(
 				let aTempNves = oTourAndStopModel.getProperty(tempNvesKey);
 				let aUpdatedTempNves = [...aTempNves, oNve];
 
-				oTourAndStopModel.setProperty(tempNvesKey, aUpdatedTempNves);
+				oTourAndStopModel.setProperty(tempNvesKey, aUpdatedTempNves); //Einheitliche Loesung fuer verladen und klaeren
 				this.removeProcessedNve(oNve);
 			},
 
 			removeProcessedNve: function (oDiffNve) { //Bearbeitete NVE aus Array fuer unbearbeitete NVEs entfernen
-				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let aRemainingNves = this.getPossiblyRemainingNves();
 				let aNewFilteredNves = aRemainingNves.filter((oCurrentNve) => oCurrentNve !== oDiffNve);
+				
+				this.setNewUnprocessedNves(aNewFilteredNves);
+			},
+
+			setNewUnprocessedNves:function(aNewFilteredNves){ //Setzen von neuem Array ohne die bearbeitete Nve
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 
 				oTourAndStopModel.setProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits", aNewFilteredNves);
-
 				this.decideWichDialogShouldBeClosed();
 			},
 
 			decideWichDialogShouldBeClosed: function () { //Unterscheidung welcher Dialog nun geschlossen werden muss
 				let oManualNveInputDialog = this.getView().byId("ManualNveInputDialogId");
 				let oClearDialog = this.getView().byId("clearDialog");
-
+				
 				if (oManualNveInputDialog) this.onManualNveInputFragmentClose();
 				if (oClearDialog) this.nveClearingDialogClose();
 			},
@@ -503,11 +498,11 @@ sap.ui.define(
 				this.onManualNveInputFragmentClose();
 			},
 
-			clearManualNveInput: function () {
+			clearManualNveInput: function () { //Eingabefeld fuer Klaer-Nve leeren
 				this.getOwnerComponent().getModel("TourAndStopModel").setProperty("/nveInputOfCustomer/manualInput", "");
 			},
 
-			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
+			_showErrorMessageBox: function (sMessageKey, fnOnClose) { //Generische loesung fuer alle Fehlermeldungen
 				StatusSounds.playBeepError();
 				MessageBox.error(this._oBundle.getText(sMessageKey), {
 					onClose: fnOnClose || function () {}, // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
@@ -525,13 +520,13 @@ sap.ui.define(
 				this.enableVideoStream();
 			},
 
-			enableVideoStream: function () { // Video starten
+			enableVideoStream: function () { // Video-Stream starten
 				navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
 					document.getElementById("clearingVideoPlayer").srcObject = stream;
 				});
 			},
 
-			disableVideoStreams: function () { //Video beenden
+			disableVideoStreams: function () { //Video-Stream beenden
 				let oVideoStream = document.getElementById("clearingVideoPlayer");
 				let oMediaStream = oVideoStream?.srcObject;
 
@@ -588,13 +583,13 @@ sap.ui.define(
 				this.getOwnerComponent().getModel("LatestPhotoModel").setProperty("/photo", oImage);
 			},
 
-			getNewestImage:function(){
+			getNewestImage:function(){ //zuerckgeben des letzten Fotos
 				let oImage = this.getOwnerComponent().getModel("LatestPhotoModel").getProperty("/photo");
 
 				return oImage;
 			},
 
-			clearPhotoModel: function () { //entfernen von letztem Foto
+			clearPhotoModel: function () { //entfernen des letzten Fotos
 				this.getOwnerComponent().getModel("LatestPhotoModel").setProperty("/photo", {});
 			},
 
@@ -607,7 +602,7 @@ sap.ui.define(
 				}
 			},
 
-			onOpenPhotoDialogClearing: function () {
+			onOpenPhotoDialogClearing: function () { //Klaergrund-Dialog oeffnen
 				this.oPhotoDialogClearing ??= this.loadFragment({
 					name: "podprojekt.view.fragments.photoDialogClearing",
 				});
@@ -615,7 +610,7 @@ sap.ui.define(
 				this.oPhotoDialogClearing.then((oDialog) => oDialog.open());
 			},
 
-			onPhotoDialogClearingClose: function () {
+			onPhotoDialogClearingClose: function () { //Schliessen des DIaloges
 				this.disableVideoStreams();
 				this.clearPhotoModel();
 				this.byId("photoDialogClearing").close();
@@ -638,7 +633,7 @@ sap.ui.define(
 				this.onPhotoDialogClearingClose();
 			},
 
-			onClearedNvePressed:function(oEvent){
+			onClearedNvePressed:function(oEvent){ //Klaer-Nve wurde im Anzeigemodus geoeffnet
 				let oPressedClearedNve = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
 				let oTourAndStopModel =this.getOwnerComponent().getModel("TourAndStopModel");
 				
@@ -646,7 +641,7 @@ sap.ui.define(
 				this.openClearedViewerInfoDialog();
 			},
 
-			onLoadedNvePressed:function(oEvent){
+			onLoadedNvePressed:function(oEvent){ //Verladene-Nve wurde im Anzeigemodus geoeffnet
 				let oPressedLoadedNve = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
 				let oTourAndStopModel =this.getOwnerComponent().getModel("TourAndStopModel");
 				
@@ -654,7 +649,7 @@ sap.ui.define(
 				this.openLoadedViewerInfoDialog();
 			},
 
-			openClearedViewerInfoDialog:function(){
+			openClearedViewerInfoDialog:function(){ //Oeffnen des Dialoges zur Ansicht der geklaerten Nve 
 				this.oClearedViewerInfoDialog ??= this.loadFragment({
 					name: "podprojekt.view.fragments.clearedViewerInfoDialog",
 				});
@@ -662,7 +657,7 @@ sap.ui.define(
 				this.oClearedViewerInfoDialog.then((oDialog) => oDialog.open());
 			},
 
-			openLoadedViewerInfoDialog:function(){
+			openLoadedViewerInfoDialog:function(){ //Oeffnen des Dialoges zur Ansicht der verladenen Nve 
 				this.oLoadedViewerInfoDialog ??= this.loadFragment({
 					name: "podprojekt.view.fragments.loadedViewerInfoDialog",
 				});
@@ -670,15 +665,15 @@ sap.ui.define(
 				this.oLoadedViewerInfoDialog.then((oDialog) => oDialog.open());
 			},
 
-			onClearedViewerInfoDialogClose:function(){
+			onClearedViewerInfoDialogClose:function(){ //schliessen des Dialoges zur Ansicht der geklaerten Nve 
 				this.getView().byId("clearedViewerInfoDialog").close();
 			},
 
-			onLoadedViewerInfoDialogClose:function(){
+			onLoadedViewerInfoDialogClose:function(){ //schliessen des Dialoges zur Ansicht der verladenen Nve 
 				this.getView().byId("loadedViewerInfoDialog").close();
 			},
 
-			getClearingPhotos:function(){
+			getClearingPhotos:function(){ //zurueckgeben der Klaergrund-Fotos
 				let aPhotos = this.getOwnerComponent().getModel("TourClearingModel").getProperty("/aPhotos");
 
 				return aPhotos;
@@ -691,7 +686,7 @@ sap.ui.define(
 				oTourClearingModel.setProperty("/aPhotos", aPhotos);
 			},
 
-			showSavingSuccessfullMessage: function () {
+			showSavingSuccessfullMessage: function () { //Meldung, dass sichern erfolgreich war
 				MessageToast.show(this._oBundle.getText("successfullyLoadedNves"), {
 					duration: 1000,
 					width: "15em",
@@ -701,13 +696,11 @@ sap.ui.define(
 			openBusyDialog: async function () {
 				//Lade-Dialog oeffnen
 				if (!this.oBusyDialog) {
-					try {
-						// Lade das Fragment, wenn es noch nicht geladen wurde
+					try { // Lade das Fragment, wenn es noch nicht geladen wurde
 						this.oBusyDialog = await this.loadFragment({
 							name: "podprojekt.view.fragments.BusyDialog",
 						});
-					} catch (error) {
-						// Fehlerbehandlung bei Problemen beim Laden des Fragments
+					} catch (error) { // Fehlerbehandlung bei Problemen beim Laden des Fragments
 						console.error("Fehler beim Laden des BusyDialogs:", error);
 						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
 						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
@@ -718,7 +711,7 @@ sap.ui.define(
 				this.oBusyDialog.open();
 			},
 			
-			closeBusyDialog: function () {
+			closeBusyDialog: function () { //Schliessen vom Busy-Dialog
 				this.byId("BusyDialog").close();
 			},
 

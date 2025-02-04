@@ -7,9 +7,9 @@ sap.ui.define(
 		"use strict";
 
 		// Definierte Konstanten
-		const ROUTE_QUITTIERUNG = "Quittierung";
+		const ROUTE_QUITTIERUNG = "Quittierung"; //Route fuer den Navigator zur Quittierung
 		const REGEX_CUSTOMER_NAME = /^[a-zA-ZäöüßÄÖÜ\-]{2,15}$/; //nur Buchstaben mit mindestlaenge 2, maxlaenge 15 und Sonderzeichen '-'
-		const PHOTO_LIMITS = {
+		const PHOTO_LIMITS = { //Beispielhafte limitierungen fuer Fotos verschiedener Kategorieren
 			"Zum Stopp": 5,
 			"Zur Beanstandung": 3,
 			"Test": 0
@@ -25,7 +25,7 @@ sap.ui.define(
 				this._oBundle = this.getView().getModel("i18n").getResourceBundle();
 			},
 
-			updateModelBindings:function(sModelName){
+			updateModelBindings:function(sModelName){ //Update des Models in allen Views
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
@@ -49,7 +49,7 @@ sap.ui.define(
 				this.setCustomerName(oInput.getValue());
 			},
 
-			setCustomerName:function(sCustomerInput){
+			setCustomerName:function(sCustomerInput){ //setzen des Kundennamen des Stops
 				this.getView().getModel("TourAndStopModel").setProperty("/aQuittierungInformation/sName", sCustomerInput);
 			},
 
@@ -75,7 +75,7 @@ sap.ui.define(
 				oInput.setValueState(sValueState);
 			},
 
-			onRecipientNotFound: function () { //TODO: Wenn Empfaenger nicht da ist, Tour fertig machen und abschicken
+			onRecipientNotFound: function () { //TODO: Klaeren was an dessen Stelle gemacht werden soll
 				this._showMessageToast("dummyProcessFinished", 2500);
 
 				setTimeout(() => {
@@ -84,7 +84,7 @@ sap.ui.define(
 				}, 2000);
 			},
 
-			setCurrentStopAsFinished: function () {
+			setCurrentStopAsFinished: function () { //Stopp wurde komplett bearbeitet, jedoch wurde nicht unterschrieben
 				//!Statuscodes muessen abgesprochen werden
 				let oCurrentStop = this.getCurrentStopOfTour(); 
 				let aStopsOfCurrentTour = this.getStopsOfCurrentTour(); 
@@ -95,19 +95,19 @@ sap.ui.define(
 				}
 			},
 
-			getCurrentStopOfTour:function(){
+			getCurrentStopOfTour:function(){ //Zurueckgeben des aktuellen Stopps
 				let oCurrentStop = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentStop"); //Infos ueber derzeitigen Stopp
 
 				return oCurrentStop;
 			},
 
-			getStopsOfCurrentTour:function(){
+			getStopsOfCurrentTour:function(){ //zurieckgeben der aktuellen Tour
 				let aStopsOfCurrentTour = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/stops"); //Tour mit allen Stopps und Infos vorhanden
 
 				return aStopsOfCurrentTour;
 			},
 
-			_showMessageToast: function (sMessageKey, iDuration) {
+			_showMessageToast: function (sMessageKey, iDuration) { //Generische Loesung fuer Meldungen an den User
 				MessageToast.show(this._oBundle.getText(sMessageKey), {
 					duration: iDuration,
 					width: "15em",
@@ -119,7 +119,7 @@ sap.ui.define(
 				this.setPressedDeliveryNoteModel(oPressedDeliveryNote);
 			},
 
-			setPressedDeliveryNoteModel:function(oPressedDeliveryNote){
+			setPressedDeliveryNoteModel:function(oPressedDeliveryNote){ //Lieferschein wird gesichert
 				let oDeliveryNoteModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				oDeliveryNoteModel.setProperty("/oDeliveryNote/note", oPressedDeliveryNote);
 				this.onNavToAbladung();
@@ -132,7 +132,7 @@ sap.ui.define(
 				this.enableVideoStream();
 			},
 
-			enableVideoStream: function () { // Video Streams starten
+			enableVideoStream: function () { // Video Stream starten
 				navigator.mediaDevices.getUserMedia({video: true}).then((stream) => {
 					let oPlayer = document.getElementById("player");
 					if (oPlayer) oPlayer.srcObject = stream;
@@ -176,17 +176,17 @@ sap.ui.define(
 				}
 			},
 
-			checkSignConditions: function () {
+			checkSignConditions: function () { //Fuer weitere Logik offen
 				this.checkIfInputConstraintsComply();
 			},
 
-			getCustomerName:function(){
+			getCustomerName:function(){ //Zurueckgeben des Kundennamens
 				let sTourAndStopModelInput = this.getView().getModel("TourAndStopModel").getProperty("/aQuittierungInformation/sName");
 
 				return sTourAndStopModelInput;
 			},
 
-			checkIfInputConstraintsComply: function () { //Werteeingabe gegen regex pruefen
+			checkIfInputConstraintsComply: function () { //Kundennamen gegen regex pruefen
 				let sConfigModelInput = this.getCustomerName();
 
 				if (REGEX_CUSTOMER_NAME.test(sConfigModelInput)) { //Eingabe-Parameter passen
@@ -196,7 +196,7 @@ sap.ui.define(
 				}
 			},
 
-			showMatchingErrorReason:function(){
+			showMatchingErrorReason:function(){ //Fehlermeldung entsprechend der Eingabe des Users beim Kundennamen
 				let sConfigModelInput = this.getCustomerName();
 
 				if (!sConfigModelInput || sConfigModelInput.length === 0) { //Kein Name Angegeben
@@ -210,7 +210,6 @@ sap.ui.define(
 				if (sConfigModelInput && sConfigModelInput.length >= 2) { //Allgemeine sonderzeichenregel verletzt
 					this._showErrorMessageBox("nameNotMatchingRegex", () => this.scrollToInputAfterError());
 				}
-
 			},
 
 			checkIfNvesAreProcessed: function () { //Prüfen ob noch nicht bearbeitete Nves existieren
@@ -235,14 +234,14 @@ sap.ui.define(
 				this.onNavToUnterschrift();
 			},
 
-			setComplaints:function(){
+			setComplaints:function(){ //Beanstandungen sichern
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let aCollectionOfFilteredComplaints = this.getFilteredComplaints();
 				
 				oTourAndStopModel.setProperty("/aQuittierungInformation/aComplaints", aCollectionOfFilteredComplaints);
 			},
 
-			getFilteredComplaints:function(){
+			getFilteredComplaints:function(){ //Zurueckgeben der Beanstandungen
 				let aCurrentComplaints = this.getOwnerComponent().getModel("ComplaintsModel")?.getProperty("/results") || [];
 				let aCollectionOfFilteredComplaints = aCurrentComplaints.filter((element) => element.value === true);
 
@@ -254,7 +253,7 @@ sap.ui.define(
 				this.byId("FotoMachenDialog").close();
 			},
 
-			getLatestPhoto:function(){
+			getLatestPhoto:function(){ //Zurueckgeben des zuletzt gemachten Fotos
 				let oSavedPhoto = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/latestPhoto"); //Zuletzt aufgenommenes Foto
 
 				return oSavedPhoto;
@@ -270,13 +269,13 @@ sap.ui.define(
 				this.onSnappPicture();
 			},
 
-			clearLatestPhotoFromPhotoModel: function () {
+			clearLatestPhotoFromPhotoModel: function () { //Loeschen des letzten Fotos
 				let oPhotoModel = this.getOwnerComponent().getModel("PhotoManagementModel"); //Model in dem das geschossene Foto gespeichert wird
 
 				oPhotoModel.setProperty("/photos/latestPhoto", {});
 			},
 
-			getSelectedPhotoTypeDescription:function(){
+			getSelectedPhotoTypeDescription:function(){ //zurueckgeben des entsprechenden Foto-Typs
 				let sSelectedType = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/selectedType/photoTyp"); //Selektierter Foto-Typ
 
 				return sSelectedType;
@@ -312,25 +311,25 @@ sap.ui.define(
 				this.setNewImage(oImage);
 			},
 
-			onPhotoTypesSelectChange: function () {
+			onPhotoTypesSelectChange: function () { //Bei Aenderung des Foto-Typs aufgerufen
 				let oSelectedPhotoType = this.getView().byId("photoTypeSelect").getSelectedItem();
 				let oSelectedType = oSelectedPhotoType.getBindingContext("PhotoManagementModel").getObject();
 				this.setPhotoManagementModel(oSelectedType);
 			},
 
-			setPhotoManagementModel: function (oSelectedType) {
+			setPhotoManagementModel: function (oSelectedType) { //Foto-Typ sichern
 				let oPhotoManagementModel = this.getOwnerComponent().getModel("PhotoManagementModel");
 
 				oPhotoManagementModel.setProperty("/photos/selectedType", oSelectedType);
 			},
 
-			getSelectedPhotoCount:function(){
+			getSelectedPhotoCount:function(){ //Zurueckgeben der Anzahl Fotos fuer den ausgewaehlten Typ
 				let iCurrentPhotoCount = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/selectedType/photo").length; // Erhalte die Anzahl der aktuellen Fotos
 
 				return iCurrentPhotoCount;
 			},
 
-			checkPhotoLimit: function (sPhotoType) { //Wirft eine Fehlermeldung, wenn Menge an Fotos überschritten wird
+			checkPhotoLimit: function (sPhotoType) { //prueft anzahl der Fotos fuer den ausgewaehlten Typ
 
 				let iAllowedPhotos = PHOTO_LIMITS[sPhotoType] || 0; // Hole das erlaubte Limit basierend auf dem Foto-Typ
 				let iCurrentPhotoCount = this.getSelectedPhotoCount(); // Erhalte die Anzahl der aktuellen Fotos
@@ -351,7 +350,7 @@ sap.ui.define(
 				}
 			},
 
-			getSelectedPhotoType:function(){
+			getSelectedPhotoType:function(){ //Zurueckgeben des ausgewaehlten Foto-Typs
 				let oSelectedType = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/selectedType"); //Selektierter Foto-Typ
 				
 				return oSelectedType;
@@ -379,7 +378,7 @@ sap.ui.define(
 				oPhotoManagementModel.refresh(true); // Erzwinge binding refresh fuer dialog Titel
 			},
 
-			onUploadSelectedButton: function () {
+			onUploadSelectedButton: function () { //Fotos hochladen Button wurde gedrueckt
 				MessageToast.show(this._oBundle.getText("demoUpload"), {
 					duration: 2500,
 					width: "15em",
@@ -392,7 +391,7 @@ sap.ui.define(
 				oPhotoModel.refresh();
 			},
 
-			setNewPhotoInPhotoList: function (oImage) {
+			setNewPhotoInPhotoList: function (oImage) { //hinzufuegen des zuletzt gemachten Fotos in die Liste aller Fotos
 				let oPhotoListModel = this.getOwnerComponent().getModel("PhotoManagementModel");
 				let aPhotoListItems = oPhotoListModel.getProperty("/photos/allPhotos");
 				let aUpdatedPhotos = [...aPhotoListItems, oImage];
@@ -400,12 +399,12 @@ sap.ui.define(
 				oPhotoListModel.setProperty("/photos/allPhotos", aUpdatedPhotos);
 			},
 
-			onRemoveFilePressed:function(oEvent){
-				let oPressedPhoto = oEvent.getSource().getBindingContext("PhotoManagementModel").getObject(); 
+			onRemoveFilePressed:function(oEvent){ //Loeschen des ausgewaehlten Fotos gedrueckt
+				let oPressedPhoto = this.getPhotoFromButton(oEvent); 
 				this.removeItemMessage(oPressedPhoto);
 			},
 
-			removeItemMessage: function(oPressedPhoto) {
+			removeItemMessage: function(oPressedPhoto) { //Nachricht an User ob Foto tatsaechliche geloescht werden soll
 				MessageBox.warning(
 					"Are you sure you want to remove the document" + " " + oPressedPhoto.fileName + " " + "?",
 					{
@@ -416,7 +415,6 @@ sap.ui.define(
 						initialFocus: MessageBox.Action.CANCEL,
 						onClose: (oAction) => {
 							if (oAction === "Remove") {
-								//Sofern die Bilder nicht zu 100% identisch sind, stellt die Abfrage kein Problem dar
 								this.removePictureFromPhotoType(oPressedPhoto);
 								this.removePictureFromDispplay(oPressedPhoto);
 							}
@@ -428,16 +426,16 @@ sap.ui.define(
 				);
 			},
 
-			removePictureFromPhotoType:function(oPressedPhoto){
+			removePictureFromPhotoType:function(oPressedPhoto){ //Entfernen vom Foto aus der Fotoliste des Types
 				let getPhotoTypePhotos = oPressedPhoto.photoType;
 				let aSelectedPhotoTypePhotos = this.getPhotoTypePhotos(getPhotoTypePhotos);
 				let iPhotoIndex = aSelectedPhotoTypePhotos.findIndex(photo => photo.src = oPressedPhoto.src);
-
+				//Sofern die Bilder nicht zu 100% identisch sind, stellt die Abfrage kein Problem dar
 				aSelectedPhotoTypePhotos.splice(iPhotoIndex, 1);
 				this.updateModelBindings("PhotoManagementModel");
 			},
 
-			removePictureFromDispplay:function(oPressedPhoto){
+			removePictureFromDispplay:function(oPressedPhoto){ //Entfernen vom Foto aus der Gesamtliste der Fotos
 				let aPhotos=this.getAllPhotos();
 				let iPhotoIndex = aPhotos.findIndex(photo => photo.src = oPressedPhoto.src);
 				aPhotos.splice(iPhotoIndex, 1); //Pruefung nicht notwendig, kann ja nur stimmen
@@ -445,36 +443,36 @@ sap.ui.define(
 			},
 
 
-			getPhotoFromButton:function(oEvent){
+			getPhotoFromButton:function(oEvent){ //Zurueckgeben des Fotos, zu dem der Button gehoert
 				let oPressedPhoto = oEvent.getSource().getBindingContext("PhotoManagementModel").getObject(); 
 
 				return oPressedPhoto;
 			},
 
-			onEditFile:function(oEvent){
+			onEditFile:function(oEvent){ //Bearbeiten der Foto-Details
 				let oPressedPhoto = this.getPhotoFromButton(oEvent);
 				this.setEditingPhoto(oPressedPhoto);
 				this.editPhotoDialogOpen();
 			},
 
-			setEditingPhoto:function(oPressedPhoto){
+			setEditingPhoto:function(oPressedPhoto){ //Setzen des zu bearbeitenden Fotos
 				let oPhotoManagementModel = this.getOwnerComponent().getModel("PhotoManagementModel");
 
 				oPhotoManagementModel.setProperty("/photos/editingPhoto", oPressedPhoto);
 			},
 
-			onRenameDocument:function(oEvent){
+			onRenameDocument:function(oEvent){ //Bearbeiten des Fotos aus der view (derzeit unbenutzt)
 				let oPressedPhoto = this.getPhotoFromButton(oEvent);
 				//Methode zum Setzen der Infos 
 				//Methode für das Umbenennen bzw oeffnen von Dialog.
 				this.editPhotoDialogOpen();
 			},
 
-			onPhotoEditReject:function(){
+			onPhotoEditReject:function(){ //Bearbeiten des Fotos abbrechen
 				this.editPhotoDialogClose();
 			},
 
-			editPhotoDialogClose:function(){
+			editPhotoDialogClose:function(){ //Schließen des Dialoges
 				this.byId("photoEditDialog").close();
 			},
 
@@ -494,26 +492,26 @@ sap.ui.define(
 				this.oEditPhotoDialog.open();
 			},
 
-			getAllPhotos:function(){
+			getAllPhotos:function(){ //Zurueckgeben aller Fotos
 				let aPhotos = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/allPhotos");
 
 				return aPhotos;
 			},
 
-			getPhotoTypePhotos:function(sPhotoTyp){
+			getPhotoTypePhotos:function(sPhotoTyp){ //Zurueckgeben der Fotos abgaengig vom Foto-Type
 				let aPhotoTypes = this.getOwnerComponent().getModel("PhotoManagementModel").getProperty("/photos/types");
 				let oType = aPhotoTypes.find(type => type.photoTyp = sPhotoTyp);
 
 				return oType.photo;
 			},
 
-			clearCustomerInput:function(){
+			clearCustomerInput:function(){ //Kundennamen leeren
 				let oConfigModel = this.getOwnerComponent().getModel("ConfigModel"); //Angabe zum Namen des Kunden
 
 				oConfigModel.setProperty("/customerName", "");
 			},
 
-			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
+			_showErrorMessageBox: function (sMessageKey, fnOnClose) { //Generische Loesung fuer Fehlermeldungen
 				StatusSounds.playBeepError();
 				MessageBox.error(this._oBundle.getText(sMessageKey), {
 					onClose: fnOnClose || function () {}, // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist

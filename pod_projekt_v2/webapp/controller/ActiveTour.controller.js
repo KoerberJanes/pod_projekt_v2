@@ -54,12 +54,9 @@ sap.ui.define(
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
 						//this.closeBusyDialog();
-						if (bTestCase) {
-							//Success-Fall simulieren
-							//this.setStopOrderChangedToFalse();
+						if (bTestCase) { //Success-Fall simulieren
 							return resolve();
-						} else {
-							//Error-Fall simulieren
+						} else { //Error-Fall simulieren
 							return reject("Fehler beim absenden der Soppreihenfolge.");
 						}
 					}, 1000);
@@ -94,12 +91,9 @@ sap.ui.define(
 				*/
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
-						if (bTestCase) {
-							//Success-Fall simulieren
-							//this.onSetStoppInformation(oPressedModelObject); //Setzen der Infos fuer die Detail-Anzeige des Stopps & erstellen der Lieferscheine
+						if (bTestCase) { //Success-Fall simulieren
 							return resolve();
-						} else {
-							//Error-Fall simulieren
+						} else { //Error-Fall simulieren
 							return reject("Fehler beim erhalten von NVEs.");
 						}
 					}, 1000);
@@ -146,13 +140,13 @@ sap.ui.define(
 				}
 			},
 
-			getModelStops:function(){
+			getModelStops:function(){ //Gibt Array der Stops zurueck
 				let aStops = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/stops");
 
 				return aStops;
 			},
 
-			getIfNvesAreUnprocessed:function(){ //Erhalten des Wertes ob NVEs unberarbeitet sind
+			getIfNvesAreUnprocessed:function(){ //Gibt boolschen Wertes ob NVEs unberarbeitet sind zurueck
 				let bNvesAreUnprocessed = true;
 				let aStops = this.getModelStops();
 
@@ -171,35 +165,35 @@ sap.ui.define(
 
 			checkIfNvesAreProcessed:function(oPressedEventId){ //Pruefen ob bisher keine NVE verladen wurde
 
-				if(this.getIfNvesAreUnprocessed()){
+				if(this.getIfNvesAreUnprocessed()){ //pruefen ob Reihenfolge veraendert werden darf
 					this.checkIfOrderReverseBtnIsPressed(oPressedEventId);
 				} else{
 					this._showErrorMessageBox(this._oBundle.getText("stopNvesAreProcessed"), () => {});
 				}
 			},
 
-			checkIfOrderReverseBtnIsPressed:function(oPressedEventId){
-				if(oPressedEventId === "btnReverse"){
+			checkIfOrderReverseBtnIsPressed:function(oPressedEventId){ //Abfangen ob es sich um einen spezial-Button handelt
+				if(oPressedEventId === "btnReverse"){ //Wenn ja, spezielle Methode aufrufen
 					this.differanciateStopOrderChangeEvents(oPressedEventId, []);
-				} else{
+				} else{ //Wenn nicht, dann standard-Button unterscheiden
 					this.checkIfNvesAreSelected(oPressedEventId);
 				}
 			},
 
-			checkIfNvesAreSelected:function(oPressedEventId){
+			checkIfNvesAreSelected:function(oPressedEventId){ //Fuer standard-Button muessen Stops ausgewaehlt sein
 				let aSelectedStopModelItems = this.getSelectedStops();
 
-				if(aSelectedStopModelItems.length > 0){
+				if(aSelectedStopModelItems.length > 0){ //Wenn Stopps ausgewaehlt pruefen ob spezial-Button verwendet wurde
 					this.checkIfCustomOrderButton(oPressedEventId, aSelectedStopModelItems);
 				} else{
 					this._showErrorMessageBox(this._oBundle.getText("noStopsSelected"), () => {});
 				}
 			},
 
-			checkIfCustomOrderButton:function(oPressedEventId, aSelectedStopModelItems){
-				if(oPressedEventId === "btnCustomOrder"){
+			checkIfCustomOrderButton:function(oPressedEventId, aSelectedStopModelItems){ //Abfangen ob es sich um einen spezial-Button handelt
+				if(oPressedEventId === "btnCustomOrder"){ //Spezial-Button
 					this.customStopPostitionFragmentOpen();
-				} else{
+				} else{ //Standard-Button
 					this.differanciateStopOrderChangeEvents(oPressedEventId, aSelectedStopModelItems);
 				}
 			},
@@ -215,7 +209,7 @@ sap.ui.define(
 				return aSelectedStopModelItems;
 			},
 
-			onCustomStopPositionAccept:function(){
+			onCustomStopPositionAccept:function(){ //Custom-Position wurde aus Dialog bestaetigt
 				this.checkIfInputConstraintsComply();
 			},
 
@@ -229,7 +223,7 @@ sap.ui.define(
 				}
 			},
 
-			checkIfEnteredValueInRange:function(){
+			checkIfEnteredValueInRange:function(){ //Pruefen ob Custom-Position innerhab des Stop-Intervals ist
 				let aStops = this.getModelStops();
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sCustomPosition = oTourAndStopModel.getProperty("/oStop/sCustomPosition");
@@ -244,7 +238,7 @@ sap.ui.define(
 				}
 			},
 
-			moveSelectedStopsToCustomPosition:function(iCustomPosition){
+			moveSelectedStopsToCustomPosition:function(iCustomPosition){ //Aufbauen der neuen Stoppreihenfolge, selektierung und aktualisierung der Models
 				let aSelectedStopModelItems = this.getSelectedStops();
     			let aStops = this.getModelStops();
 
@@ -268,7 +262,7 @@ sap.ui.define(
 				this.customStopPostitionFragmentClose(); //Schliessen des Dialoges
 			},
 
-			calculateInsertPosition: function (iCustomPosition, aStops, aSelectedStopModelItems) {
+			calculateInsertPosition: function (iCustomPosition, aStops, aSelectedStopModelItems) { //Berechnung der neuen Position anhand der Stopp-Position aus dem Dialog und delektierter Stopps
 				// Kombiniere aStops und aSelectedStopModelItems, um vollständige Liste zu erhalten
 				let aAllStops = [...aStops, ...aSelectedStopModelItems];
 
@@ -288,7 +282,7 @@ sap.ui.define(
 				return targetIndexInAStops === -1 ? aStops.length : targetIndexInAStops;
 			},
 
-			_setFocus:function(){
+			_setFocus:function(){ //Fokus fuer Custom-Position
 				const oInput = this.getView()?.byId("CustomPositionInput");
 
 				if (oInput?.getDomRef()) {
@@ -308,16 +302,15 @@ sap.ui.define(
 				return this.getOwnerComponent().getModel("oTourAndStopModel").getProperty("/position");
 			},
 
-			onCustomStopPositionReject:function(){
+			onCustomStopPositionReject:function(){ //Abbrechen auf dem Custom-Stop-Position Dialog gedrueckt
 				this.customStopPostitionFragmentClose();
 			},
 
-			differanciateStopOrderChangeEvents:function(oPressedEventId, aSelectedStopModelItems){
+			differanciateStopOrderChangeEvents:function(oPressedEventId, aSelectedStopModelItems){ //Faelle fuer die Standard-Buttons
 				let aStops = this.getModelStops();
 
 				switch (oPressedEventId) {
-					case "bUp":
-						// Elemente eins nach oben verschieben
+					case "bUp": // Elemente eins nach oben verschieben
 						aSelectedStopModelItems.forEach(item => {
 							let index = aStops.indexOf(item);
 							if (index > 0 && !aSelectedStopModelItems.includes(aStops[index - 1])) {
@@ -326,8 +319,7 @@ sap.ui.define(
 						});
 						
 						break;
-					case "bDown":
-						// Elemente eins nach unten verschieben
+					case "bDown": // Elemente eins nach unten verschieben
 						for (let i = aSelectedStopModelItems.length - 1; i >= 0; i--) {
 							let item = aSelectedStopModelItems[i];
 							let index = aStops.indexOf(item);
@@ -337,8 +329,7 @@ sap.ui.define(
 						}
 
 						break;
-					case "bStart":
-						// Hinzufuegen der Elemente (erste Position)
+					case "bStart": // Hinzufuegen der Elemente (erste Position)
 						aSelectedStopModelItems.forEach(item => {
 							let index = aStops.indexOf(item);
 							if (index > -1) {
@@ -349,8 +340,7 @@ sap.ui.define(
     					aStops.unshift(...aSelectedStopModelItems);
 						
 						break;
-					case "bEnd":
-						// Elemente an das Ende schieben (letzte Position)
+					case "bEnd": // Elemente an das Ende schieben (letzte Position)
 						for (let i = aSelectedStopModelItems.length - 1; i >= 0; i--) {
 							let item = aSelectedStopModelItems[i];
 							let index = aStops.indexOf(item);
@@ -362,8 +352,7 @@ sap.ui.define(
     					aStops.push(...aSelectedStopModelItems);
 
 						break;
-					case "btnReverse":
-						// Listenreihenfolge umdrehen
+					case "btnReverse": // Listenreihenfolge umdrehen
 						aStops.reverse();
 						break;
 				
@@ -371,13 +360,10 @@ sap.ui.define(
 						break;
 				}
 
-				this.setStopOrderChangedToTrue();
-				
+				this.setStopOrderChangedToTrue(); //Flag setzen, dass Reihenfolge im Backend geaendert wurde
 				this.adjustStopSequence(aStops); // Stoppreihenfolge Nummern werden angepasst
-
-				// Hier update notwendig, da sonst Model-referenz der Elemente fuer erneute Auswahl nicht stimmt
+				// Update bevor neu selektiert werden soll
 				this.updateModelBindings("TourAndStopModel");
-
 				this.selectSameItemsAgain(aSelectedStopModelItems);
 			},
 
@@ -397,11 +383,10 @@ sap.ui.define(
 				}
 			},
 
-			adjustStopSequence: function(aStops) { // Stopp-sequence anpassen
+			adjustStopSequence: function(aStops) { // Stopp-sequence Attribut neu zuweisen
 				let sequenceValues = aStops.map(item => item.sequence); // Extrahiere die sequence-Werte der Stopps
 
 				sequenceValues.sort((a, b) => b - a); // Sortiere die sequence-Werte in absteigender Reihenfolge
-			
 				// Weise die sortierten sequence-Werte den Stopps in der neuen Reihenfolge zu
 				aStops.forEach((item, index) => {
 					item.sequence = sequenceValues[index];
@@ -409,18 +394,21 @@ sap.ui.define(
 			},
 
 			getStoppSequenceChangeable:function(){ //Erhalten des Wertes fuer Aenderbarkeit der Stoppreihenfolge
-				return this.getOwnerComponent().getModel("ConfigModel").getProperty("/generalSettings/bStopSequenceChangeable");
+				let bStopSequenceChangeable = this.getOwnerComponent().getModel("ConfigModel").getProperty("/generalSettings/bStopSequenceChangeable");
+				
+				return bStopSequenceChangeable;
 			},
 
-			checkIfStoppAlreadyDealtWith: function (oEvent) { //!Statuscodes muessen abgesprochen werden
+			checkIfStoppAlreadyDealtWith: function (oEvent) { //pruefen ob Stopp bereits verarbeitet ist
+				//!Statuscodes muessen abgesprochen werden
 				let oPressedModelStop = oEvent.getSource().getBindingContext("TourAndStopModel").getObject();
 				let iNumberOfUnprocessedNves = oPressedModelStop.orders[0].aDeliveryNotes[0].aUnprocessedNumberedDispatchUnits.length;
 				let sStopStatus = oPressedModelStop.stopStatus; //in Kombination mit der Methode: 'setCurrentStopAsFinished'
 
 				if (iNumberOfUnprocessedNves === 0 && sStopStatus === STOP_STATUS_PROCESSED) { //Keine unbearbeiteten NVEs und Stopp hat status erledigt
-					this.setPressedStopInformation(oPressedModelStop);
-					this.viewerModeFragmentOpen(oPressedModelStop);
-				} else { //Stop zum verarbeiten vorbereiten
+					this.setPressedStopInformation(oPressedModelStop); //Setzen des Stopps fuer Anzeige
+					this.viewerModeFragmentOpen(oPressedModelStop); //Oeffnen des Dialoges fuer den Anzeigemodus
+				} else { //Stopp nicht beendet, daher pruefen ob Stoppreihenfolge geupdatet werden muss
 					this.checkIfStopOrderChanged(oPressedModelStop);
 				}
 			},
@@ -429,23 +417,19 @@ sap.ui.define(
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let oDeliveryNote = oPressedModelStop.orders[0].aDeliveryNotes[0];
 
-				//setzen des Stops fuer Stopp-Info
-				oTourAndStopModel.setProperty("/oCurrentStop", oPressedModelStop);
-
+				oTourAndStopModel.setProperty("/oCurrentStop", oPressedModelStop); //setzen des Stops fuer Stopp-Info
 				//Setzen der DeliveryNote fuer Anzeige, da ja bereits alles abgehandelt wurde
 				oTourAndStopModel.setProperty("/oDeliveryNote/note", oDeliveryNote);
-
 				this.updateModelBindings("TourAndStopModel");
-				
 			},
 
-			saveStopOrderChanges:function(){
+			saveStopOrderChanges:function(){ //Vorbereiten fuer das Update der Reihenfolge am Backend
 				this.openBusyDialog();
 				let aPromises = [];
 				aPromises.push(this.simulateBackendCallForStoppOrderChange(true)); // senden der neuen Stoppreihenfolge an das Backend
 
 				Promise.all(aPromises)
-				.then(() => {
+				.then(() => { //Wenn alle Versprechen eingehalten wurden
 					this.closeBusyDialog();
 					this.setStopOrderChangedToFalse();
 				})
@@ -455,60 +439,50 @@ sap.ui.define(
 				});
 			},
 
-			getIfStopOrderChanged:function(){
+			getIfStopOrderChanged:function(){ //Gibt Status zurueck ob Reihenfolge geaendert wurde
 				let bStopOrderChanged = this.getOwnerComponent().getModel("ConfigModel").getProperty("/generalSettings/bStopOrderChanged");
 
 				return bStopOrderChanged;
 			},
 
-			checkIfStopOrderChanged:function(oPressedModelStop){ //Objekt muss fuer NVEs mitgegeben werden.
-				let aPromises = [];
+			checkIfStopOrderChanged:function(oPressedModelStop){ //Objekt muss fuer NVEs mitgegeben werden
 				let bStopOrderChanged = this.getIfStopOrderChanged();
 
-				if(bStopOrderChanged){
+				if(bStopOrderChanged){ //reihenfolge wurde geaendert
 					this.showStopOrderChangedMessage(oPressedModelStop);
-				} else{
-					this.openBusyDialog();
-					aPromises.push(this.simulateBackendCallForStoppOrderChange(true)); // senden der neuen Stoppreihenfolge an das Backend
-					aPromises.push(this.simulateBackendCallToGetNVEs(true, oPressedModelStop));
-
-					Promise.all(aPromises)
-					.then(() => {
-						this.closeBusyDialog();
-						this.onSetStoppInformation(oPressedModelStop);
-						this.setStopOrderChangedToFalse();
-					})
-					.catch((error) =>{
-						this.closeBusyDialog();
-						console.error("Error during backend calls:", error);
-					});
-					
+				} else{ //Stoppreihenfolge wurde nicht geaendert, vorbereiten fuer Update am Backend
+					this.prepareUpdateForStopOrder(oPressedModelStop);
 				}
 			},
 
-			showStopOrderChangedMessage:function(oPressedModelObject){
+			prepareUpdateForStopOrder:function(oPressedModelStop){
+				this.openBusyDialog();
+				let aPromises = [];
+
+				aPromises.push(this.simulateBackendCallForStoppOrderChange(true)); // senden der neuen Stoppreihenfolge an das Backend
+				aPromises.push(this.simulateBackendCallToGetNVEs(true, oPressedModelStop));
+
+				Promise.all(aPromises)
+				.then(() => { //Wenn alle Versprechen eingehalten wurden
+					this.closeBusyDialog();
+					this.onSetStoppInformation(oPressedModelStop);
+					this.setStopOrderChangedToFalse();
+				})
+				.catch((error) =>{
+					this.closeBusyDialog();
+					console.error("Error during backend calls:", error);
+				});
+			},
+
+			showStopOrderChangedMessage:function(oPressedModelStop){ //Reihenfolge geaendert Popup vorbereiten
 				MessageBox.show(this._oBundle.getText("saveChangedStopOrder"), {
 					icon: MessageBox.Icon.INFORMATION,
 					title: this._oBundle.getText("changedStopOrder"),
 					actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 					emphasizedAction: MessageBox.Action.YES,
 					onClose: (oAction) => {
-						if (oAction === "YES") { //Speichern
-							this.openBusyDialog();
-							let aPromises = [];
-							aPromises.push(this.simulateBackendCallForStoppOrderChange(true)); // senden der neuen Stoppreihenfolge an das Backend
-							aPromises.push(this.simulateBackendCallToGetNVEs(true, oPressedModelObject)); // Bekommen der NVEs fuer den ausgewaehlten Stopp
-							
-							Promise.all(aPromises)
-							.then(() => {
-								this.closeBusyDialog();
-								this.onSetStoppInformation(oPressedModelObject);
-								this.setStopOrderChangedToFalse();
-							})
-							.catch((error) =>{
-								this.closeBusyDialog();
-								console.error("Error during backend calls:", error);
-							});
+						if (oAction === "YES") { //User bestaetigt Update am Backend
+							this.prepareUpdateForStopOrder(oPressedModelStop);
 						} else { //Abbrechen
 							//NOP
 						}
@@ -521,14 +495,13 @@ sap.ui.define(
 
 				oTourAndStopModel.setProperty("/oCurrentStop", oPressedModelObject);
 				this.createLoadingUnitsDetailedDescription(oPressedModelObject.orders[0]);
-
 				this.updateModelBindings("TourAndStopModel");
 			},
 
-			createLoadingUnitsDetailedDescription: function (oPressedModelObjectDetails) {
-				//Erstellen der Unterstruktur von Nves (Details)
+			createLoadingUnitsDetailedDescription: function (oPressedModelObjectDetails) { //Anzeige der Nves im Tree wird hier gemacht
+				//!Kann bisher nicht durch expressionBindung substituiert werden
 				let aLoadingUnits = oPressedModelObjectDetails.loadingUnits;
-
+				//Bennenung beier Texte mit dem gleichen Attributnamen in verschiedener Tiefe sorgt fuer korrekte Anzeige im Tree
 				aLoadingUnits.forEach((oCurrentDefaultLoadingUnit) => {
 					oCurrentDefaultLoadingUnit.detailedInformation = [
 						{
@@ -540,49 +513,49 @@ sap.ui.define(
 				this.onNavToStopInformation();
 			},
 
-			emptyCustomInputPosition:function(){
+			emptyCustomInputPosition:function(){ //Custom position Feld wird geleert
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				oTourAndStopModel.setProperty("/oStop/sCustomPosition", "");
 			},
 
-			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
+			_showErrorMessageBox: function (sMessageKey, fnOnClose) { //Generische Loesung fuer alle Fehlermeldungen
 				StatusSounds.playBeepError();
 				MessageBox.error(this._oBundle.getText(sMessageKey), {
 					onClose: fnOnClose || function () {}, // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
 				});
 			},
 			
-			onStopDisplayModeAccept:function(){
+			onStopDisplayModeAccept:function(){ //User mochte Viewer-Modus anschalten
 				this.setUserViewerSettingToTrue();
 				this.onNavToStopInformation();
 			},
 
-			setUserViewerSettingToTrue:function(){
+			setUserViewerSettingToTrue:function(){ //Viewer-Modus Attribut auf true Setzen
 				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
 				oSettingsModel.setProperty("/generalSettings/bViewerMode", true);
 			},
 
-			setUserViewerSettingToFalse:function(){
+			setUserViewerSettingToFalse:function(){ //Viewer-Modus Attribut auf false Setzen
 				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
 				oSettingsModel.setProperty("/generalSettings/bViewerMode", false);
 			},
 
-			setStopOrderChangedToTrue:function(){
+			setStopOrderChangedToTrue:function(){ //Stoppreihenfolge Attribut auf true Setzen
 				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
 				oSettingsModel.setProperty("/generalSettings/bStopOrderChanged", true);
 			},
 
-			setStopOrderChangedToFalse:function(){
+			setStopOrderChangedToFalse:function(){ //Stoppreihenfolge Attribut auf false Setzen
 				let oSettingsModel = this.getOwnerComponent().getModel("ConfigModel");
 				oSettingsModel.setProperty("/generalSettings/bStopOrderChanged", false);
 				this.showStopOrderSavingSuccessfullMessage();
 			},
 
-			onStopDisplayModeReject:function(){
+			onStopDisplayModeReject:function(){ //User mochte Viewer-Modus nicht anschalten
 				this.viewerModeFragmentClose();
 			},
 
-			showStopOrderSavingSuccessfullMessage: function () {
+			showStopOrderSavingSuccessfullMessage: function () { //Reihenfolge erfolgreich gesichert
 				MessageToast.show(this._oBundle.getText("stopOrderChangedSuccessfull"), {
 					duration: 1000,
 					width: "15em",
@@ -592,13 +565,11 @@ sap.ui.define(
 			openBusyDialog: async function () {
 				//Lade-Dialog oeffnen
 				if (!this.oBusyDialog) {
-					try {
-						// Lade das Fragment, wenn es noch nicht geladen wurde
+					try { // Lade das Fragment, wenn es noch nicht geladen wurde
 						this.oBusyDialog = await this.loadFragment({
 							name: "podprojekt.view.fragments.BusyDialog",
 						});
-					} catch (error) {
-						// Fehlerbehandlung bei Problemen beim Laden des Fragments
+					} catch (error) { // Fehlerbehandlung bei Problemen beim Laden des Fragments
 						console.error("Fehler beim Laden des BusyDialogs:", error);
 						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
 						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
@@ -613,8 +584,7 @@ sap.ui.define(
 				this.byId("BusyDialog").close();
 			},
 
-			viewerModeFragmentOpen:function(){
-
+			viewerModeFragmentOpen:function(){ //Oeffnen des Dialoges fuer den Viewer-Modus
 				this.oViewerModeFragment ??= this.loadFragment({
 					name: "podprojekt.view.fragments.displayStoppInViewerMode",
 				});
@@ -624,11 +594,11 @@ sap.ui.define(
 				});
 			},
 
-			viewerModeFragmentClose:function(){
+			viewerModeFragmentClose:function(){ //Schliessen des Viewer-Modus Dialoges
 				this.byId("stopDisplayModeDialog").close();
 			},
 
-			customStopPostitionFragmentOpen:function(){
+			customStopPostitionFragmentOpen:function(){ //Oeffnen des Dialoges fuer die Custom-Position
 
 				this.oCustomStopPostitionFragment ??= this.loadFragment({
 					name: "podprojekt.view.fragments.customStopPosition",
@@ -639,20 +609,18 @@ sap.ui.define(
 				});
 			},
 
-			customStopPostitionFragmentClose:function(){ //schliessen des Dialogs
+			customStopPostitionFragmentClose:function(){ //Schliessen des Dialoges fuer die Custom-Position
 				this.emptyCustomInputPosition();
 				this.byId("customStopPositionDialog").close();
 			},
 
-			onNavToStopInformation: function () {
-				//Navigation zur StopInformation View
+			onNavToStopInformation: function () { //Navigation zur StopInformation View
 				let oRouter = this.getOwnerComponent().getRouter();
 
 				oRouter.navTo("StopInformation");
 			},
 
-			onNavToOverview: function () {
-				//Navigation zur Overview
+			onNavToOverview: function () { //Navigation zur Overview
 				let oRouter = this.getOwnerComponent().getRouter();
 
 				oRouter.navTo("Overview");

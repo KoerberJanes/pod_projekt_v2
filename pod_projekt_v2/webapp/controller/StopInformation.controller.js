@@ -11,13 +11,12 @@ sap.ui.define(
 
 			onAfterRendering: function () {},
 
-			onPressBtnAvisNr: function (oEvent) {
-				//Natives anrufen der Telefonnummer
+			onPressBtnAvisNr: function (oEvent) {//Natives anrufen der Telefonnummer
 				let sPhoneAvis = this.getPhoneAvis();
 				sap.m.URLHelper.triggerTel(sPhoneAvis);
 			},
 
-			getPhoneAvis:function(){
+			getPhoneAvis:function(){ //Zurueckgeben der Telefonnummer des Kunden
 				let sPhoneAvis = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentStop/phoneAvis");
 				
 				return sPhoneAvis;

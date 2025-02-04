@@ -39,29 +39,26 @@ sap.ui.define(
 				}*/
 
 				oTourAndStopModel.setProperty("/customerInformation/driverId", sIdEumDev);
+				//Hier werden Test-Daten verwendet
 				oTourAndStopModel.setProperty("/customerInformation/role", userRoleDispo);
 				oTourAndStopModel.setProperty("/customerInformation/driverName", sDriverName);
 
-				//Simulation fuer den Backend-Call nachdem Fahrerdaten gesetzt wurden
-				this.simulateBackendCallForTours(true);
+				this.simulateBackendCallForTours(true); //Simulation fuer den Backend-Call nachdem Fahrerdaten gesetzt wurden
 			},
 
 			openBusyDialog: async function () {
 				//Lade-Dialog oeffnen
 				if (!this.oBusyDialog) {
-					try {
-						// Lade das Fragment, wenn es noch nicht geladen wurde
+					try { // Lade das Fragment, wenn es noch nicht geladen wurde
 						this.oBusyDialog = await this.loadFragment({
 							name: "podprojekt.view.fragments.BusyDialog",
 						});
-					} catch (error) {
-						// Fehlerbehandlung bei Problemen beim Laden des Fragments
+					} catch (error) { // Fehlerbehandlung bei Problemen beim Laden des Fragments
 						console.error("Fehler beim Laden des BusyDialogs:", error);
 						MessageBox.error(this._oBundle.getText("errorLoadingBusyDialog"));
 						return; // Beende die Methode, wenn das Fragment nicht geladen werden konnte
 					}
 				}
-
 				// Öffne das Dialog, wenn es erfolgreich geladen wurde
 				this.oBusyDialog.open();
 			},
@@ -106,8 +103,7 @@ sap.ui.define(
 
 				
 				setTimeout(() => { //Simulation der response-time
-					if (bTestCase) {
-						//Success-Fall simulieren
+					if (bTestCase) {//Success-Fall simulieren
 						let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel"); //Demo Model bereits vorab gefuellt
 						let aTourAndStopModelItems = oTourAndStopModel.getProperty("/aAllToursOfDriver"); //Inhalt fuer Abfrage benoetigt. Wird spaeter durch das oData Model ersetzt
 
@@ -116,8 +112,7 @@ sap.ui.define(
 						oConfigModel.setProperty("/customerInformation/role", userRole);
 						this.updateModelBindings("ConfigModel");
 						
-						if (aTourAndStopModelItems.length === 0) {
-							//Keine Tour vorhanden
+						if (aTourAndStopModelItems.length === 0) {//Keine Tour vorhanden
 							this._showErrorMessageBox("noToursLoaded", () => {});
 						} else {
 							this.handleRecievedTours(aTourAndStopModelItems);
@@ -125,7 +120,6 @@ sap.ui.define(
 					} else {
 						//Error-Fall simulieren
 					}
-					//this.closeBusyDialog();
 				}, 1000);
 
 			},
@@ -179,24 +173,23 @@ sap.ui.define(
 				
 			},
 
-			handleRecievedTours: function (aRecievedTours) {
-				//Verarbeiten der erhaltenen Touren
+			handleRecievedTours: function (aRecievedTours) { //Verarbeiten der erhaltenen Touren
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let aFilteredTours = this.getFilteredStops(aRecievedTours);
 
 				oTourAndStopModel.setProperty("/aAllToursOfDriver", aFilteredTours);
+				//Muss ind er fertigen App wieder einkommentiert werden
 				//this.updateModelBindings("TourAndStopModel");
 			},
 
-			getFilteredStops: function (aRecievedTours) { //Tour-Stati werden gefiltert
-				
+			getFilteredStops: function (aRecievedTours) { //Zurueckgeben von gefilterten Touren anhand der Tour-Stati
 				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
 				let sCustomerRole = oTourAndStopModel.getProperty(("/customerInformation/role"));
 
 				return sCustomerRole !== 'dispo' ? aRecievedTours.filter((tour) => !["90", "70", "10"].includes(tour.routeStatus)) : aRecievedTours;
 			},
 
-			onFilterSearch: function(oEvent) {
+			onFilterSearch: function(oEvent) { //Filtersuche, wenn User die Rolle 'dispo' hat
 				let oFilterBar = this.byId("filterBar");
 				let oList = this.byId("tourSelectionList"); // Deine Liste
 				let oBinding = oList.getBinding("items"); // Die Bindung der "items"-Aggregation der Liste
@@ -248,18 +241,15 @@ sap.ui.define(
 				this.getOwnerComponent().getModel("TourAndStopModel").setProperty("/aAllToursOfDriver", aFilteredTours);
 			},
 
-			onSelectionChange: function(oEvent) {
+			onSelectionChange: function(oEvent) { //In der kombobox wurde etwas geaendert
 				let aSelectedItems = oEvent.getSource().getSelectedItems(); // Alle ausgewaehlten Items in der MultiComboBox
 				let aSelectedKeys = aSelectedItems.map(function(item) {
 					return item.getKey(); // Alle ausgewaehlten "key"-Werte holen
 				});
 
-				// Zugriff auf das Model
-				let oFilterData = this.getOwnerComponent().getModel("FiltersModel").getData();
-
+				let oFilterData = this.getOwnerComponent().getModel("FiltersModel").getData(); // Zugriff auf das Model
 				// Filter auf das Model anwenden
 				oFilterData.selectedRouteStatuses = aSelectedKeys; // Eine neue Eigenschaft fuer die selektierten Filter hinzufuegen
-
 				// Filterdaten im Model aktualisieren
 				this.getOwnerComponent().getModel("FiltersModel").setData(oFilterData);
 
@@ -267,13 +257,11 @@ sap.ui.define(
 				// this._applyFilters(aTours, oFilterData);
 			},
 
-			onResetFilters: function() {
-				// Zugriff auf das Model
-				let oFilterData = this.getOwnerComponent().getModel("filtersModel").getData();
+			onResetFilters: function() { //Filter zuruecksetzen, bisher nicht verwendet
+				let oFilterData = this.getOwnerComponent().getModel("filtersModel").getData();// Zugriff auf das Model
 
 				// Zuruecksetzen des Filterstatus auf leeren Wert oder Standardwert
 				oFilterData.selectedRouteStatuses = [];
-			
 				// Filterdaten im Model zuruecksetzen
 				this.getOwnerComponent().getModel("filtersModel").setData(oFilterData);
 			
@@ -289,8 +277,7 @@ sap.ui.define(
 				this.openTourStartFragment();
 			},
 
-			openTourStartFragment: function () {
-				//Tourstart Fragment oeffnen
+			openTourStartFragment: function () { //Tourstart Fragment oeffnen
 				this.oTourstartDialog ??= this.loadFragment({
 					name: "podprojekt.view.fragments.Tourstart",
 				});
@@ -352,19 +339,19 @@ sap.ui.define(
 				}
 			},
 
-			getUserTourDistanceInput:function(){
+			getUserTourDistanceInput:function(){ //Zurueckgeben des Userinputs fuer die Kilometerzahl des Tourstart-Fragments
 				let iTourStartFragmentInput = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oTourStartUserInput/sMileage"); //User-Eingabe
 
 				return iTourStartFragmentInput;
 			},
 
-			getTourTolerance:function(){
+			getTourTolerance:function(){ //Zurueckgeben der Tolleranz einer Tour
 				let iRespectiveTourMileageTolerance = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/mileageTolerance"); //Aktuelle tolleranz fuer Tour-Mileage
 
 				return iRespectiveTourMileageTolerance;
 			},
 
-			getCurrentTourMileage:function(){
+			getCurrentTourMileage:function(){ //Zurueckgeben der aktuellen Kilometerzahl der Tour
 				let iRespectiveTourMileageTolerance = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/mileage"); //Aktuelle tolleranz fuer Tour-Mileage
 
 				return iRespectiveTourMileageTolerance;
@@ -386,13 +373,12 @@ sap.ui.define(
 					aPromises.push(this.simulateBackendCallForStopps(true)); //Simulation vom erhalten der Stopps
 
 					Promise.all(aPromises)
-					.then(() => {
+					.then(() => { //Wenn alle Versprechen eingehalten werden
 						this.closeBusyDialog();
 						this.setStopInformationModelData(); 
 					})
 					.catch((error) => {
 						this.closeBusyDialog();
-						//Fokus in eingabefeld
 						console.error("Error during backend calls:",error);
 					});
 				} else { //Eingabe nicht in Tolleranz
@@ -401,7 +387,7 @@ sap.ui.define(
 				this.resetMileageUserInput(); //Bei akzeptierter Eingabe das Feld leeren
 			},
 
-			getTourstartStops:function(){
+			getTourstartStops:function(){ //Zurueckgeben der Stopps der Tour
 				let aRespectiveTourStops = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oCurrentTour/stops"); //Array an Stops der ausgewaehlten Tour
 
 				return aRespectiveTourStops;
@@ -422,7 +408,7 @@ sap.ui.define(
 				}
 			},
 
-			sortStopsDescending:function(aStops){ // Sortieren der Stopps in absteigender Reihenfolge nach 'sequence'
+			sortStopsDescending:function(aStops){ //Sortieren und zurueckgeben der Stopps in absteigender Reihenfolge nach 'sequence'
 				return aStops.sort((stopA, stopB) => {
 					let sequenceA = stopA.sequence || 0; // Falls 'sequence' fehlt, Standardwert 0
 					let sequenceB = stopB.sequence || 0;
@@ -431,7 +417,8 @@ sap.ui.define(
 				});
 			},
 
-			validateDeliveryNotesForStops: function (aRespectiveTourStops) {
+			validateDeliveryNotesForStops: function (aRespectiveTourStops) { //Prueft ob ein lieferschein erstellt werden muss oder ob schon einer existiert
+				//!Kann ggf. durch den erhalt eines Lieferscheins aus dem Backend komplett abgeloest werden bzw. einfahc nur notwendige NVEs hinzugefuegt werden
 				let isValid = true;  // Statusparameter, der die Gueltigkeit speichert
 
     			// Hilfsfunktion, die ueberprueft, ob ein NVE in einem der Arrays im Lieferschein enthalten ist
@@ -488,7 +475,7 @@ sap.ui.define(
 				return isValid;  // Gibt true zurueck, wenn alle NVEs abgedeckt sind und kein neuer Lieferschein benoetigt wird
 			},
 
-			createDeliveryNotes: function () {
+			createDeliveryNotes: function () { //Erstellen eines Lieferscheins mit den zugehoerigen Nves
 				let aRespectiveTourStops = this.getTourstartStops(); // Array an Stops der ausgewaehlten Tour
 
 				aRespectiveTourStops.forEach((stop) => {
@@ -538,7 +525,7 @@ sap.ui.define(
 				this.onNavToActiveTour();
 			},
 
-			_showErrorMessageBox: function (sMessageKey, fnOnClose) {
+			_showErrorMessageBox: function (sMessageKey, fnOnClose) { //Generische Loesung fuer Fehlermeldungen
 				StatusSounds.playBeepError();
 				MessageBox.error(this._oBundle.getText(sMessageKey), {
 					onClose: fnOnClose || function () {}, // Verwende eine leere Funktion, wenn fnOnClose nicht definiert ist
@@ -546,8 +533,6 @@ sap.ui.define(
 			},
 
 			onDialogAfterOpen: function (oEvent) {
-				// Der TourstartDialog ist geoeffnet, setze den Fokus
-				// Der TourstartDialog ist geoeffnet, setze den Fokus
 				const oInput = this.getView()?.byId("kilometerInput");
 
 				if (oInput?.getDomRef()) {
@@ -569,8 +554,8 @@ sap.ui.define(
 				});
 			},
 
-			onRefreshTours: function () {
-				//Refresh der Touren, bisher ein Dummy
+			onRefreshTours: function () {//Refresh der Touren, bisher ein Dummy
+				//Abfragen der Touren aus dem Backen muesste das abloesen
 				MessageToast.show(this._oBundle.getText("dummyRefresh"), {
 					duration: 1000,
 					width: "15em",
@@ -578,7 +563,7 @@ sap.ui.define(
 				this.simulateBackendCallForTours();
 			},
 
-			TourStatisticsDialogOpen:function(){
+			TourStatisticsDialogOpen:function(){ //Uebersicht der verschiedenen Stati von Touren des Users
 
 				this.oTourStatisticsDialog ??= this.loadFragment({
 					name: "podprojekt.view.fragments.TourStatistics",
@@ -590,7 +575,7 @@ sap.ui.define(
 				});
 			},
 
-			MapTourStatisticsForDiagram:function(){
+			MapTourStatisticsForDiagram:function(){ //Mapping des Namens und der Farben fuer die Touren des Users 
 				const oTourAndStopModel = this.getView().getModel("TourAndStopModel");
 				const aResults = oTourAndStopModel.getProperty("/aAllToursOfDriver");
 
@@ -675,11 +660,11 @@ sap.ui.define(
 				this.updateModelBindings("TourAndStopModel");
 			},
 
-			updateModelBindings:function(sModelName){
+			updateModelBindings:function(sModelName){ //Update des Models in allen Views
 				this.getOwnerComponent().getModel(sModelName).updateBindings(true);
 			},
 
-			TourStatisticsDialogClose:function(){
+			TourStatisticsDialogClose:function(){ //Tourstatistics Fragment schließen
 				this.byId("TourStatisticsDialog").close();
 			},
 

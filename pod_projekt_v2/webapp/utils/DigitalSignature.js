@@ -33,7 +33,6 @@ sap.ui.define(
                     sap.ui.core.Control.prototype.onAfterRendering.apply(this, arguments);
                     this._initializeCanvas();
                     this._attachEventHandlers();
-                    //sap.ui.core.ResizeHandler.register(this, this._initializeCanvas.bind(this));
                 }
             },
 
