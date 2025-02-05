@@ -178,8 +178,32 @@ sap.ui.define(
 				this._openNveClearingDialog();
 			},
 
+			getTempLoadedNves: function(){
+				let aTempLoadedNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aTempLoadedNVEs") || []; 
+
+				return aTempLoadedNves;
+			},
+
+			getTempClearedNves: function(){
+				let aTempClearedNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aTempClearedNVEs") || []; 
+
+				return aTempClearedNves;
+			},
+
+			getLoadedNves: function(){
+				let aLoadedNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aTotalLoadedNVEs") || []; 
+
+				return aLoadedNves;
+			},
+
+			getClearedNves: function(){
+				let aClearedNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aTotalClearedNVEs") || []; 
+
+				return aClearedNves;
+			},
+
 			getPossiblyRemainingNves:function(){ //Gibt unbearbeitet Nves zurueck, sofern vorhanden
-				let aRemainingNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits") || []; //Noch nicht quittierte Nves
+				let aRemainingNves = this.getOwnerComponent().getModel("TourAndStopModel").getProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits") || []; 
 
 				return aRemainingNves;
 			},
@@ -445,10 +469,94 @@ sap.ui.define(
 				if (oLoadingNve) { //Nve fuer manuelle bearbeitung wurde gefunden
 					this.differenciateNveProcessingType(oLoadingNve, oEvent);
 				} else {
-					this.resetUserBarcodeInput();
-					this._showErrorMessageBox("noNveFound", () => this.scrollToInputAfterError());
+					//TODO: Pruefen ob NVE nicht bereits verlden oder geklaert wurde, wenn das beides nicht der Fall ist, dann dieser Code
+					/*
+					
+					*/
+					this.checkIfNveIsProcessed(sManualNveUserInput);
 				}
 			},
+
+			checkIfNveIsProcessed:function(sManualNveUserInput){
+
+				// Arrays abrufen und in einer Map speichern
+				const arrayMap = {
+					aTempClearedNVEs: this.getTempClearedNves(),
+					aClearedNves: this.getClearedNves(),
+					aTempLoadedNVEs: this.getTempLoadedNves(),
+					aLoadedNves: this.getLoadedNves()
+				};
+
+				// Funktion, die prüft, ob das Element in einem Array existiert
+				const findElementInArray = (array, key) => {
+					return array.find((element) => element.label1 === key);
+				};
+
+				// Variable, um das Ergebnis zu speichern
+				let foundInArray = null; //Arrayname
+				let foundElement = null; //Objekt selbst
+
+				// Schleife durch die Arrays
+				for (const [key, array] of Object.entries(arrayMap)) {
+					const oFoundNve = findElementInArray(array, sManualNveUserInput);
+					if (oFoundNve) {
+						foundInArray = key;
+						foundElement = oFoundNve;
+					}
+				}
+
+				if(foundInArray !== null && foundElement !== null){ //Wenn Nve gefunden wurde unterscheiden
+					//this.differenciateProcessedNveType(foundInArray, foundElement);
+					this.showUserMessageForProcessedNve(foundInArray, foundElement);
+				} else{ //Keine Nve wurde gefunden, Meldung an User
+					this.resetUserBarcodeInput();
+					this._showErrorMessageBox("noNveFound", () => this.scrollToInputAfterError());
+				}				
+			},
+
+			showUserMessageForProcessedNve: function (foundInArray, foundElement) { //Es sind nicht gespeicherte aber bearbeitete NVEs vorhanden
+				let sNveNumber = foundElement.label1;
+				let sDifferentProcessedStatus = null;
+
+				if(foundInArray === "aTempClearedNVEs" || foundInArray === "aTotalClearedNVEs"){
+					sDifferentProcessedStatus = this._oBundle.getText("nveAlreadyProcessed_2_cleared");
+				} else{
+					sDifferentProcessedStatus = this._oBundle.getText("nveAlreadyProcessed_2_loaded");
+				}
+				
+				MessageBox.show(this._oBundle.getText("nveAlreadyProcessed"), {
+					icon: MessageBox.Icon.INFORMATION,
+					title: this._oBundle.getText("nveAlreadyProcessed_1") + sNveNumber + sDifferentProcessedStatus,
+					actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+					emphasizedAction: MessageBox.Action.YES,
+					onClose: (oAction) => {
+						if (oAction === "YES") { //Speichern
+							this.differenciateProcessedNveType(foundInArray, foundElement);
+						} else { //Abbrechen
+							//NOP
+							return;
+						}
+					},
+				});
+			},
+
+			differenciateProcessedNveType:function(foundInArray, foundElement){
+				//Entfernen der NVE aus dem foundInArray und hinzufügen in das aUnprocessedNumberedDispatchUnits-Array
+				let oTourAndStopModel = this.getOwnerComponent().getModel("TourAndStopModel");
+				let aUnprocessedNumberedDispatchUnits = oTourAndStopModel.getProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits");
+				let aUpdatedUnprocessedNumberedDispatchUnits = [... aUnprocessedNumberedDispatchUnits, foundElement];
+				let aFoundInArrayNves = oTourAndStopModel.getProperty("/oDeliveryNote/note/"+foundInArray);
+				let aNewFilteredNves = aFoundInArrayNves.filter((oCurrentNve) => oCurrentNve !== foundElement);
+
+				//Entfernen der gefundenen Nve
+				oTourAndStopModel.setProperty("/oDeliveryNote/note/"+foundInArray, aNewFilteredNves);
+				//hinzufuegen der Nve in aUnprocessedNumberedDispatchUnits
+				oTourAndStopModel.setProperty("/oDeliveryNote/note/aUnprocessedNumberedDispatchUnits", aUpdatedUnprocessedNumberedDispatchUnits);
+				
+				this.onManualNveInputFragmentClose();
+				this.updateModelBindings("TourAndStopModel");
+			},
+
 
 			differenciateNveProcessingType: function (oDiffNve, oEvent) { //unterscheiden ob manuelles klaeren oder verladen verwendet wurde
 				let sDialogId = oEvent.getSource().getParent().getId().split("-").pop(); //leider keine bessere Idee dazu gehabt
