@@ -557,7 +557,6 @@ sap.ui.define(
 				this.updateModelBindings("TourAndStopModel");
 			},
 
-
 			differenciateNveProcessingType: function (oDiffNve, oEvent) { //unterscheiden ob manuelles klaeren oder verladen verwendet wurde
 				let sDialogId = oEvent.getSource().getParent().getId().split("-").pop(); //leider keine bessere Idee dazu gehabt
 
